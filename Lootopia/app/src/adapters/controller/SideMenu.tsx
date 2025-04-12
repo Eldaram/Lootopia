@@ -12,11 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-type Props = {
-  onClose: () => void;
-};
-
-export const SideMenu = ({ onClose }: Props) => {
+export const SideMenu = () => {
   return (
     <View
       style={{
@@ -89,19 +85,6 @@ export const SideMenu = ({ onClose }: Props) => {
             </Text>
           </TouchableOpacity>
         ))}
-
-        <TouchableOpacity
-          onPress={onClose}
-          style={{
-            marginTop: 30,
-            padding: 10,
-            backgroundColor: '#ddd',
-            borderRadius: 8,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontWeight: 'bold' }}>Fermer</Text>
-        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
