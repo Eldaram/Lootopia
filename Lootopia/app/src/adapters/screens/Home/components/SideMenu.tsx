@@ -5,23 +5,22 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  Dimensions,
   ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const screenHeight = Dimensions.get('window').height;
-const screenWidth = Dimensions.get('window').width;
-
 export const SideMenu = () => {
+  const { width, height } = useWindowDimensions(); 
+
   return (
     <View
       style={{
         position: 'absolute',
         top: 0,
         left: 0,
-        width: screenWidth * 0.19, 
-        height: screenHeight,   
+        width: width * 0.19, 
+        height: height,  
         zIndex: 10,
       }}
     >
@@ -97,4 +96,3 @@ export const SideMenu = () => {
     </View>
   );
 };
-
