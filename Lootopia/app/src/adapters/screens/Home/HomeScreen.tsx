@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { SideMenu } from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
 import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
+
+const screenWidth = Dimensions.get('window').width;
 
 export const HomeScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,7 +40,7 @@ export const HomeScreen = () => {
     } else {
       setIsMenuOpen(true);
       Animated.timing(menuTranslateX, {
-        toValue: 420,
+        toValue: screenWidth * 0.2,
         duration: 300,
         useNativeDriver: true,
       }).start();
@@ -65,7 +67,7 @@ export const HomeScreen = () => {
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <TouchableOpacity onPress={toggleMenu}>
-                  <Icon name="bars" size={30} color="#555" />
+                  <Icon name="bars" size={40} color="#555" />
                 </TouchableOpacity>
                 <SearchBar onSearch={handleSearch} />
                 <TouchableOpacity>
