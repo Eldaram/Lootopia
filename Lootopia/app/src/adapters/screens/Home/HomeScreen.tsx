@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SideMenu } from './SideMenu';
-import SearchBar from '@/app/src/adapters/controller/SearchBar';
+import { SideMenu } from './components/SideMenu';
+import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
+import HuntingCard from './components/HuntingCard';
+import EvenementCard from './components/EvenementCard';
 
 export const HomeScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,18 +22,27 @@ export const HomeScreen = () => {
     }
   };
 
-  const handleMenuOpen = () => {
-    setIsMenuOpen(true);
-    Animated.timing(menuTranslateX, {
-      toValue: 420,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     console.log('Search Query:', query);
+  };
+
+  const toggleMenu = () => {
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      Animated.timing(menuTranslateX, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      setIsMenuOpen(true);
+      Animated.timing(menuTranslateX, {
+        toValue: 420,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   return (
@@ -53,30 +64,17 @@ export const HomeScreen = () => {
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TouchableOpacity onPress={handleMenuOpen}>
+                <TouchableOpacity onPress={toggleMenu}>
                   <Icon name="bars" size={30} color="#555" />
                 </TouchableOpacity>
-                 <SearchBar onSearch={handleSearch}  />
+                <SearchBar onSearch={handleSearch} />
                 <TouchableOpacity>
                   <Icon name="user-circle" size={40} color="#555" />
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 24, marginBottom: 12 }}>
-                Chasses disponibles 🟢
-              </Text>
-              <View
-                style={{
-                  backgroundColor: '#ffff',
-                  borderRadius: 12,
-                  marginBottom: 400,
-                }}
-              ></View>
-
-              <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 24, marginBottom: 12 }}>
-                Évènements
-              </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12, backgroundColor: '#ffff',}}></ScrollView>
+              <HuntingCard />
+              <EvenementCard />
             </ScrollView>
           </Animated.View>
         </View>
