@@ -1,13 +1,26 @@
-import React, { useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const cardWidth = 550 + 300;
+const screenWidth = Dimensions.get('window').width;
 
 const HuntingCard = () => {
   const scrollRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
   const totalCards = 4;
+
+  const [cardWidth, setCardWidth] = useState(screenWidth * 0.3);
+
+  useEffect(() => {
+    const onResize = () => {
+      const newWidth = Dimensions.get('window').width;
+      setCardWidth(newWidth * 0.3);
+    };
+    const subscription = Dimensions.addEventListener('change', onResize);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const scrollToCard = (index: number) => {
     if (scrollRef.current) {
@@ -35,8 +48,6 @@ const HuntingCard = () => {
         Chasses disponibles 🟢
       </Text>
 
-       {/* TODO: Ajouter 2-3 ou 4 chasses dispo aléatoires */}
-
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <TouchableOpacity onPress={handlePrev}>
           <Icon name="chevron-left" size={30} color="#333" style={{ marginHorizontal: 10 }} />
@@ -54,9 +65,9 @@ const HuntingCard = () => {
               style={{
                 backgroundColor: '#ffff',
                 borderRadius: 12,
-                width: 550,
+                width: cardWidth, 
                 height: 300,
-                margin: 30,
+                margin: 15,
                 padding: 16,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 4 },
