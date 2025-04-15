@@ -31,7 +31,7 @@ export const SideMenu = () => {
         style={{
           flex: 1,
           paddingTop: 40,
-          paddingHorizontal: 10,
+          paddingHorizontal: 20,
           width: '100%',
           height: '100%',
         }}
