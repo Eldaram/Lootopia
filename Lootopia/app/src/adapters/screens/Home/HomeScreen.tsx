@@ -50,15 +50,16 @@ export const HomeScreen = () => {
 
   if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff', padding: 16 }}>
+      <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Menu toggleMenu={toggleMenu} />
         <Header />
         <ButtonGrid />
         <EvenementsSection />
         <BoutiqueSection />
-      </View>
+      </ScrollView>
     );
   }
+  
 
   if (Platform.OS === 'web') {
   return (

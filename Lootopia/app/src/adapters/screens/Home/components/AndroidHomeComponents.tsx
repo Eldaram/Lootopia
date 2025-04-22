@@ -121,28 +121,50 @@ export const EvenementsSection = () => {
   );
 };
 
+//TODO : remplacer donnée par 2 offre boutique au hazard
 export const BoutiqueSection = () => {
   const shopOffers: ShopOffer[] = [
     { id: '1', title: 'Pack de Chasses', description: 'Augmente ton nombre de chasses disponibles.' },
     { id: '2', title: 'Potion Magique', description: 'Potion pour améliorer tes chances.' },
-    { id: '3', title: 'Pack VIP', description: 'Accès aux événements exclusifs.' },
   ];
 
-  const renderShopOffer = ({ item }: { item: ShopOffer }) => (
-    <View style={{ marginBottom: 16, backgroundColor: '#fff', padding: 16, borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }}>
-      <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.title}</Text>
-      <Text>{item.description}</Text>
+  const renderShopOffer = (item: ShopOffer) => (
+    <View style={{
+      flex: 1,
+      marginRight: 8,
+      backgroundColor: '#fff',
+      padding: 12,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+    }}>
+      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.title}</Text>
+      <Text style={{ fontSize: 12 }}>{item.description}</Text>
     </View>
   );
 
   return (
     <View>
       <Text style={{ fontWeight: 'bold', fontSize: 20, marginVertical: 20 }}>Boutique</Text>
-      <FlatList
-        data={shopOffers}
-        renderItem={renderShopOffer}
-        keyExtractor={(item) => item.id}
-      />
+
+      <View style={{
+        backgroundColor: '#ffff',
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}>
+        {shopOffers.map((offer, index) => (
+          <React.Fragment key={offer.id}>
+            {renderShopOffer(offer)}
+          </React.Fragment>
+        ))}
+      </View>
     </View>
   );
 };
+
