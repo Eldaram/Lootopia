@@ -3,10 +3,8 @@ import { View, TouchableOpacity, Text, FlatList, Dimensions } from 'react-native
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// Obtenir la largeur de l'écran
 const screenWidth = Dimensions.get('window').width;
 
-// Définir les types des événements et des offres de la boutique
 interface Event {
   id: string;
   title: string;
@@ -23,7 +21,6 @@ interface MenuProps {
   toggleMenu: () => void;
 }
 
-// Menu Component
 export const Menu: React.FC<MenuProps> = ({ toggleMenu }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
     <TouchableOpacity onPress={toggleMenu}>
@@ -35,16 +32,14 @@ export const Menu: React.FC<MenuProps> = ({ toggleMenu }) => (
   </View>
 );
 
-// Header Component
 //TODO : changer Stanly par le username
 export const Header = () => (
   <View style={{ marginVertical: 20 }}>
-    <Text style={{ fontSize: 36, fontWeight: 'bold' }}>Hi! Stanly</Text>
+    <Text style={{ fontSize: 36, fontWeight: 'bold' }}>Hi! Stanly  <Text style={{ fontSize: 30, marginLeft: 10 }}>🖐️</Text></Text>
     <Text style={{ fontSize: 12, color: '#555' }}>Welcome Back</Text>
   </View>
 );
 
-// ButtonGrid Component
 export const ButtonGrid = () => {
   const buttons = ['Organiser', 'Chasses disponibles', 'Mes chasses', 'Mes artéfacts'];
 
@@ -80,8 +75,7 @@ export const ButtonGrid = () => {
   );
 };
 
-
-// EvenementsSection Component
+//TODO: a remplacer par 3 events au hazard
 export const EvenementsSection = () => {
   const eventsData: Event[] = [
     { id: '1', title: 'Chasse 1', description: 'Chasse à la créature mystérieuse.' },
@@ -89,11 +83,27 @@ export const EvenementsSection = () => {
     { id: '3', title: 'Chasse 3', description: 'Le grand défi de la ville.' },
   ];
 
-  // Typage de item dans renderItem
   const renderEventItem = ({ item }: { item: Event }) => (
-    <View style={{ marginRight: 16, width: screenWidth * 0.6, backgroundColor:  '#F27438', borderRadius: 10, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, }}>
-      <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.title}</Text>
-      <Text>{item.description}</Text>
+    <View style={{ marginRight: 16, width: screenWidth * 0.6, backgroundColor: '#F27438', borderRadius: 10, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, position: 'relative',height: 150, }}>
+      
+      <View style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '50%', 
+        backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        zIndex: 1, 
+        
+      }} />
+
+      <View style={{ zIndex: 2, position: 'relative',
+        top: 75 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 18, color: 'white' }}>{item.title}</Text>
+        <Text style={{ color: 'white' }}>{item.description}</Text>
+      </View>
     </View>
   );
 
@@ -111,7 +121,6 @@ export const EvenementsSection = () => {
   );
 };
 
-// BoutiqueSection Component
 export const BoutiqueSection = () => {
   const shopOffers: ShopOffer[] = [
     { id: '1', title: 'Pack de Chasses', description: 'Augmente ton nombre de chasses disponibles.' },
@@ -119,7 +128,6 @@ export const BoutiqueSection = () => {
     { id: '3', title: 'Pack VIP', description: 'Accès aux événements exclusifs.' },
   ];
 
-  // Typage de item dans renderItem
   const renderShopOffer = ({ item }: { item: ShopOffer }) => (
     <View style={{ marginBottom: 16, backgroundColor: '#fff', padding: 16, borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }}>
       <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.title}</Text>
