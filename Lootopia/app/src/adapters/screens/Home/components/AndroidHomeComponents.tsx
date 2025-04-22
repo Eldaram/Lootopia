@@ -55,13 +55,13 @@ export const ButtonGrid = () => {
           style={{
             width: '48%',
             height: 120,
-            backgroundColor: index % 2 === 0 ? '#F9968B' : '#F27438',
+            backgroundColor: index % 3 === 0 ? '#F9968B' : '#2CCED2',
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: 16,
-            borderTopRightRadius: 20,
+            borderTopRightRadius: index === 3 ? 100 : 100,
             borderTopLeftRadius: 20,
-            borderBottomRightRadius: 20,
+            borderBottomRightRadius: index === 3 ? 20 : 20, 
             borderBottomLeftRadius: 20,
             padding: 10,
             shadowColor: '#000',
@@ -77,6 +77,7 @@ export const ButtonGrid = () => {
     </View>
   );
 };
+
 
 // EvenementsSection Component
 export const EvenementsSection = () => {
