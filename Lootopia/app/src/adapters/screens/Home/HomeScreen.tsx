@@ -5,6 +5,7 @@ import { SideMenu } from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
 import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -49,8 +50,12 @@ export const HomeScreen = () => {
 
   if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <Text style={{ fontSize: 24 }}>Hello World Android 👋</Text>
+      <View style={{ flex: 1, backgroundColor: '#fff', padding: 16 }}>
+        <Menu toggleMenu={toggleMenu} />
+        <Header />
+        <ButtonGrid />
+        <EvenementsSection />
+        <BoutiqueSection />
       </View>
     );
   }
