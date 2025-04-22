@@ -6,6 +6,7 @@ import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
 import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
+import { BottomBar } from './components/BottomBar';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -50,13 +51,17 @@ export const HomeScreen = () => {
 
   if (Platform.OS === 'android') {
     return (
-      <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+      <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Menu toggleMenu={toggleMenu} />
         <Header />
         <ButtonGrid />
         <EvenementsSection />
         <BoutiqueSection />
       </ScrollView>
+    
+      <BottomBar />
+    </View>
     );
   }
   
