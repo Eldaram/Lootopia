@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { SideMenu } from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
@@ -47,6 +47,15 @@ export const HomeScreen = () => {
     }
   };
 
+  if (Platform.OS === 'android') {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ fontSize: 24 }}>Hello World Android 👋</Text>
+      </View>
+    );
+  }
+
+  if (Platform.OS === 'web') {
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       {isMenuOpen && <SideMenu />}
@@ -84,3 +93,5 @@ export const HomeScreen = () => {
     </View>
   );
 };
+return null;
+}
