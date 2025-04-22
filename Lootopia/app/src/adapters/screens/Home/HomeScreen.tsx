@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { SideMenu } from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
 import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
+import { BottomBar } from './components/BottomBar';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -47,6 +49,24 @@ export const HomeScreen = () => {
     }
   };
 
+  if (Platform.OS === 'android') {
+    return (
+      <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <Menu toggleMenu={toggleMenu} />
+        <Header />
+        <ButtonGrid />
+        <EvenementsSection />
+        <BoutiqueSection />
+      </ScrollView>
+    
+      <BottomBar />
+    </View>
+    );
+  }
+  
+
+  if (Platform.OS === 'web') {
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       {isMenuOpen && <SideMenu />}
@@ -84,3 +104,5 @@ export const HomeScreen = () => {
     </View>
   );
 };
+return null;
+}
