@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Obtenir la largeur de l'écran
 const screenWidth = Dimensions.get('window').width;
@@ -50,28 +51,29 @@ export const ButtonGrid = () => {
   return (
     <View style={{ marginTop: 40, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
       {buttons.map((text, index) => (
-        <TouchableOpacity
-          key={index}
-          style={{
-            width: '48%',
-            height: 120,
-            backgroundColor: index % 3 === 0 ? '#F9968B' : '#2CCED2',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 16,
-            borderTopRightRadius: index === 3 ? 100 : 100,
-            borderTopLeftRadius: 20,
-            borderBottomRightRadius: index === 3 ? 20 : 20, 
-            borderBottomLeftRadius: 20,
-            padding: 10,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.8,
-            shadowRadius: 2,
-          }}
-        >
-          <Icon name={index % 2 === 0 ? 'map' : 'search'} size={30} color="white" />
-          <Text style={{ color: 'white', marginTop: 10, fontWeight: 'bold' }}>{text}</Text>
+        <TouchableOpacity key={index} style={{ width: '48%', height: 120, marginBottom: 16 }}>
+          <LinearGradient
+            colors={index % 3 === 0 ? ['#F9968B', '#FF6347'] : ['#176A6C', '#2CCED2']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.8,
+              shadowRadius: 2,
+              borderTopRightRadius: index === 3 ? 100 : 100,
+              borderTopLeftRadius: 20,
+              borderBottomRightRadius: index === 3 ? 20 : 20, 
+              borderBottomLeftRadius: 20,
+            }}
+          >
+            <Icon name={index % 2 === 0 ? 'map' : 'search'} size={30} color="white" />
+            <Text style={{ color: 'white', marginTop: 10, fontWeight: 'bold' }}>{text}</Text>
+          </LinearGradient>
         </TouchableOpacity>
       ))}
     </View>
@@ -89,7 +91,7 @@ export const EvenementsSection = () => {
 
   // Typage de item dans renderItem
   const renderEventItem = ({ item }: { item: Event }) => (
-    <View style={{ marginRight: 16, width: screenWidth * 0.6, backgroundColor: '#fff', borderRadius: 10, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }}>
+    <View style={{ marginRight: 16, width: screenWidth * 0.6, backgroundColor:  '#F27438', borderRadius: 10, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, }}>
       <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.title}</Text>
       <Text>{item.description}</Text>
     </View>
