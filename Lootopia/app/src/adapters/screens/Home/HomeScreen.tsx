@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
+import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { SideMenu } from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
@@ -7,10 +7,15 @@ import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
 import { BottomBar } from './components/BottomBar';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 const screenWidth = Dimensions.get('window').width;
 
 export const HomeScreen = () => {
+  const systemColorScheme = useColorScheme(); // Détecte le thème du système (light ou dark)
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark'); // Initialise avec le thème du système
+  const theme = Colors[isDarkMode ? 'dark' : 'light']; // Sélectionne les couleurs en fonction de l'état
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTranslateX] = useState(new Animated.Value(0));
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,60 +54,71 @@ export const HomeScreen = () => {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevMode) => !prevMode);
+  };
+
   if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <Menu toggleMenu={toggleMenu} />
-        <Header />
-        <ButtonGrid />
-        <EvenementsSection />
-        <BoutiqueSection />
-      </ScrollView>
-    
-      <BottomBar />
-    </View>
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
+        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+          <Menu toggleMenu={toggleMenu} />
+          <Header />
+          <ButtonGrid />
+          <EvenementsSection />
+          <BoutiqueSection />
+        </ScrollView>
+        <BottomBar />
+        <TouchableOpacity onPress={toggleDarkMode} style={{ position: 'absolute', bottom: 20, right: 20 }}>
+          <Icon name={isDarkMode ? 'sun-o' : 'moon-o'} size={30} color={theme.icon} />
+        </TouchableOpacity>
+      </View>
     );
   }
-  
 
   if (Platform.OS === 'web') {
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      {isMenuOpen && <SideMenu />}
-      <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={{ flex: 1 }}>
-          <Animated.View
-            style={{
-              flex: 1,
-              marginLeft: menuTranslateX,
-            }}
-          >
-            <ScrollView
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
+        {isMenuOpen && <SideMenu />}
+        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+          <View style={{ flex: 1 }}>
+            <Animated.View
               style={{
                 flex: 1,
-                padding: 16,
-                backgroundColor: '#f5f5f5',
+                marginLeft: menuTranslateX,
               }}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TouchableOpacity onPress={toggleMenu}>
-                  <Icon name="bars" size={40} color="#555" />
-                </TouchableOpacity>
-                <SearchBar onSearch={handleSearch} />
-                <TouchableOpacity>
-                  <Icon name="user-circle" size={40} color="#555" />
-                </TouchableOpacity>
-              </View>
+              <ScrollView
+                style={{
+                  flex: 1,
+                  padding: 16,
+                  backgroundColor: theme.background,
+                }}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={toggleMenu}>
+                    <Icon name="bars" size={40} color={theme.icon} />
+                  </TouchableOpacity>
+                  <SearchBar onSearch={handleSearch} />
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleDarkMode} style={{ marginRight: 10 }}>
+                      <Icon name={isDarkMode ? 'sun-o' : 'moon-o'} size={30} color={theme.icon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Icon name="user-circle" size={40} color={theme.icon} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
 
-              <HuntingCard />
-              <EvenementCard />
-            </ScrollView>
-          </Animated.View>
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
-  );
+                <HuntingCard />
+                <EvenementCard />
+              </ScrollView>
+            </Animated.View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  }
+
+  return null;
 };
-return null;
-}
