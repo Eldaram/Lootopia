@@ -33,24 +33,132 @@ You can start developing by editing the files inside the **app** directory. This
 - **PostGIS** extension installed on PostgreSQL (required for geospatial data)
 - Node.js with **Knex.js** to manage migrations and seeds
 
----
-
 ### Installing and Configuring PostgreSQL with PostGIS
 
-1. Install PostgreSQL (if not already done):  
-   https://www.postgresql.org/download/windows/
-
+1. Install PostgreSQL (if not already done): https://www.postgresql.org/download/windows/
 2. Install PostGIS extension:
-
-   - On Windows, PostGIS is usually available via PostgreSQL’s StackBuilder tool.
+   - On Windows, PostGIS is usually available via PostgreSQL's StackBuilder tool.
    - Open StackBuilder and select PostGIS for your PostgreSQL version.
+3. Enable the PostGIS extension in your database: Connect to your database (using psql, PgAdmin, or another client) and run:
 
-3. Enable the PostGIS extension in your database:  
-   Connect to your database (using psql, PgAdmin, or another client) and run:
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+```
 
-   ```sql
-   CREATE EXTENSION IF NOT EXISTS postgis;
-   ```
+### Environment Variable Configuration (`.env.local`)
+
+Create a `.env.local` file at your project root and add your PostgreSQL connection string, for example:
+
+```
+DB__CONNECTION=postgres://postgres:root@localhost:5050/lootopia
+```
+
+- `postgres://` — protocol
+- `postgres` — database user
+- `root` — password
+- `localhost` — host
+- `5050` — port (adjust if needed)
+- `lootopia` — database name
+
+### Knex Configuration
+
+Your `knexfile.js` (or `.ts`) should load this environment variable to connect to the database:
+
+```javascript
+import { config } from "dotenv";
+config({ path: ".env.local" });
+
+const knexfile = {
+  client: "pg",
+  connection: process.env.DB__CONNECTION,
+  migrations: {
+    directory: "./db/migrations",
+  },
+  seeds: {
+    directory: "./db/seeds",
+  },
+  debug: true,
+};
+
+export default knexfile;
+```
+
+### Managing Migrations
+
+- Migration files are stored in `/db/migrations`
+- Create a new migration:
+
+```bash
+npx knex migrate:make migration_name
+```
+
+- Run migrations to update your database schema:
+
+```bash
+npx knex migrate:latest
+```
+
+- Example migration for geospatial data in `caches` table:
+
+```javascript
+table.specificType("location", "geometry(Point, 4326)");
+table.float("dimension"); // Radius in kilometers around the point
+```
+
+### Managing Seeds
+
+- Seed files are stored in `/db/seeds`
+- Create a new seed file:
+
+```bash
+npx knex seed:make seed_name
+```
+
+- Run seeds to populate tables with initial data:
+
+```bash
+npx knex seed:run
+```
+
+- Seeds can include geospatial data using PostGIS functions.
+
+#### Example Geospatial Data Insertion in a Seed
+
+```javascript
+await knex("caches").insert({
+  location: knex.raw(`ST_SetSRID(ST_MakePoint(2.3522, 48.8566), 4326)`), // Longitude, Latitude (example: Paris)
+  dimension: 10, // Radius in kilometers
+  visibility: 1,
+  partner_id: 1,
+  status: 1,
+});
+```
+
+### Verify Database Connection
+
+Before running migrations or seeds, you can test the connection with this simple Node.js script:
+
+```javascript
+import knex from "knex";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+
+const db = knex({
+  client: "pg",
+  connection: process.env.DB__CONNECTION,
+});
+
+db.raw("SELECT 1+1 AS result")
+  .then(() => console.log("DB connection successful"))
+  .catch((err) => console.error("DB connection error:", err))
+  .finally(() => db.destroy());
+```
+
+### Recommended Tools for Database Visualization
+
+- **TablePlus** (modern, user-friendly UI)
+- **PgAdmin** (official PostgreSQL tool, more traditional UI)
+- Make sure connection parameters (host, port, user, password) match your PostgreSQL setup.
 
 ## Get a fresh project
 
