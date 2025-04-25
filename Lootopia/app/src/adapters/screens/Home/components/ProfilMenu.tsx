@@ -7,20 +7,22 @@ interface ProfileMenuProps {
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ isLoggedIn }) => {
+  const popupSize = Dimensions.get('window').width * 0.8;
+
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [menuTranslateX] = useState(new Animated.Value(Dimensions.get('window').width));
+  const [menuTranslateX] = useState(new Animated.Value(popupSize));
 
   const toggleMenu = () => {
     if (isMenuVisible) {
       Animated.timing(menuTranslateX, {
-        toValue: Dimensions.get('window').width,
+        toValue: popupSize * 0.3,
         duration: 300,
         useNativeDriver: true,
       }).start(() => setIsMenuVisible(false));
     } else {
       setIsMenuVisible(true);
       Animated.timing(menuTranslateX, {
-        toValue: Dimensions.get('window').width * 0.3,
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }).start();
@@ -39,8 +41,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isLoggedIn }) => {
             position: 'absolute',
             top: 60,
             right: 0,
-            bottom: 0,
-            width: Dimensions.get('window').width * 0.7,
+            width: popupSize * 0.3,
+            height: '60%',
             backgroundColor: '#fff',
             padding: 16,
             transform: [{ translateX: menuTranslateX }],
