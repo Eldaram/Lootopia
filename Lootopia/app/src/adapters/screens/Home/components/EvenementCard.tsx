@@ -82,6 +82,7 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
                   key={item}
                   style={{
                     width: cardWidth,
+                    height: 300,
                     marginHorizontal: 10,
                     backgroundColor: theme.cardBackground, 
                     borderRadius: 12,
