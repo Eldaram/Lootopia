@@ -9,9 +9,14 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Colors } from '@/constants/Colors';
 
-export const SideMenu = () => {
-  const { width, height } = useWindowDimensions(); 
+interface SideMenuProps {
+  theme: typeof Colors.light;
+}
+
+export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
+  const { width, height } = useWindowDimensions();
 
   return (
     <View
@@ -19,13 +24,17 @@ export const SideMenu = () => {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: width * 0.19, 
-        height: height,  
+        width: width * 0.19,
+        height: height,
         zIndex: 10,
       }}
     >
       <ImageBackground
-        source={require('@/assets/images/menu-background.png')}
+        source={
+          theme === Colors.dark
+            ? require('@/assets/images/menu-background-dark.png') // Image pour le mode sombre
+            : require('@/assets/images/menu-background.png') // Image pour le mode clair
+        }
         resizeMode="cover"
         style={{
           flex: 1,
@@ -71,7 +80,7 @@ export const SideMenu = () => {
                 alignItems: 'center',
                 padding: 12,
                 marginBottom: 8,
-                backgroundColor: 'white',
+                backgroundColor: theme.cardBackground,
                 borderRadius: 10,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 2 },
@@ -80,11 +89,17 @@ export const SideMenu = () => {
                 elevation: 2,
               }}
             >
-              <Icon name={item.icon} size={20} color="#555" style={{ marginRight: 10 }} />
+              <Icon
+                name={item.icon}
+                size={20}
+                color={theme.icon} 
+                style={{ marginRight: 10 }}
+              />
               <Text
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
+                  color: theme.text,
                 }}
               >
                 {item.label}

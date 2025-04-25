@@ -13,9 +13,9 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 const screenWidth = Dimensions.get('window').width;
 
 export const HomeScreen = () => {
-  const systemColorScheme = useColorScheme(); // Détecte le thème du système (light ou dark)
-  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark'); // Initialise avec le thème du système
-  const theme = Colors[isDarkMode ? 'dark' : 'light']; // Sélectionne les couleurs en fonction de l'état
+  const systemColorScheme = useColorScheme(); 
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark'); 
+  const theme = Colors[isDarkMode ? 'dark' : 'light'];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTranslateX] = useState(new Animated.Value(0));
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,7 +79,7 @@ export const HomeScreen = () => {
   if (Platform.OS === 'web') {
     return (
       <View style={{ flex: 1, backgroundColor: theme.background }}>
-        {isMenuOpen && <SideMenu />}
+        {isMenuOpen && <SideMenu theme={theme}/>}
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
           <View style={{ flex: 1 }}>
             <Animated.View
