@@ -99,7 +99,7 @@ export const HomeScreen = () => {
                   <TouchableOpacity onPress={toggleMenu}>
                     <Icon name="bars" size={40} color={theme.icon} />
                   </TouchableOpacity>
-                  <SearchBar onSearch={handleSearch} />
+                  <SearchBar onSearch={handleSearch} theme={theme} />
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={toggleDarkMode} style={{ marginRight: 10 }}>
                       <Icon name={isDarkMode ? 'sun-o' : 'moon-o'} size={30} color={theme.icon} />
@@ -110,8 +110,8 @@ export const HomeScreen = () => {
                   </View>
                 </View>
 
-                <HuntingCard />
-                <EvenementCard />
+                <HuntingCard theme={theme}/>
+                <EvenementCard theme={theme} />
               </ScrollView>
             </Animated.View>
           </View>

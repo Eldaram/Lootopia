@@ -1,20 +1,21 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Colors } from '@/constants/Colors';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  theme: typeof Colors.light;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
   const [query, setQuery] = useState('');
-  const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5); 
+  const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5);
 
- 
   useLayoutEffect(() => {
     const updateInputWidth = () => {
       const screenWidth = Dimensions.get('window').width;
-      setInputWidth(screenWidth * 0.5); 
+      setInputWidth(screenWidth * 0.5);
     };
 
     updateInputWidth();
@@ -35,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: theme.cardBackground,
         padding: 10,
         borderRadius: 12,
         elevation: 3,
@@ -55,14 +56,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           paddingLeft: 10,
           fontSize: 16,
           borderRadius: 12,
+          color: theme.text, 
+          backgroundColor: theme.background, 
         }}
         value={query}
         onChangeText={setQuery}
         placeholder="Rechercher..."
-        placeholderTextColor="#888"
+        placeholderTextColor={theme.icon} 
       />
       <TouchableOpacity onPress={handleSearch} style={{ padding: 10 }}>
-        <Icon name="search" size={20} color="#555" />
+        <Icon name="search" size={20} color={theme.icon} /> 
       </TouchableOpacity>
     </View>
   );

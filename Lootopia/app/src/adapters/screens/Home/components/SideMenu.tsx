@@ -32,8 +32,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
       <ImageBackground
         source={
           theme === Colors.dark
-            ? require('@/assets/images/menu-background-dark.png') // Image pour le mode sombre
-            : require('@/assets/images/menu-background.png') // Image pour le mode clair
+            ? require('@/assets/images/menu-background-dark.png') 
+            : require('@/assets/images/menu-background.png') 
         }
         resizeMode="cover"
         style={{
