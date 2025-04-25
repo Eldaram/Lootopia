@@ -7,6 +7,7 @@ import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
 import { BottomBar } from './components/BottomBar';
+import ProfileMenu from './components/ProfilMenu';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -90,9 +91,7 @@ export const HomeScreen = () => {
                   <Icon name="bars" size={40} color="#555" />
                 </TouchableOpacity>
                 <SearchBar onSearch={handleSearch} />
-                <TouchableOpacity>
-                  <Icon name="user-circle" size={40} color="#555" />
-                </TouchableOpacity>
+                <ProfileMenu isLoggedIn={true}/>
               </View>
 
               <HuntingCard />
