@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { InfoCard } from './InfoCard';
@@ -11,7 +11,7 @@ const EvenementCard = () => {
 
   const [cardWidth, setCardWidth] = useState(Dimensions.get('window').width * 0.15);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const updateCardWidth = () => {
       const screenWidth = Dimensions.get('window').width;
       setCardWidth(screenWidth * 0.15); 

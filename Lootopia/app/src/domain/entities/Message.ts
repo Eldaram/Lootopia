@@ -1,3 +1,3 @@
-export class Message {
+export default class Message {
   constructor(public text: string) {}
 }

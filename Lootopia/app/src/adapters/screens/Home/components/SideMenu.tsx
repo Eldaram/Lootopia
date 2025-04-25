@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export const SideMenu = () => {
+const SideMenu = () => {
   const { width, height } = useWindowDimensions(); 
 
   return (
@@ -96,3 +96,5 @@ export const SideMenu = () => {
     </View>
   );
 };
+
+export default SideMenu;

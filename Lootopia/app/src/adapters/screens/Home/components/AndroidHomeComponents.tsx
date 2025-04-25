@@ -168,3 +168,6 @@ export const BoutiqueSection = () => {
   );
 };
 
+export default function AndroidHome() {
+  return;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -11,7 +11,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5); 
 
  
-  useLayoutEffect(() => {
+  useEffect(() => {
     const updateInputWidth = () => {
       const screenWidth = Dimensions.get('window').width;
       setInputWidth(screenWidth * 0.5); 

@@ -1,7 +1,7 @@
 import { View, TouchableOpacity, Text, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export const BottomBar = () => {
+const BottomBar = () => {
   return (
     <View style={{
       position: 'absolute',
@@ -52,3 +52,5 @@ export const BottomBar = () => {
     </View>
   );
 };
+
+export default BottomBar;

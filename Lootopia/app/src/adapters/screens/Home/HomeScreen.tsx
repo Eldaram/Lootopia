@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SideMenu } from './components/SideMenu';
+import SideMenu from './components/SideMenu';
 import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
 import HuntingCard from './components/HuntingCard';
 import EvenementCard from './components/EvenementCard';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
-import { BottomBar } from './components/BottomBar';
+import BottomBar from './components/BottomBar';
 
 const screenWidth = Dimensions.get('window').width;
 
-export const HomeScreen = () => {
+const HomeScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTranslateX] = useState(new Animated.Value(0));
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,3 +106,5 @@ export const HomeScreen = () => {
 };
 return null;
 }
+
+export default HomeScreen;
