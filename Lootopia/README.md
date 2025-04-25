@@ -25,6 +25,33 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Database (DB) Setup
+
+### Prerequisites
+
+- PostgreSQL installed locally (e.g., version 17)
+- **PostGIS** extension installed on PostgreSQL (required for geospatial data)
+- Node.js with **Knex.js** to manage migrations and seeds
+
+---
+
+### Installing and Configuring PostgreSQL with PostGIS
+
+1. Install PostgreSQL (if not already done):  
+   https://www.postgresql.org/download/windows/
+
+2. Install PostGIS extension:
+
+   - On Windows, PostGIS is usually available via PostgreSQL’s StackBuilder tool.
+   - Open StackBuilder and select PostGIS for your PostgreSQL version.
+
+3. Enable the PostGIS extension in your database:  
+   Connect to your database (using psql, PgAdmin, or another client) and run:
+
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS postgis;
+   ```
+
 ## Get a fresh project
 
 When you're ready, run:
@@ -49,7 +76,6 @@ Join our community of developers creating universal apps.
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
-
 # ⚙️ Configuration de l'Émulateur Android avec Expo (React Native)
 
 Ce guide permet de configurer **Android Studio** et un **émulateur Android (Pixel 6a avec Google Play)** pour exécuter un projet React Native avec **Expo**.
@@ -73,7 +99,7 @@ Ce guide permet de configurer **Android Studio** et un **émulateur Android (Pix
 
 ### A. Créer une variable système
 
-- **Nom** : `ANDROID_HOME`  
+- **Nom** : `ANDROID_HOME`
 - **Valeur** :  
   `C:\Users\<VotreNom>\AppData\Local\Android\Sdk`
 
@@ -157,4 +183,3 @@ Si tu as des soucis : vérifie que le chemin SDK est bon et que l’émulateur e
 ---
 
 Made with ☕ by un collègue sympa ✌️
-
