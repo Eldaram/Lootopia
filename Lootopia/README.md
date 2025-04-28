@@ -1,8 +1,16 @@
-# Welcome to your Expo app 👋
+# Lootopia - Expo App with PostgreSQL/PostGIS
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This project is an [Expo](https://expo.dev) application with geospatial database capabilities using PostgreSQL and PostGIS.
 
-## Get started
+## 📱 Getting Started
+
+### Prerequisites
+
+- Node.js and npm installed
+- PostgreSQL with PostGIS extension (for database features)
+- Android Studio (for Android development)
+
+### Installation
 
 1. Install dependencies
 
@@ -10,151 +18,214 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Set up your database (see Database Setup section)
 
+3. Start the app
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+In the output, you'll find options to open the app in:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [Expo Go](https://expo.dev/go)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🗄️ Database (DB) Setup
 
-## Get a fresh project
+### Prerequisites
 
-When you're ready, run:
+- PostgreSQL installed locally (version 17 recommended)
+- PostGIS extension for geospatial data
+- Node.js with Knex.js for migrations and seeds
+
+### Installing PostgreSQL & PostGIS
+
+1. Install PostgreSQL: https://www.postgresql.org/download/
+2. Install PostGIS extension:
+   - On Windows: Use PostgreSQL's StackBuilder tool
+   - Open StackBuilder and select PostGIS for your PostgreSQL version
+3. Enable PostGIS in your database:
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS postgis;
+   ```
+
+### Environment Configuration
+
+Create a `.env.local` file at your project root:
+
+```
+DB__CONNECTION=postgres://postgres:root@localhost:5050/lootopia
+```
+
+Connection string format:
+
+- `postgres://` — protocol
+- `postgres` — database user
+- `root` — password
+- `localhost` — host
+- `5050` — port (adjust if needed)
+- `lootopia` — database name
+
+### Knex Configuration
+
+Create `knexfile.js` (or `.ts`):
+
+```javascript
+import { config } from "dotenv";
+config({ path: ".env.local" });
+
+const knexfile = {
+  client: "pg",
+  connection: process.env.DB__CONNECTION,
+  migrations: {
+    directory: "./db/migrations",
+  },
+  seeds: {
+    directory: "./db/seeds",
+  },
+  debug: true,
+};
+
+export default knexfile;
+```
+
+### Database Commands
+
+#### Migrations
 
 ```bash
-npm run reset-project
+# Create a migration
+npx knex migrate:make migration_name
+
+# Run migrations
+npx knex migrate:latest
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Example migration for geospatial data:
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-
-# ⚙️ Configuration de l'Émulateur Android avec Expo (React Native)
-
-Ce guide permet de configurer **Android Studio** et un **émulateur Android (Pixel 6a avec Google Play)** pour exécuter un projet React Native avec **Expo**.
-
-> 🛠 Le projet est déjà installé (`npm install` fait) et `expo` est déjà présent (`expo --version` fonctionne).
-
----
-
-## 1. 📥 Installer Android Studio
-
-1. Téléchargez Android Studio : https://developer.android.com/studio
-2. Installez-le avec les options recommandées.
-3. Au premier lancement, laissez Android Studio installer :
-   - Le **SDK Android**
-   - Le **SDK Command Line Tools**
-   - Et tout ce qu’il propose par défaut
-
----
-
-## 2. ⚙️ Variables d’environnement (Windows)
-
-### A. Créer une variable système
-
-- **Nom** : `ANDROID_HOME`  
-- **Valeur** :  
-  `C:\Users\<VotreNom>\AppData\Local\Android\Sdk`
-
-> Remplace `<VotreNom>` par ton nom d’utilisateur Windows.
-
-### B. Modifier la variable `Path`
-
-Ajoutez **ces deux chemins** à votre `Path` :
-
-```
-%ANDROID_HOME%\emulator
-%ANDROID_HOME%\platform-tools
+```javascript
+table.specificType("location", "geometry(Point, 4326)");
+table.float("dimension"); // Radius in kilometers around the point
 ```
 
-> Ça permet à la ligne de commande d’accéder aux outils nécessaires.
+#### Seeds
 
----
+```bash
+# Create a seed file
+npx knex seed:make seed_name
 
-## 3. 🧬 Activer SVM (virtualisation) dans le BIOS
+# Run seeds
+npx knex seed:run
+```
 
-1. Redémarrez votre PC.
-2. Appuyez sur `DEL`, `F2`, `ESC`, etc. (selon votre carte mère) pour entrer dans le BIOS.
-3. Activez :
-   - `SVM Mode` (AMD)
-   - ou `Intel VT-x` (Intel)
-4. Sauvegardez & redémarrez.
+Example geospatial data insertion:
 
-> 💡 Cela permet à l’émulateur Android de fonctionner correctement.
+```javascript
+await knex("caches").insert({
+  location: knex.raw(`ST_SetSRID(ST_MakePoint(2.3522, 48.8566), 4326)`), // Paris
+  dimension: 10, // Radius in kilometers
+  visibility: 1,
+  partner_id: 1,
+  status: 1,
+});
+```
 
----
+### Verify Database Connection
 
-## 4. ❌ Désactiver Hyper-V (Windows uniquement)
+Test your connection with this script:
 
-L’émulateur ne fonctionne pas avec Hyper-V activé.
+```javascript
+import knex from "knex";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
-### Via PowerShell (admin) :
+const db = knex({
+  client: "pg",
+  connection: process.env.DB__CONNECTION,
+});
+
+db.raw("SELECT 1+1 AS result")
+  .then(() => console.log("DB connection successful"))
+  .catch((err) => console.error("DB connection error:", err))
+  .finally(() => db.destroy());
+```
+
+### Recommended Database Tools
+
+- **TablePlus**: Modern, user-friendly UI
+- **PgAdmin**: Official PostgreSQL tool
+
+## 📱 Android Emulator Setup
+
+### 1. Install Android Studio
+
+1. Download from https://developer.android.com/studio
+2. Install with recommended options
+3. Let Android Studio install the SDK and necessary tools
+
+### 2. Set Environment Variables (Windows)
+
+1. Create system variable:
+   - **Name**: `ANDROID_HOME`
+   - **Value**: `C:\Users\<YourName>\AppData\Local\Android\Sdk`
+2. Add to `Path`:
+   ```
+   %ANDROID_HOME%\emulator
+   %ANDROID_HOME%\platform-tools
+   ```
+
+### 3. Enable Virtualization
+
+1. Restart your PC and enter BIOS (usually `DEL`, `F2`, or `ESC`)
+2. Enable:
+   - `SVM Mode` (AMD) or
+   - `Intel VT-x` (Intel)
+3. Save and restart
+
+### 4. Disable Hyper-V (Windows)
+
+Run PowerShell as admin:
 
 ```powershell
 bcdedit /set hypervisorlaunchtype off
 ```
 
-Redémarrez ensuite votre machine.
+Then restart your computer.
 
----
+### 5. Create Android Emulator
 
-## 5. 📱 Créer un émulateur Android (Pixel 6a)
+1. In Android Studio, go to **Tools > Device Manager**
+2. Click **Create Device**
+3. Choose **Pixel 6a**
+4. Select a system image with **Google Play** (Android 13 recommended)
+5. Click **Finish**
 
-1. Dans Android Studio, allez dans **Tools > Device Manager**.
-2. Cliquez sur **Create Device**.
-3. Choisissez **Pixel 6a**.
-4. Sélectionnez une image système avec **Google Play** (ex: Android 13).
-5. Cliquez sur **Finish**.
+### 6. Launch Project in Emulator
 
----
+1. Start the emulator via Android Studio (Device Manager > ▶️)
+2. In your project terminal, run:
+   ```bash
+   npx expo start --android
+   ```
 
-## 6. 🚀 Lancer le projet dans l’émulateur
+## 🔄 Reset Project (for new development)
 
-1. Démarrez l’émulateur via Android Studio (Device Manager > ▶️).
-2. Dans le terminal, placez-vous dans le dossier du projet Expo.
-3. Exécutez :
-
-```bash
-npm start
-```
-
-> ou directement :
+When you're ready to start fresh:
 
 ```bash
-expo start --android
+npm run reset-project
 ```
 
-Cela ouvrira l'app dans l’émulateur automatiquement ✅
+This moves starter code to the **app-example** directory and creates a blank **app** directory.
 
----
+## 📚 Learn More
 
-## ✅ Prêt à coder !
+- [Expo documentation](https://docs.expo.dev/)
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/)
 
-Tu peux maintenant développer, tester et itérer ton app React Native directement dans un émulateur Android 👨‍💻📱  
-Si tu as des soucis : vérifie que le chemin SDK est bon et que l’émulateur est bien démarré **avant** de lancer `expo`.
+## 🤝 Community
 
----
-
-Made with ☕ by un collègue sympa ✌️
-
+- [Expo on GitHub](https://github.com/expo/expo)
+- [Discord community](https://chat.expo.dev)
