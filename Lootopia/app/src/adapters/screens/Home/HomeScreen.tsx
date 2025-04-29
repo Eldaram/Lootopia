@@ -28,11 +28,9 @@ export const HomeScreen = () => {
 
 
     useEffect(() => {
-    // Applique la classe CSS initiale
     document.documentElement.classList.add(theme);
   
     return () => {
-      // Nettoie les classes CSS lors du démontage
       document.documentElement.classList.remove('light', 'dark');
     };
   }, [theme]);

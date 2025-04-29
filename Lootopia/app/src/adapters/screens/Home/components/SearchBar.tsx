@@ -34,7 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
+        backgroundColor: 'var(--card-background-color)',
         padding: 10,
         borderRadius: 12,
         elevation: 3,
@@ -54,16 +54,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           paddingLeft: 10,
           fontSize: 16,
           borderRadius: 12,
-          color: 'var(--text-color)', // Utilisation des variables CSS
-          backgroundColor: 'var(--background-color)', // Utilisation des variables CSS
+          color: 'var(--text-color)',
+          backgroundColor: 'var(--background-color)', 
         }}
         value={query}
         onChangeText={setQuery}
         placeholder="Rechercher..."
-        placeholderTextColor="var(--icon-color)" // Utilisation des variables CSS
+        placeholderTextColor="var(--icon-color)" 
       />
       <TouchableOpacity onPress={handleSearch} style={{ padding: 10 }}>
-        <Icon name="search" size={20} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
+        <Icon name="search" size={20} color="var(--icon-color)" />
       </TouchableOpacity>
     </View>
   );

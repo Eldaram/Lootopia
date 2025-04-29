@@ -61,7 +61,7 @@ const EvenementCard: React.FC = () => {
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={handlePrev} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-left" size={24} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
+            <Icon name="chevron-left" size={24} color="var(--icon-color)" />
           </TouchableOpacity>
 
           <ScrollView
@@ -79,7 +79,7 @@ const EvenementCard: React.FC = () => {
                     width: cardWidth,
                     height: 300,
                     marginHorizontal: 10,
-                    backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
+                    backgroundColor: 'var(--card-background-color)',
                     borderRadius: 12,
                     padding: 16,
                     shadowColor: '#000',
@@ -93,7 +93,7 @@ const EvenementCard: React.FC = () => {
                     style={{
                       fontSize: 18,
                       fontWeight: 'bold',
-                      color: 'var(--text-color)', // Utilisation des variables CSS
+                      color: 'var(--text-color)',
                     }}
                   >
                     {`Évènement ${item}`}
@@ -104,12 +104,12 @@ const EvenementCard: React.FC = () => {
           </ScrollView>
 
           <TouchableOpacity onPress={handleNext} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-right" size={24} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
+            <Icon name="chevron-right" size={24} color="var(--icon-color)" />
           </TouchableOpacity>
         </View>
 
         <View style={{ flex: 1, marginLeft: 16 }}>
-          <InfoCard /> {/* Suppression de la prop `theme` */}
+          <InfoCard />
         </View>
       </View>
     </View>

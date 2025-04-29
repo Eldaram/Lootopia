@@ -6,7 +6,7 @@ export const InfoCard: React.FC = () => {
     <View
       style={{
         height: 300,
-        backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
+        backgroundColor: 'var(--card-background-color)',
         borderRadius: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -24,7 +24,7 @@ export const InfoCard: React.FC = () => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: 'var(--text-color)', // Utilisation des variables CSS
+            color: 'var(--text-color)',
           }}
         >
           Achetez le !
@@ -47,7 +47,7 @@ export const InfoCard: React.FC = () => {
             textAlign: 'center',
             fontSize: 12,
             marginTop: 4,
-            color: 'var(--icon-color)', // Utilisation des variables CSS
+            color: 'var(--icon-color)',
           }}
         >
           1500 Gemmes +{'\n'}3000 pièces d’or
@@ -59,7 +59,7 @@ export const InfoCard: React.FC = () => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: 'var(--text-color)', // Utilisation des variables CSS
+            color: 'var(--text-color)', 
           }}
         >
           Mes derniers artéfacts
@@ -75,7 +75,7 @@ export const InfoCard: React.FC = () => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: 'var(--text-color)', // Utilisation des variables CSS
+            color: 'var(--text-color)',
           }}
         >
           Meilleurs Chasseurs

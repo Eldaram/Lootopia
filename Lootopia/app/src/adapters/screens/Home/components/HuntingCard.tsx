@@ -50,7 +50,7 @@ const HuntingCard: React.FC = () => {
           fontWeight: 'bold',
           marginTop: 24,
           marginBottom: 12,
-          color: 'var(--text-color)', // Utilisation des variables CSS
+          color: 'var(--text-color)',
         }}
       >
         Chasses disponibles 🟢
@@ -71,7 +71,7 @@ const HuntingCard: React.FC = () => {
             <TouchableOpacity
               key={item}
               style={{
-                backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
+                backgroundColor: 'var(--card-background-color)',
                 borderRadius: 12,
                 width: cardWidth,
                 height: 300,
