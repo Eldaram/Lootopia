@@ -27,19 +27,25 @@ export const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
 
-    useEffect(() => {
-    document.documentElement.classList.add(theme);
+      useEffect(() => {
+      if (Platform.OS === 'web') {
+        document.documentElement.classList.add(theme);
+    
+        return () => {
+          document.documentElement.classList.remove('light', 'dark');
+        };
+      }
+    }, [theme]);
   
-    return () => {
-      document.documentElement.classList.remove('light', 'dark');
-    };
-  }, [theme]);
-  
-  const toggleTheme = () => {
+    const toggleTheme = () => {
     setTheme((prevTheme) => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(newTheme);
+  
+      if (Platform.OS === 'web') {
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(newTheme);
+      }
+  
       return newTheme;
     });
   };
