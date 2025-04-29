@@ -2,13 +2,8 @@ import React, { useRef, useState, useLayoutEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { InfoCard } from './InfoCard';
-import { Colors } from '@/constants/Colors';
 
-interface EvenementCardProps {
-  theme: typeof Colors.light; 
-}
-
-const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
+const EvenementCard: React.FC = () => {
   const totalCards = 5;
   const scrollRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
@@ -56,7 +51,7 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
         style={{
           fontSize: 20,
           fontWeight: 'bold',
-          color: theme.text,
+          color: 'var(--text-color)',
           marginBottom: 12,
         }}
       >
@@ -66,7 +61,7 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={handlePrev} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-left" size={24} color={theme.icon} />
+            <Icon name="chevron-left" size={24} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
           </TouchableOpacity>
 
           <ScrollView
@@ -84,7 +79,7 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
                     width: cardWidth,
                     height: 300,
                     marginHorizontal: 10,
-                    backgroundColor: theme.cardBackground, 
+                    backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
                     borderRadius: 12,
                     padding: 16,
                     shadowColor: '#000',
@@ -98,7 +93,7 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
                     style={{
                       fontSize: 18,
                       fontWeight: 'bold',
-                      color: theme.text, 
+                      color: 'var(--text-color)', // Utilisation des variables CSS
                     }}
                   >
                     {`Évènement ${item}`}
@@ -109,12 +104,12 @@ const EvenementCard: React.FC<EvenementCardProps> = ({ theme }) => {
           </ScrollView>
 
           <TouchableOpacity onPress={handleNext} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-right" size={24} color={theme.icon} />
+            <Icon name="chevron-right" size={24} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
           </TouchableOpacity>
         </View>
 
         <View style={{ flex: 1, marginLeft: 16 }}>
-          <InfoCard theme={theme} />
+          <InfoCard /> {/* Suppression de la prop `theme` */}
         </View>
       </View>
     </View>

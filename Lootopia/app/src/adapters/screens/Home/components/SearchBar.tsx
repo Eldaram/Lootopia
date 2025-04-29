@@ -1,14 +1,12 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Colors } from '@/constants/Colors';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  theme: typeof Colors.light;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState('');
   const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5);
 
@@ -36,7 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: theme.cardBackground,
+        backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
         padding: 10,
         borderRadius: 12,
         elevation: 3,
@@ -56,16 +54,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
           paddingLeft: 10,
           fontSize: 16,
           borderRadius: 12,
-          color: theme.text, 
-          backgroundColor: theme.background, 
+          color: 'var(--text-color)', // Utilisation des variables CSS
+          backgroundColor: 'var(--background-color)', // Utilisation des variables CSS
         }}
         value={query}
         onChangeText={setQuery}
         placeholder="Rechercher..."
-        placeholderTextColor={theme.icon} 
+        placeholderTextColor="var(--icon-color)" // Utilisation des variables CSS
       />
       <TouchableOpacity onPress={handleSearch} style={{ padding: 10 }}>
-        <Icon name="search" size={20} color={theme.icon} /> 
+        <Icon name="search" size={20} color="var(--icon-color)" /> {/* Utilisation des variables CSS */}
       </TouchableOpacity>
     </View>
   );

@@ -1,15 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Colors } from '@/constants/Colors';
 
 const screenWidth = Dimensions.get('window').width;
 
-interface HuntingCardProps {
-  theme: typeof Colors.light;
-}
-
-const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
+const HuntingCard: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
   const currentIndex = useRef(0);
   const totalCards = 4;
@@ -55,7 +50,7 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
           fontWeight: 'bold',
           marginTop: 24,
           marginBottom: 12,
-          color: theme.text,
+          color: 'var(--text-color)', // Utilisation des variables CSS
         }}
       >
         Chasses disponibles 🟢
@@ -63,7 +58,7 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
 
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <TouchableOpacity onPress={handlePrev}>
-          <Icon name="chevron-left" size={30} color={theme.icon} style={{ marginHorizontal: 10 }} />
+          <Icon name="chevron-left" size={30} color="var(--icon-color)" style={{ marginHorizontal: 10 }} />
         </TouchableOpacity>
 
         <ScrollView
@@ -76,7 +71,7 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
             <TouchableOpacity
               key={item}
               style={{
-                backgroundColor: theme.cardBackground,
+                backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
                 borderRadius: 12,
                 width: cardWidth,
                 height: 300,
@@ -89,10 +84,10 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
                 elevation: 5,
               }}
             >
-              <Text style={{ fontSize: 18, fontWeight: 'bold', color: theme.text }}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--text-color)' }}>
                 {`Chasse ${item}`}
               </Text>
-              <Text style={{ fontSize: 14, color: theme.icon, marginTop: 8 }}>
+              <Text style={{ fontSize: 14, color: 'var(--icon-color)', marginTop: 8 }}>
                 {`Description courte de la chasse ${item}`}
               </Text>
             </TouchableOpacity>
@@ -100,7 +95,7 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
         </ScrollView>
 
         <TouchableOpacity onPress={handleNext}>
-          <Icon name="chevron-right" size={30} color={theme.icon} style={{ marginHorizontal: 10 }} />
+          <Icon name="chevron-right" size={30} color="var(--icon-color)" style={{ marginHorizontal: 10 }} />
         </TouchableOpacity>
       </View>
     </View>

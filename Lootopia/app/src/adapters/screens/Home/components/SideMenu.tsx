@@ -17,7 +17,7 @@ interface SideMenuProps {
 
 export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
   const { width, height } = useWindowDimensions();
-
+  
   return (
     <View
       style={{

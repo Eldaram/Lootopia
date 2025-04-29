@@ -1,17 +1,12 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { Colors } from '@/constants/Colors';
 
-interface InfoCardProps {
-  theme: typeof Colors.light;
-}
-
-export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
+export const InfoCard: React.FC = () => {
   return (
     <View
       style={{
         height: 300,
-        backgroundColor: theme.cardBackground, 
+        backgroundColor: 'var(--card-background-color)', // Utilisation des variables CSS
         borderRadius: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -29,7 +24,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: theme.text,
+            color: 'var(--text-color)', // Utilisation des variables CSS
           }}
         >
           Achetez le !
@@ -52,7 +47,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
             textAlign: 'center',
             fontSize: 12,
             marginTop: 4,
-            color: theme.icon,
+            color: 'var(--icon-color)', // Utilisation des variables CSS
           }}
         >
           1500 Gemmes +{'\n'}3000 pièces d’or
@@ -64,15 +59,15 @@ export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: theme.text, 
+            color: 'var(--text-color)', // Utilisation des variables CSS
           }}
         >
           Mes derniers artéfacts
         </Text>
 
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>👁️ L’œil d’Astra</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>👁️ L’œil d’Astra</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>👁️ L’œil d’Astra</Text>
       </View>
 
       <View style={{ flex: 1, alignItems: 'center' }}>
@@ -80,15 +75,15 @@ export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
           style={{
             fontWeight: 'bold',
             marginBottom: 8,
-            color: theme.text, 
+            color: 'var(--text-color)', // Utilisation des variables CSS
           }}
         >
           Meilleurs Chasseurs
         </Text>
 
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥇 ShadowFlux</Text>
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥈 ShadowFlux</Text>
-        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥉 ShadowFlux</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>🥇 ShadowFlux</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>🥈 ShadowFlux</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: 'var(--icon-color)' }}>🥉 ShadowFlux</Text>
       </View>
     </View>
   );
