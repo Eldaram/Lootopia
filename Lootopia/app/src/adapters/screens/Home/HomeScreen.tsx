@@ -27,13 +27,24 @@ export const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
 
-  useEffect(() => {
-    const listener = Appearance.addChangeListener(({ colorScheme }) => {
-      setTheme(colorScheme || 'light');
+    useEffect(() => {
+    // Applique la classe CSS initiale
+    document.documentElement.classList.add(theme);
+  
+    return () => {
+      // Nettoie les classes CSS lors du démontage
+      document.documentElement.classList.remove('light', 'dark');
+    };
+  }, [theme]);
+  
+  const toggleTheme = () => {
+    setTheme((prevTheme) => {
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(newTheme);
+      return newTheme;
     });
-
-    return () => listener.remove();
-  }, []);
+  };
 
   const handleOutsidePress = () => {
     if (isMenuOpen) {
@@ -69,13 +80,9 @@ export const HomeScreen = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light')); 
-  };
-
-  if (Platform.OS === 'android') {
+   if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1, backgroundColor: theme === 'dark' ? '#11151D' : '#f5f5f5' }}>
+      <View style={{ flex: 1, backgroundColor: 'var(--background-color)' }}>
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
           <Menu toggleMenu={toggleMenu} />
           <Header />
@@ -88,12 +95,12 @@ export const HomeScreen = () => {
           onPress={toggleTheme}
           style={{ position: 'absolute', bottom: 20, right: 20 }}
         >
-          <Icon name={theme === 'dark' ? 'sun-o' : 'moon-o'} size={30} color={theme === 'dark' ? '#ffffff' : '#121212'} />
+          <Icon name="moon-o" size={30} color="var(--icon-color)" />
         </TouchableOpacity>
       </View>
     );
   }
-
+  
   if (Platform.OS === 'web') {
     return (
       <View style={{ flex: 1, backgroundColor: 'var(--background-color)' }}>
@@ -110,24 +117,24 @@ export const HomeScreen = () => {
                 style={{
                   flex: 1,
                   padding: 16,
-                  backgroundColor: theme === 'dark' ? '#11151D' : '#f5f5f5',
+                  backgroundColor: 'var(--background-color)',
                 }}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <TouchableOpacity onPress={toggleMenu}>
-                    <Icon name="bars" size={40} color={theme === 'dark' ? '#ffffff' : '#121212'} />
+                    <Icon name="bars" size={40} color="var(--icon-color)" />
                   </TouchableOpacity>
                   <SearchBar onSearch={(query) => console.log(query)} />
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 10 }}>
-                      <Icon name={theme === 'dark' ? 'sun-o' : 'moon-o'} size={30} color={theme === 'dark' ? '#ffffff' : '#121212'} />
+                      <Icon name="moon-o" size={30} color="var(--icon-color)" />
                     </TouchableOpacity>
                     <TouchableOpacity>
-                      <Icon name="user-circle" size={40} color={theme === 'dark' ? '#ffffff' : '#121212'} />
+                      <Icon name="user-circle" size={40} color="var(--icon-color)" />
                     </TouchableOpacity>
                   </View>
                 </View>
-
+  
                 <HuntingCard />
                 <EvenementCard />
               </ScrollView>
