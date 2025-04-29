@@ -55,11 +55,6 @@ export const HomeScreen = () => {
     }
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    console.log('Search Query:', query);
-  };
-
   const toggleMenu = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
@@ -122,7 +117,7 @@ export const HomeScreen = () => {
                   <TouchableOpacity onPress={toggleMenu}>
                     <Icon name="bars" size={40} color="var(--icon-color)" />
                   </TouchableOpacity>
-                  <SearchBar onSearch={(query) => console.log(query)} />
+                    <SearchBar onSearch={(query) => setSearchQuery(query)} />
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 10 }}>
                       <Icon name="moon-o" size={30} color="var(--icon-color)" />
