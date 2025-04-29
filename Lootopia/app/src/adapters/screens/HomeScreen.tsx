@@ -11,12 +11,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '@/constants/Colors';
-import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/AndroidHomeComponents';
-import { BottomBar } from '@/components/BottomBar';
-import { SideMenu } from '@/components/SideMenu';
-import SearchBar from '@/components/SearchBar';
-import HuntingCard from '@/components/HuntingCard';
-import EvenementCard from '@/components/EvenementCard';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponents';
+import { BottomBar } from '@/components/ui/home/BottomBar';
+import { SideMenu } from '@/components/ui/home/SideMenu';
+import SearchBar from '@/components/ui/home/SearchBar';
+import HuntingCard from '@/components/ui/home/HuntingCard';
+import EvenementCard from '@/components/ui/home/EvenementCard';
 
 const screenWidth = Dimensions.get('window').width;
 

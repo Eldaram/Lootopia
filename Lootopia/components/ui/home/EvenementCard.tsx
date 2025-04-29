@@ -1,7 +1,7 @@
+import { InfoCard } from '@/components/ui/home/InfoCard';
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { InfoCard } from './InfoCard';
 
 const EvenementCard: React.FC = () => {
   const totalCards = 5;
