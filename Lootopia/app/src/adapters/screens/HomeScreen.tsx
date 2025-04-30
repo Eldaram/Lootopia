@@ -79,24 +79,19 @@ export const HomeScreen = () => {
     }
   };
 
-   if (Platform.OS === 'android') {
+  if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1, backgroundColor: 'var(--background-color)' }}>
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-          <Menu toggleMenu={toggleMenu} />
-          <Header />
-          <ButtonGrid />
-          <EvenementsSection />
-          <BoutiqueSection />
-        </ScrollView>
-        <BottomBar />
-        <TouchableOpacity
-          onPress={toggleTheme}
-          style={{ position: 'absolute', bottom: 20, right: 20 }}
-        >
-          <Icon name="moon-o" size={30} color="var(--icon-color)" />
-        </TouchableOpacity>
-      </View>
+      <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <Menu toggleMenu={toggleMenu} />
+        <Header />
+        <ButtonGrid />
+        <EvenementsSection />
+        <BoutiqueSection />
+      </ScrollView>
+    
+      <BottomBar />
+    </View>
     );
   }
   
