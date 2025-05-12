@@ -189,7 +189,7 @@ display: flex;
 /* Info Card Section */
 
 .info-card {
-  height: 300px;
+  height: 270px;
   width: 400px;
   background-color: var(--card-background-color);
   border-radius: 16px;
