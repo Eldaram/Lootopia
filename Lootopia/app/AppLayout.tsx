@@ -45,14 +45,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   return (
     <div className="web-container">
       {isMenuOpen && (
-        <div className="side-menu-visible" style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: screenWidth * 0.2,
-          height: '100%',
-          zIndex: 1000,
-        }}>
+        <div className="side-menu-visible">
           <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />
         </div>
       )}
