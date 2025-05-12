@@ -132,6 +132,7 @@ display: flex;
   flex-direction: row;
   align-items: center;
   width: 600px;
+  margin-left: 60px;
 }
 
 .evenement-card-section{
@@ -185,6 +186,59 @@ display: flex;
   font-size: 16px;
   flex: 1;
   padding: 8px;
+}
+
+/* Info Card Section */
+
+.info-card {
+  height: 300px;
+  width: 400px;
+  background-color: var(--card-background-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 16px;
+  margin-right: 90px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 12px;
+}
+
+.info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.info-image {
+  width: 50px;
+  height: 50px;
+  margin: 8px 0;
+}
+
+.info-price {
+  font-weight: bold;
+  color: #e67e22;
+}
+
+.info-description {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--icon-color);
+}
+
+.info-item {
+  font-size: 14px;
+  margin-top: 4px;
+  color: var(--icon-color);
 }
 
 /* DARK MODE AND LIGHT MODE */
