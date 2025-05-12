@@ -10,7 +10,6 @@ import { Colors } from '@/constants/Colors';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponents';
 import { BottomBar } from '@/components/ui/home/BottomBar';
 import { SideMenu } from '@/components/ui/home/SideMenu';
-import SearchBar from '@/components/ui/home/SearchBar';
 import HuntingCard from '@/components/ui/home/HuntingCard';
 import EvenementCard from '@/components/ui/home/EvenementCard';
 import '../../../src/styles.css';
@@ -83,12 +82,6 @@ export const HomeScreen = () => {
     return (
       <div className="web-container">
         {isMenuOpen && <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />}
-        
-        <div onClick={handleOutsidePress} className="flex-container">
-
-                <SearchBar onSearch={(query) => setSearchQuery(query)} />
-              </div>
-
               <HuntingCard />
               <EvenementCard />
             </div>
