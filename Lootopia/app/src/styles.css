@@ -27,6 +27,7 @@ display: flex;
   justify-content: flex-start;
   transition: margin-left 300ms ease-in-out;
   overflow-y: auto;
+  margin-top: 20px;
 }
 
 .flex-container::-webkit-scrollbar {

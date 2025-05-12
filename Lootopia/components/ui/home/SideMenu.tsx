@@ -27,7 +27,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
         left: 0,
         width: width * 0.19,
         height: height,
-        zIndex: 10,
+        zIndex: 1000, 
       }}
     >
       <ImageBackground

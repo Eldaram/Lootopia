@@ -6,7 +6,6 @@ import {
   Platform,
   Appearance,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '@/constants/Colors';
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponents';
 import { BottomBar } from '@/components/ui/home/BottomBar';
@@ -86,31 +85,13 @@ export const HomeScreen = () => {
         {isMenuOpen && <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />}
         
         <div onClick={handleOutsidePress} className="flex-container">
-          <div className="menu-container" style={{ marginLeft: `${menuTranslateX}px` }}>
-            <div className="content-container">
-              <div className="menu">
-                <button className="icon-button" onClick={toggleMenu}>
-                  <Icon name="bars" size={40} color="var(--icon-color)" />
-                </button>
 
                 <SearchBar onSearch={(query) => setSearchQuery(query)} />
-
-                <div className="style-menu">
-                  <button className="icon-button" onClick={toggleTheme}>
-                    <Icon name="moon-o" size={30} color="var(--icon-color)" />
-                  </button>
-                  <button className="icon-button">
-                    <Icon name="user-circle" size={40} color="var(--icon-color)" />
-                  </button>
-                </div>
               </div>
 
               <HuntingCard />
               <EvenementCard />
             </div>
-          </div>
-        </div>
-      </div>
     );
   }
 
