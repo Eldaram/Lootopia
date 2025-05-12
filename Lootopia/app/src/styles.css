@@ -154,13 +154,11 @@ display: flex;
 }
 
 .scroll-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  width: calc(100% - 100px);
-  max-width: 1000px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
 .scroll-track {
   display: flex;
   gap: 16px;
