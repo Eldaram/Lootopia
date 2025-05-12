@@ -1,33 +1,37 @@
-import { InfoCard } from '@/components/ui/home/InfoCard';
 import React, { useRef, useState, useLayoutEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { InfoCard } from '@/components/ui/home/InfoCard';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import '../../../app/src/styles.css';
+
 
 const EvenementCard: React.FC = () => {
   const totalCards = 5;
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const currentIndex = useRef(0);
 
-  const [cardWidth, setCardWidth] = useState(Dimensions.get('window').width * 0.3);
+  const [cardWidth, setCardWidth] = useState(window.innerWidth * 0.3);
 
   useLayoutEffect(() => {
     const updateCardWidth = () => {
-      const screenWidth = Dimensions.get('window').width;
+      const screenWidth = window.innerWidth;
       setCardWidth(screenWidth * 0.3);
     };
 
     updateCardWidth();
 
-    const subscription = Dimensions.addEventListener('change', updateCardWidth);
+    window.addEventListener('resize', updateCardWidth);
 
     return () => {
-      subscription.remove();
+      window.removeEventListener('resize', updateCardWidth);
     };
   }, []);
 
   const scrollToCard = (index: number) => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo({ x: index * cardWidth, animated: true });
+      scrollRef.current.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -46,73 +50,39 @@ const EvenementCard: React.FC = () => {
   };
 
   return (
-    <View style={{ flexDirection: 'column', marginTop: 34 }}>
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'var(--text-color)',
-          marginBottom: 12,
-        }}
-      >
-        Évènements
-      </Text>
+    <div>
+    <h2 className="section-title">Évènements</h2>
+    <div className="evenement-card-container">
+      <div className="evenement-card-section">
+        <div className="evenement-card-row">
+          <button onClick={handlePrev} className="icon-button">
+            <Icon name="chevron-left" size={24} />
+          </button>
 
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-        <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={handlePrev} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-left" size={24} color="var(--icon-color)" />
-          </TouchableOpacity>
-
-          <ScrollView
+          <div
             ref={scrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
-            style={{ flex: 1 }}
+            className="scroll-container"
           >
-            <View style={{ flexDirection: 'row' }}>
+            <div className="scroll-track">
               {[1, 2, 3, 4, 5].map((item) => (
-                <View
-                  key={item}
-                  style={{
-                    width: cardWidth,
-                    height: 300,
-                    marginHorizontal: 10,
-                    backgroundColor: 'var(--card-background-color)',
-                    borderRadius: 12,
-                    padding: 16,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 5,
-                    elevation: 5,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: 'bold',
-                      color: 'var(--text-color)',
-                    }}
-                  >
-                    {`Évènement ${item}`}
-                  </Text>
-                </View>
+                <div key={item} className="evenement-card">
+                  <h3 className="card-title">{`Évènement ${item}`}</h3>
+                </div>
               ))}
-            </View>
-          </ScrollView>
+            </div>
+          </div>
 
-          <TouchableOpacity onPress={handleNext} style={{ marginHorizontal: 6 }}>
-            <Icon name="chevron-right" size={24} color="var(--icon-color)" />
-          </TouchableOpacity>
-        </View>
+          <button onClick={handleNext} className="icon-button">
+            <Icon name="chevron-right" size={24} />
+          </button>
+        </div>
+      </div>
 
-        <View style={{ flex: 1, marginLeft: 16 }}>
-          <InfoCard />
-        </View>
-      </View>
-    </View>
+      <div className="info-card-container">
+        <InfoCard />
+      </div>
+      </div>
+      </div>
   );
 };
 

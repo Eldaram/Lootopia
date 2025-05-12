@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import '../../../app/src/styles.css';
 

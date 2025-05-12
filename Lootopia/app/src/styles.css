@@ -129,6 +129,52 @@ display: flex;
   margin-top: 8px;
 }
 
+/* Evenements Card */
+
+.evenement-card-container {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 34px;
+}
+
+.evenement-card-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 600px;
+}
+
+.evenement-card-section{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.evenement-card {
+  background-color: var(--card-background-color);
+  border-radius: 12px;
+  height: 250px;
+  margin: 15px;
+  padding: 16px;
+  flex-shrink: 0;
+  width: 100px;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  width: calc(100% - 100px);
+  max-width: 1000px;
+}
+
+.scroll-track {
+  display: flex;
+  gap: 16px;
+  min-width: max-content;
+}
 /* DARK MODE AND LIGHT MODE */
 
 @media (max-width: 768px) {
