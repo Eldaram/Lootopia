@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '@/constants/Colors';
+import '../../../app/src/styles.css';
 
 interface SideMenuProps {
   theme: typeof Colors.light;

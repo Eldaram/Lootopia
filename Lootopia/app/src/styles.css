@@ -91,6 +91,46 @@ display: flex;
   margin-top: 20px;
 }
 
+/* Hunting Section */
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.hunting-card-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.hunting-card {
+  background-color: var(--card-background-color);
+  border-radius: 12px;
+  height: 300px;
+  margin: 15px;
+  padding: 16px;
+  flex-shrink: 0;
+  width: 400px;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.card-description {
+  font-size: 14px;
+  color: var(--icon-color);
+  margin-top: 8px;
+}
+
+/* DARK MODE AND LIGHT MODE */
+
 @media (max-width: 768px) {
   .menu {
     flex-direction: column;
@@ -105,6 +145,10 @@ display: flex;
 
   .icon-button {
     margin: 10px 0;
+  }
+
+  .hunting-card {
+       width: 90vw;
   }
 }
 

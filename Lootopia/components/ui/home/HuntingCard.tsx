@@ -1,30 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-const screenWidth = Dimensions.get('window').width;
+import '../../../app/src/styles.css';
 
 const HuntingCard: React.FC = () => {
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const currentIndex = useRef(0);
   const totalCards = 4;
 
-  const [cardWidth, setCardWidth] = useState(screenWidth * 0.3);
-
-  useEffect(() => {
-    const onResize = () => {
-      const newWidth = Dimensions.get('window').width;
-      setCardWidth(newWidth * 0.3);
-    };
-    const subscription = Dimensions.addEventListener('change', onResize);
-    return () => {
-      subscription.remove();
-    };
-  }, []);
 
   const scrollToCard = (index: number) => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo({ x: index * cardWidth, animated: true });
+      const cardWidth = scrollRef.current.offsetWidth;
+      scrollRef.current.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -43,62 +33,32 @@ const HuntingCard: React.FC = () => {
   };
 
   return (
-    <View>
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          marginTop: 24,
-          marginBottom: 12,
-          color: 'var(--text-color)',
-        }}
-      >
-        Chasses disponibles 🟢
-      </Text>
+    <div>
+      <h2 className="section-title">Chasses disponibles 🟢</h2>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TouchableOpacity onPress={handlePrev}>
-          <Icon name="chevron-left" size={30} color="var(--icon-color)" style={{ marginHorizontal: 10 }} />
-        </TouchableOpacity>
+      <div className="hunting-card-row">
+        <button onClick={handlePrev} className="icon-button">
+          <Icon name="chevron-left" size={30} />
+        </button>
 
-        <ScrollView
+        <div
+          className="scroll-container"
           ref={scrollRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={false}
+          style={{ overflowX: 'hidden', display: 'flex' }}
         >
           {[1, 2, 3, 4].map((item) => (
-            <TouchableOpacity
-              key={item}
-              style={{
-                backgroundColor: 'var(--card-background-color)',
-                borderRadius: 12,
-                width: cardWidth,
-                height: 300,
-                margin: 15,
-                padding: 16,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.1,
-                shadowRadius: 5,
-                elevation: 5,
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--text-color)' }}>
-                {`Chasse ${item}`}
-              </Text>
-              <Text style={{ fontSize: 14, color: 'var(--icon-color)', marginTop: 8 }}>
-                {`Description courte de la chasse ${item}`}
-              </Text>
-            </TouchableOpacity>
+            <div key={item} className="hunting-card">
+              <h3 className="card-title">{`Chasse ${item}`}</h3>
+              <p className="card-description">{`Description courte de la chasse ${item}`}</p>
+            </div>
           ))}
-        </ScrollView>
+        </div>
 
-        <TouchableOpacity onPress={handleNext}>
-          <Icon name="chevron-right" size={30} color="var(--icon-color)" style={{ marginHorizontal: 10 }} />
-        </TouchableOpacity>
-      </View>
-    </View>
+        <button onClick={handleNext} className="icon-button">
+          <Icon name="chevron-right" size={30} />
+        </button>
+      </div>
+    </div>
   );
 };
 
