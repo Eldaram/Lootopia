@@ -19,31 +19,30 @@ import '../../../src/styles.css';
 const screenWidth = Dimensions.get('window').width;
 
 export const HomeScreen = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(Appearance.getColorScheme() || 'light'); 
+  const [theme, setTheme] = useState<'light' | 'dark'>(Appearance.getColorScheme() || 'light');
   const [menuTranslateX, setMenuTranslateX] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      document.documentElement.classList.add(theme);
 
-      useEffect(() => {
-      if (Platform.OS === 'web') {
-        document.documentElement.classList.add(theme);
-    
-        return () => {
-          document.documentElement.classList.remove('light', 'dark');
-        };
-      }
-    }, [theme]);
-  
-    const toggleTheme = () => {
+      return () => {
+        document.documentElement.classList.remove('light', 'dark');
+      };
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
     setTheme((prevTheme) => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-  
+
       if (Platform.OS === 'web') {
         document.documentElement.classList.remove('light', 'dark');
         document.documentElement.classList.add(newTheme);
       }
-  
+
       return newTheme;
     });
   };
@@ -80,27 +79,23 @@ export const HomeScreen = () => {
     </View>
     );
   }
- 
+  
   if (Platform.OS === 'web') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--background-color)' }}>
         {isMenuOpen && <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />}
         
         <div onClick={handleOutsidePress} style={{ flex: 1 }}>
-          <div 
-            style={{
-              marginLeft: `${menuTranslateX}px`,
-              transition: 'margin-left 300ms ease-in-out',
-            }}
-          >
-            <div 
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: 16,
-                backgroundColor: 'var(--background-color)',
-              }}
-            >
+          <div style={{
+            marginLeft: `${menuTranslateX}px`,
+            transition: 'margin-left 300ms ease-in-out',
+          }}>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: 16,
+              backgroundColor: 'var(--background-color)',
+            }}>
               <div className="menu">
                 <button className="icon-button" onClick={toggleMenu}>
                   <Icon name="bars" size={40} color="var(--icon-color)" />
