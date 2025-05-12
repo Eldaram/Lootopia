@@ -79,23 +79,15 @@ export const HomeScreen = () => {
     </View>
     );
   }
-  
+
   if (Platform.OS === 'web') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--background-color)' }}>
+      <div className="web-container">
         {isMenuOpen && <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />}
         
-        <div onClick={handleOutsidePress} style={{ flex: 1 }}>
-          <div style={{
-            marginLeft: `${menuTranslateX}px`,
-            transition: 'margin-left 300ms ease-in-out',
-          }}>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: 16,
-              backgroundColor: 'var(--background-color)',
-            }}>
+        <div onClick={handleOutsidePress} className="flex-container">
+          <div className="menu-container" style={{ marginLeft: `${menuTranslateX}px` }}>
+            <div className="content-container">
               <div className="menu">
                 <button className="icon-button" onClick={toggleMenu}>
                   <Icon name="bars" size={40} color="var(--icon-color)" />

@@ -1,4 +1,4 @@
-.light {
+/* .light {
   --text-color: #121212;
   --background-color: #f5f5f5;
   --card-background-color: #ffffff;
@@ -79,5 +79,127 @@ button.icon-button {
   .style-menu {
     flex-direction: column;
     align-items: center;
+  }
+} */
+
+/* Global theme styles */
+.light {
+  --text-color: #121212;
+  --background-color: #f5f5f5;
+  --card-background-color: #ffffff;
+  --icon-color: #121212;
+}
+
+.dark {
+  --text-color: #ffffff;
+  --background-color: #11151D;
+  --card-background-color: #222D41;
+  --icon-color: #ffffff;
+}
+
+.web-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  height: 100vh;
+}
+
+.flex-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.menu-container {
+  margin-left: 0;
+  transition: margin-left 300ms ease-in-out;
+  width: 100%;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background-color: var(--background-color);
+}
+
+/* Menu layout */
+.menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.style-menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-button {
+  all: unset;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 15px;
+  padding: 8px;
+  transition: transform 200ms ease;
+  color: var(--icon-color);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  transform: scale(1.2);
+}
+
+.search-bar {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: var(--card-background-color);
+  border: 1px solid var(--icon-color);
+  border-radius: 8px;
+}
+
+.card-container {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .style-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .icon-button {
+    margin: 10px 0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .menu,
+  .style-menu,
+  .icon-button {
+    color: var(--icon-color);
+  }
+
+  .icon-button {
+    color: var(--icon-color);
+  }
+
+  .web-container {
+    background-color: var(--background-color);
   }
 }
