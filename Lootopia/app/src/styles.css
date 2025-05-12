@@ -98,17 +98,24 @@ button.icon-button {
 }
 
 .web-container {
-  display: flex;
+display: flex;
   flex-direction: column;
   background-color: var(--background-color);
-  height: 100vh;
+  height:100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .flex-container {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: flex-start;
+  transition: margin-left 300ms ease-in-out;
+  overflow-y: auto;
+}
+
+.flex-container::-webkit-scrollbar {
+  width: 0px;
 }
 
 .menu-container {
@@ -124,7 +131,6 @@ button.icon-button {
   background-color: var(--background-color);
 }
 
-/* Menu layout */
 .menu {
   display: flex;
   flex-direction: row;
