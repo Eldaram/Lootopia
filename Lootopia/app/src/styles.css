@@ -240,6 +240,9 @@ display: flex;
   color: var(--icon-color);
 }
 
+/* SideMenu Section */
+
+
 /* DARK MODE AND LIGHT MODE */
 
 @media (max-width: 768px) {

@@ -61,6 +61,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             flexGrow: 1,
             justifyContent: 'flex-start',
           }}
+           showsVerticalScrollIndicator={false}
         >
           {[
             { label: 'Accueil', icon: 'home' },
