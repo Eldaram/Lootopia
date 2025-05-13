@@ -49,7 +49,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
     <div className="web-container">
       {isMenuOpen && (
         <div className="side-menu-visible">
-          <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />
+          <SideMenu />
         </div>
       )}
       <div onClick={handleOutsidePress} className="flex-container">

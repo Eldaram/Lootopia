@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,17 +9,26 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Colors } from '@/constants/Colors';
 import { useLocation } from 'wouter';
-import '../../../app/src/styles.css';
+import '../../../app/src/styles.css'; 
 
-interface SideMenuProps {
-  theme: typeof Colors.light;
-}
-
-export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
+export const SideMenu: React.FC = () => {
   const { width, height } = useWindowDimensions();
-  const [, setLocation] = useLocation(); 
+  const [, setLocation] = useLocation();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const darkModeEnabled = document.documentElement.classList.contains('dark');
+      setIsDarkMode(darkModeEnabled);
+    };
+    checkDarkMode();
+    window.addEventListener('darkmodechange', checkDarkMode);
+
+    return () => {
+      window.removeEventListener('darkmodechange', checkDarkMode);
+    };
+  }, []);
 
   const menuItems = [
     { label: 'Accueil', icon: 'home', to: '/' },
@@ -47,7 +56,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
     >
       <ImageBackground
         source={
-          theme === Colors.dark
+          isDarkMode
             ? require('@/assets/images/menu-background-dark.png')
             : require('@/assets/images/menu-background.png')
         }
@@ -60,18 +69,24 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
           height: '100%',
         }}
       >
-        <button className="icon-button" onClick={() => setLocation('/')}>
-        <Image
-          source={require('@/assets/images/logo.png')}
+        <TouchableOpacity
+          onPress={() => setLocation('/')}
           style={{
-            width: '100%',
-            height: 250,
-            resizeMode: 'contain',
             alignSelf: 'center',
-            marginBottom: 20,
+            padding: 10,
           }}
-        />
-        </button>
+        >
+          <Image className='icon-button'
+            source={require('@/assets/images/logo.png')}
+            style={{
+              width: 200,
+              height: 250,
+              resizeMode: 'contain',
+              alignSelf: 'center',
+            }}
+          />
+        </TouchableOpacity>
+
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -88,7 +103,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                 alignItems: 'center',
                 padding: 12,
                 marginBottom: 8,
-                backgroundColor: theme.cardBackground,
+                backgroundColor: isDarkMode ? '#444' : '#f4f4f4',
                 borderRadius: 10,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 2 },
@@ -100,14 +115,14 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               <Icon
                 name={item.icon}
                 size={20}
-                color={theme.icon}
+                color={isDarkMode ? '#fff' : '#333'} 
                 style={{ marginRight: 10 }}
               />
               <Text
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
-                  color: theme.text,
+                  color: isDarkMode ? '#fff' : '#333',
                 }}
               >
                 {item.label}

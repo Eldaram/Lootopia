@@ -80,7 +80,6 @@ export const HomeScreen = () => {
   if (Platform.OS === 'web') {
     return (
       <div className="web-container">
-        {isMenuOpen && <SideMenu theme={theme === 'dark' ? Colors.dark : Colors.light} />}
               <HuntingCard />
               <EvenementCard />
             </div>

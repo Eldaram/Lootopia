@@ -242,6 +242,43 @@ display: flex;
 
 /* SideMenu Section */
 
+.menu-background {
+  background-image: url('/assets/images/menu-background.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #ddd;
+}
+
+.menu-icon {
+  color: #333;
+}
+
+body.dark .menu-background {
+  background-image: url('/assets/images/menu-background-dark.png');
+}
+
+body.dark .menu-item {
+  background-color: #333;
+}
+
+body.dark .menu-icon {
+  color: #fff;
+}
 
 /* DARK MODE AND LIGHT MODE */
 
