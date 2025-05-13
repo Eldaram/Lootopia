@@ -5,6 +5,8 @@ import SearchBar from '@/components/ui/home/SearchBar';
 import { Colors } from '@/constants/Colors';
 import { SideMenu } from '@/components/ui/home/SideMenu';
 import './src/styles.css';
+import { useLocation } from 'wouter';
+import { Image } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -13,6 +15,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTranslateX, setMenuTranslateX] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -55,12 +58,22 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             <button className="icon-button" onClick={toggleMenu}>
               <Icon name="bars" size={40} color="var(--icon-color)" />
             </button>
+             <button className="icon-button" onClick={() => setLocation('/')}>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={{
+               width: 120,
+              height: 120,
+            resizeMode: 'contain',
+            }}
+              />
+              </button>
             <SearchBar onSearch={setSearchQuery} />
             <div className="style-menu">
               <button className="icon-button" onClick={toggleTheme}>
                 <Icon name="moon-o" size={30} color="var(--icon-color)" />
               </button>
-              <button className="icon-button">
+              <button className="icon-button" onClick={() => setLocation('/profile')}>
                 <Icon name="user-circle" size={40} color="var(--icon-color)" />
               </button>
             </div>

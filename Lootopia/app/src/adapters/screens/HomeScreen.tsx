@@ -20,7 +20,6 @@ export const HomeScreen = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(Appearance.getColorScheme() || 'light');
   const [menuTranslateX, setMenuTranslateX] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (Platform.OS === 'web') {
