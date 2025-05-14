@@ -3,10 +3,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Platform, Dimensions, Appearance } from 'react-native';
 import SearchBar from '@/components/ui/home/SearchBar';
 import { Colors } from '@/constants/Colors';
-import { SideMenu } from '@/components/ui/home/SideMenu';
 import './src/styles.css';
 import { useLocation } from 'wouter';
 import { Image } from 'react-native';
+import { SideMenu } from '@/components/ui/home/SideMenu';
 
 const screenWidth = Dimensions.get('window').width;
 

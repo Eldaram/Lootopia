@@ -6,13 +6,11 @@ import {
   Platform,
   Appearance,
 } from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponents';
-import { BottomBar } from '@/components/ui/home/BottomBar';
-import { SideMenu } from '@/components/ui/home/SideMenu';
 import HuntingCard from '@/components/ui/home/HuntingCard';
-import EvenementCard from '@/components/ui/home/EvenementCard';
 import '../../../src/styles.css';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponent';
+import { BottomBar } from '@/components/ui/home/BottomBar';
+import EvenementCard from '@/components/ui/home/EvenementCard';
 
 const screenWidth = Dimensions.get('window').width;
 
