@@ -96,38 +96,41 @@ export const SideMenu: React.FC = () => {
         >
           {menuItems.map((item, index) => (
             <TouchableOpacity
-              key={index}
-              onPress={() => setLocation(item.to)}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: 12,
-                marginBottom: 8,
-                backgroundColor: isDarkMode ? '#444' : '#f4f4f4',
-                borderRadius: 10,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 2,
-              }}
-            >
+            key={index}
+            onPress={() => setLocation(item.to)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: 12,
+              marginBottom: 8,
+              backgroundColor: isDarkMode ? '#444' : '#f4f4f4',
+              borderRadius: 10,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
+          >
+            <View style={{ width: 30, alignItems: 'center' }}>
               <Icon
                 name={item.icon}
                 size={20}
-                color={isDarkMode ? '#fff' : '#333'} 
-                style={{ marginRight: 10 }}
+                color={isDarkMode ? '#fff' : '#333'}
               />
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
+            </View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
                   color: isDarkMode ? '#fff' : '#333',
-                }}
-              >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
+                marginLeft: 8,
+              }}
+            >
+              {item.label}
+            </Text>
+          </TouchableOpacity>
+          
           ))}
         </ScrollView>
       </ImageBackground>
