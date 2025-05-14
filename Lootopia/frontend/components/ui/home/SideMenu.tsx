@@ -76,7 +76,7 @@ export const SideMenu: React.FC = () => {
             padding: 10,
           }}
         >
-          <Image className='icon-button'
+          <Image 
             source={require('@/assets/images/logo.png')}
             style={{
               width: 200,
