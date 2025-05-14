@@ -1,17 +1,38 @@
 import db from "../../services/db.js";
 import * as Yup from "yup";
 
-// Schéma de validation commun pour la chasse
 const huntSchema = Yup.object({
-  name: Yup.string().required("Le nom est requis"),
-  description: Yup.string().optional(),
-  date: Yup.date().required("La date est requise"),
+  title: Yup.string().required("Le titre est requis"),
+  description: Yup.string().default(""),
+  world: Yup.number().default(1),
+  duration: Yup.date().default(
+    () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  ), // 1 mois
+  mode: Yup.number().default(1),
+  max_participants: Yup.number().default(10),
+  chat_enabled: Yup.boolean().default(true),
+  map_id: Yup.number().default(1),
+  participation_fee: Yup.number().default(0),
+  search_delay: Yup.string().default("00:01:00"), // 1 minute
+  partner_id: Yup.number().required("Le créateur est requis"),
+  status: Yup.number().default(1),
 });
 
-// Validation des données
-async function validateData(data) {
+// Validation des données et application des valeurs par défaut
+async function validateAndApplyDefaults(data) {
   try {
-    await huntSchema.validate(data, { abortEarly: false });
+    // Valider et appliquer les valeurs par défaut
+    const validatedData = await huntSchema.validate(data, {
+      abortEarly: false,
+      stripUnknown: false,
+    });
+
+    // Ajouter le created_at si c'est une nouvelle entrée
+    if (!data.id) {
+      validatedData.created_at = new Date();
+    }
+
+    return validatedData;
   } catch (error) {
     throw new Error(error.errors.join(", "));
   }
@@ -27,10 +48,13 @@ export default async function handler(req, res) {
 
     // Méthode POST : Ajoute une nouvelle chasse
     if (req.method === "POST") {
-      await validateData(req.body); // Validation avant insertion
+      // Valider et appliquer les valeurs par défaut
+      const validatedData = await validateAndApplyDefaults(req.body);
 
-      const [id] = await db("hunts").insert(req.body).returning("id");
-      return res.status(201).json({ id });
+      // Insérer dans la base de données et récupérer l'entrée complète
+      const [newHunt] = await db("hunts").insert(validatedData).returning("*");
+
+      return res.status(201).json(newHunt);
     }
 
     // Méthode PUT : Met à jour une chasse existante
@@ -40,16 +64,26 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "ID requis" });
       }
 
-      await validateData(req.body); // Validation avant mise à jour
-
-      const [updatedHunt] = await db("hunts")
-        .where("id", id)
-        .update(req.body)
-        .returning("*");
-
-      if (!updatedHunt) {
+      // Récupérer l'entrée existante
+      const existingHunt = await db("hunts").where("id", id).first();
+      if (!existingHunt) {
         return res.status(404).json({ error: "Chasse introuvable" });
       }
+
+      // Fusionner les données existantes avec les nouvelles données
+      const mergedData = { ...existingHunt, ...req.body };
+
+      // Valider et appliquer les valeurs par défaut
+      const validatedData = await validateAndApplyDefaults(mergedData);
+
+      // Ajouter updated_at
+      validatedData.updated_at = new Date();
+
+      // Mettre à jour et récupérer l'entrée complète
+      const [updatedHunt] = await db("hunts")
+        .where("id", id)
+        .update(validatedData)
+        .returning("*");
 
       return res.status(200).json(updatedHunt);
     }
@@ -61,16 +95,16 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "ID requis" });
       }
 
-      const deletedHunt = await db("hunts")
+      const [deletedHunt] = await db("hunts")
         .where("id", id)
         .del()
         .returning("*");
 
-      if (!deletedHunt.length) {
+      if (!deletedHunt) {
         return res.status(404).json({ error: "Chasse introuvable" });
       }
 
-      return res.status(200).json({ message: "Chasse supprimée" });
+      return res.status(200).json(deletedHunt);
     }
 
     res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
