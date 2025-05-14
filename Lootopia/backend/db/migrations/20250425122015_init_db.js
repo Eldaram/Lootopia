@@ -55,7 +55,6 @@ exports.up = async function (knex) {
 
   await knex.schema.createTable("themes", (table) => {
     table.increments("id").primary();
-    // Ajoute ici d'autres colonnes si nécessaire
   });
 
   await knex.schema.createTable("collections", (table) => {

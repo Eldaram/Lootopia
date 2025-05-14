@@ -1,6 +1,4 @@
-const { config } = require("dotenv");
-
-config({ path: ".env.local" });
+require("dotenv").config({ path: "../.env.local" });
 
 module.exports = {
   development: {
@@ -9,9 +7,13 @@ module.exports = {
     connection: process.env.DB__CONNECTION,
     migrations: {
       directory: "./db/migrations",
+      stub: "./db/migration.stub",
+      loadExtensions: [".js"],
     },
     seeds: {
       directory: "./db/seeds",
+      stub: "./db/seed.stub",
+      loadExtensions: [".js"],
     },
   },
 };

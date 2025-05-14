@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SideMenu } from './components/SideMenu';
-import SearchBar from '@/app/src/adapters/screens/Home/components/SearchBar';
-import HuntingCard from './components/HuntingCard';
-import EvenementCard from './components/EvenementCard';
-import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './components/AndroidHomeComponents';
-import { BottomBar } from './components/BottomBar';
+import { SideMenu } from './Home/components/SideMenu';
+import SearchBar from './Home/components/SearchBar';
+import HuntingCard from './Home/components/HuntingCard';
+import EvenementCard from './Home/components/EvenementCard';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './Home/components/AndroidHomeComponents';
+import { BottomBar } from './Home/components/BottomBar';
 
 const screenWidth = Dimensions.get('window').width;
 
