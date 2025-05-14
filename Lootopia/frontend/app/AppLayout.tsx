@@ -71,7 +71,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             <SearchBar onSearch={setSearchQuery} />
             <div className="style-menu">
               <button className="icon-button" onClick={toggleTheme}>
-                <Icon name="moon-o" size={30} color="var(--icon-color)" />
+                <Icon  name={theme === 'light' ? 'moon-o' : 'sun-o'} size={30} color="var(--icon-color)" />
               </button>
               <button className="icon-button" onClick={() => setLocation('/profile')}>
                 <Icon name="user-circle" size={40} color="var(--icon-color)" />
