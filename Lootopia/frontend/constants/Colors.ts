@@ -3,24 +3,31 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
+const tintColorLight = '#0a7ea4'; 
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    background: '#f5f5f5',
+    cardBackground: '#fff', 
+    tint: tintColorLight, 
+    icon: '#555', 
+    tabIconDefault: '#687076', 
+    tabIconSelected: tintColorLight, 
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    text: '#fff', 
+    background: '#121212', 
+    cardBackground: '#1E1E1E',
+    tint: tintColorDark, 
+    icon: '#fff',
+    tabIconDefault: '#9BA1A6', 
     tabIconSelected: tintColorDark,
   },
+};
+
+// Fonction pour récupérer le thème actif
+export const getTheme = (colorScheme: 'light' | 'dark') => {
+  return Colors[colorScheme];
 };

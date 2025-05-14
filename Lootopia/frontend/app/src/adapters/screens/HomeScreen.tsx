@@ -1,51 +1,63 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Platform, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { SideMenu } from './Home/components/SideMenu';
-import SearchBar from './Home/components/SearchBar';
-import HuntingCard from './Home/components/HuntingCard';
-import EvenementCard from './Home/components/EvenementCard';
-import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from './Home/components/AndroidHomeComponents';
-import { BottomBar } from './Home/components/BottomBar';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  ScrollView,
+  Dimensions,
+  Platform,
+  Appearance,
+} from 'react-native';
+import { Colors } from '@/constants/Colors';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponents';
+import { BottomBar } from '@/components/ui/home/BottomBar';
+import { SideMenu } from '@/components/ui/home/SideMenu';
+import HuntingCard from '@/components/ui/home/HuntingCard';
+import EvenementCard from '@/components/ui/home/EvenementCard';
+import '../../../src/styles.css';
 
 const screenWidth = Dimensions.get('window').width;
 
 export const HomeScreen = () => {
+  const [theme, setTheme] = useState<'light' | 'dark'>(Appearance.getColorScheme() || 'light');
+  const [menuTranslateX, setMenuTranslateX] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [menuTranslateX] = useState(new Animated.Value(0));
-  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      document.documentElement.classList.add(theme);
+
+      return () => {
+        document.documentElement.classList.remove('light', 'dark');
+      };
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => {
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+
+      if (Platform.OS === 'web') {
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(newTheme);
+      }
+
+      return newTheme;
+    });
+  };
 
   const handleOutsidePress = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
-      Animated.timing(menuTranslateX, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      setMenuTranslateX(0);
     }
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    console.log('Search Query:', query);
   };
 
   const toggleMenu = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
-      Animated.timing(menuTranslateX, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      setMenuTranslateX(0);
     } else {
       setIsMenuOpen(true);
-      Animated.timing(menuTranslateX, {
-        toValue: screenWidth * 0.2,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      setMenuTranslateX(screenWidth * 0.2);
     }
   };
 
@@ -64,45 +76,15 @@ export const HomeScreen = () => {
     </View>
     );
   }
-  
 
   if (Platform.OS === 'web') {
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      {isMenuOpen && <SideMenu />}
-      <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={{ flex: 1 }}>
-          <Animated.View
-            style={{
-              flex: 1,
-              marginLeft: menuTranslateX,
-            }}
-          >
-            <ScrollView
-              style={{
-                flex: 1,
-                padding: 16,
-                backgroundColor: '#f5f5f5',
-              }}
-            >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TouchableOpacity onPress={toggleMenu}>
-                  <Icon name="bars" size={40} color="#555" />
-                </TouchableOpacity>
-                <SearchBar onSearch={handleSearch} />
-                <TouchableOpacity>
-                  <Icon name="user-circle" size={40} color="#555" />
-                </TouchableOpacity>
-              </View>
-
+    return (
+      <div className="web-container">
               <HuntingCard />
               <EvenementCard />
-            </ScrollView>
-          </Animated.View>
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
-  );
+            </div>
+    );
+  }
+
+  return null;
 };
-return null;
-}
