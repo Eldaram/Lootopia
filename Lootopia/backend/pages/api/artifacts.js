@@ -1,3 +1,4 @@
+import cors from "../../lib/cors.js";
 import db from "../../services/db.js";
 import * as Yup from "yup";
 
@@ -41,6 +42,13 @@ async function validateAndApplyDefaults(data, isUpdate = false) {
 }
 
 export default async function handler(req, res) {
+  await cors(req, res);
+
+  // Réponse rapide aux requêtes OPTIONS (pré-vol)
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
   try {
     // Méthode GET : Récupère tous les artefacts ou un artefact spécifique
     if (req.method === "GET") {
