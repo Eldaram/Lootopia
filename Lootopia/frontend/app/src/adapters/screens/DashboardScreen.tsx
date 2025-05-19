@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "../../services/authService";
-import '../../../src/dashboard.css';
-import { Text, ScrollView } from "react-native";
+import '../../../src/styles.css';
+import { Text, ScrollView, View } from "react-native";
 
 export const DashboardScreen = () => {
   const [user, setUser] = useState<any>(null);
@@ -47,30 +47,30 @@ export const DashboardScreen = () => {
   return (
     <ScrollView className="container">
       <Text className="title">Gestion des utilisateurs</Text>
-      <table className="user-table">
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Rôle</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(users) && users.length > 0 ? (
-            users.map((u, index) => (
-              <tr key={index}>
-                <td>{u.username}</td>
-                <td>{u.email}</td>
-                <td>{u.role}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={3}>Aucun utilisateur trouvé.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+
+      <View style={{ marginTop: 20, backgroundColor: '#f2f2f2' }}>
+        {/* Table header */}
+        <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', padding: 10 }}>
+          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Nom</Text>
+          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Email</Text>
+          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Rôle</Text>
+        </View>
+
+        {/* Table body */}
+        {Array.isArray(users) && users.length > 0 ? (
+          users.map((u, index) => (
+            <View key={index} style={{ flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+              <Text style={{ flex: 1, textAlign: 'center' }}>{u.username}</Text>
+              <Text style={{ flex: 1, textAlign: 'center' }}>{u.email}</Text>
+              <Text style={{ flex: 1, textAlign: 'center' }}>{u.role}</Text>
+            </View>
+          ))
+        ) : (
+          <View style={{ flexDirection: 'row', padding: 10 }}>
+            <Text style={{ flex: 1, textAlign: 'center' }}>Aucun utilisateur trouvé.</Text>
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 };
