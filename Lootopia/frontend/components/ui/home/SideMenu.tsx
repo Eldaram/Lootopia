@@ -37,9 +37,10 @@ export const SideMenu: React.FC = () => {
     { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' },
     { label: 'Artefacts', icon: 'gem', to: '/artefacts' },
     { label: 'Classement', icon: 'list', to: '/classement' },
-    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/tableau-de-bord' },
+    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/dashboard' },
     { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' },
     { label: 'Aide', icon: 'question-circle', to: '/aide' },
+    { label: 'Connexion', icon: 'sign-in', to: '/login' },
     { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion' },
   ];
 

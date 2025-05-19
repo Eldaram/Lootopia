@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Platform, Dimensions, Appearance } from 'react-native';
 import SearchBar from '@/components/ui/home/SearchBar';
-import { Colors } from '@/constants/Colors';
 import './src/styles.css';
 import { useLocation } from 'wouter';
 import { Image } from 'react-native';
