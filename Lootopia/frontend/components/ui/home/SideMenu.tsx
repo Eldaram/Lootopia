@@ -48,12 +48,12 @@ export const SideMenu: React.FC = () => {
 
   const menuItems = [
     { label: 'Accueil', icon: 'home', to: '/' },
-    { label: 'Organiser(Organisateur)', icon: 'cogs', to: '/organiser', role: 'admin' }, 
+    { label: 'Organiser', icon: 'cogs', to: '/organiser', role: 'admin' }, 
     { label: 'Mes Chasses', icon: 'bullseye', to: '/mes-chasses' },
     { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' },
     { label: 'Artefacts', icon: 'gem', to: '/artefacts' },
     { label: 'Classement', icon: 'list', to: '/classement' },
-    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/dashboard', role: 'admin' },
+    { label: 'Tableau de bord', icon: 'tachometer', to: '/dashboard', role: 'admin' },
     { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' },
     { label: 'Aide', icon: 'question-circle', to: '/aide' },
     { label: 'Connexion', icon: 'sign-in', to: '/login' }, 
