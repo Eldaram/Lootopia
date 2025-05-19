@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert } from "react-native";
-import { useLocation } from "wouter"; // ← ici
+import { useLocation } from "wouter";
 import { storeSession } from "@/app/src/services/authService";
 
+//login en attendant session utilisateur
 const LoginScreen = () => {
   const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("admin");
-  const [_, setLocation] = useLocation(); // ← ici
+  const [_, setLocation] = useLocation();
 
   const login = async () => {
     try {
@@ -21,7 +22,7 @@ const LoginScreen = () => {
       if (data.success) {
         await storeSession(data.user);
         Alert.alert("Connecté en tant que", data.user.role);
-        setLocation("/dashboard");
+        setLocation("/");
       } else {
         Alert.alert("Erreur", "Identifiants incorrects");
       }

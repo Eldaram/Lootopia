@@ -8,7 +8,6 @@ export const DashboardScreen = () => {
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
-      console.log("Session récupérée dans dashboard:", session);
       setUser(session);
     };
   
@@ -24,7 +23,7 @@ export const DashboardScreen = () => {
       {user.role === "admin" ? (
         <Text>Vous êtes ADMIN</Text>
       ) : (
-        <Text>Vous êtes USER</Text>
+        <Text>Vous n'avez pas l'autorisation d'accéder à cette page</Text>
       )}
     </View>
   );

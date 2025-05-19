@@ -1,5 +1,5 @@
-import db from "../../services/db"; // Assure-toi que ce chemin est correct
-import { serialize } from "cookie"; // Assure-toi que cette ligne est présente
+import db from "../../services/db";
+import { serialize } from "cookie";
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
@@ -16,7 +16,6 @@ export default async function handler(req, res) {
   const { email, password } = req.body;
 
   try {
-    // Recherche de l'utilisateur dans la base de données
     const user = await db("users").where({ email, password }).first();
 
     if (!user) {
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
     const cookie = serialize("session", JSON.stringify(session), {
       httpOnly: true,
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 jour
+      maxAge: 60 * 60 * 24, // 1 jour de connexion
     });
 
     res.setHeader("Set-Cookie", cookie);
