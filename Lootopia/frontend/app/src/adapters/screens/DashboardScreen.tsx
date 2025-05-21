@@ -6,59 +6,75 @@ import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch";
 export const DashboardScreen = () => {
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const handleToggleStatus = async (userId: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
-
+    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-
       if (!res.ok) throw new Error("Erreur lors de la mise à jour du statut");
-
       const updatedUsers = users.map(user =>
         user.id === userId ? { ...user, status: newStatus } : user
       );
       setUsers(updatedUsers);
+    } catch (err) {
+      console.error("Erreur mise à jour statut:", err);
+    }
   };
 
   const handleChangeRole = async (userId: number, newRole: string) => {
+    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: newRole }),
       });
-
       if (!res.ok) throw new Error("Erreur lors de la mise à jour du rôle");
-
       const updatedUsers = users.map(user =>
         user.id === userId ? { ...user, role: newRole } : user
       );
       setUsers(updatedUsers);
+    } catch (err) {
+      console.error("Erreur mise à jour rôle:", err);
+    }
   };
 
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
       setUser(session);
-
       if (session?.role === "admin") {
         const res = await fetch("http://localhost:3000/api/users", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-
+        if (!res.ok) {
+          throw new Error("Erreur de récupération des utilisateurs");
+        }
         const data = await res.json();
         if (Array.isArray(data)) {
           setUsers(data);
         }
       }
     };
-
     fetchSession();
   }, []);
+
+  const filteredUsers = users.filter((u) => {
+    const matchesRole = filterRole === "all" || u.role === filterRole;
+    const matchesStatus =
+      filterStatus === "all" || u.status === (filterStatus === "active" ? 1 : 0);
+    const matchesSearch =
+      u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesRole && matchesStatus && matchesSearch;
+  });
 
   if (!user) return <p>Chargement...</p>;
 
@@ -69,6 +85,37 @@ export const DashboardScreen = () => {
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-title">Gestion des utilisateurs</h1>
+      <div className="dashboard-filters">
+        <input
+          type="text"
+          placeholder="Rechercher par nom ou email"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="filter-input"
+        />
+
+        <select
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+          className="filter-select"
+        >
+          <option value="all">Tous les rôles</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+          <option value="moderator">Modérateur</option>
+          <option value="organizer">Organisateur</option>
+        </select>
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="filter-select"
+        >
+          <option value="all">Tous les statuts</option>
+          <option value="active">Actif</option>
+          <option value="inactive">Inactif</option>
+        </select>
+      </div>
 
       <div className="dashboard-table-container">
         <div className="dashboard-table-header">
@@ -78,8 +125,8 @@ export const DashboardScreen = () => {
           <strong className="dashboard-header-cell">Rôle</strong>
         </div>
 
-        {Array.isArray(users) && users.length > 0 ? (
-          users.map((u, index) => (
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((u, index) => (
             <div key={index} className="dashboard-table-row">
               <span className="dashboard-cell">
                 <ToggleSwitch

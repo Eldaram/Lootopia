@@ -438,3 +438,18 @@ input:checked+.slider:before {
   border-color: #4caf50;
   outline: none;
 }
+
+.dashboard-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
