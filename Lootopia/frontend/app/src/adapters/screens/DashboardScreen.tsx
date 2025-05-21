@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getSession } from "../../services/authService";
 import "../../../src/styles.css";
-import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch";
+import { UserRow } from "@/components/ui/dashboard/UserRow";
+import { BanUserModal } from "@/components/ui/dashboard/BanUserModal";
 
 export const DashboardScreen = () => {
   const [user, setUser] = useState<any>(null);
@@ -9,6 +10,8 @@ export const DashboardScreen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [banModalUserId, setBanModalUserId] = useState<number | null>(null);
+  const [banDuration, setBanDuration] = useState<number>(0);
 
   const handleToggleStatus = async (userId: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
@@ -76,6 +79,36 @@ export const DashboardScreen = () => {
     return matchesRole && matchesStatus && matchesSearch;
   });
 
+  const handleBanUser = async () => {
+    if (banModalUserId === null || banDuration <= 0) return;
+  
+    const now = new Date().toISOString();
+    try {
+      const res = await fetch(`http://localhost:3000/api/users?id=${banModalUserId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          disable_start: now,
+          disable_time: banDuration,
+        }),
+      });
+  
+      if (!res.ok) throw new Error("Erreur lors du bannissement de l'utilisateur");
+  
+      const updatedUsers = users.map(user =>
+        user.id === banModalUserId
+          ? { ...user, disable_start: now, disable_time: banDuration }
+          : user
+      );
+  
+      setUsers(updatedUsers);
+      setBanModalUserId(null);
+      setBanDuration(0);
+    } catch (err) {
+      console.error("Erreur de bannissement :", err);
+    }
+  };  
+
   if (!user) return <p>Chargement...</p>;
 
   if (user.role !== "admin") {
@@ -126,30 +159,28 @@ export const DashboardScreen = () => {
         </div>
 
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((u, index) => (
-            <div key={index} className="dashboard-table-row">
-              <span className="dashboard-cell">
-                <ToggleSwitch
-                  checked={u.status === 1}
-                  onChange={() => handleToggleStatus(u.id, u.status)}
-                />
-              </span>
-              <span className="dashboard-cell">{u.username}</span>
-              <span className="dashboard-cell">{u.email}</span>
-              <span className="dashboard-cell">
-                <select
-                  value={u.role}
-                  onChange={(e) => handleChangeRole(u.id, e.target.value)}
-                  className="role-select"
-                >
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                  <option value="moderator">Modérateur</option>
-                  <option value="organizer">Organisateur</option>
-                </select>
-              </span>
-            </div>
-          ))
+          <>
+            {filteredUsers.map((u) => (
+              <UserRow
+                key={u.id}
+                user={u}
+                onToggleStatus={handleToggleStatus}
+                onChangeRole={handleChangeRole}
+                onBanClick={setBanModalUserId}
+              />
+            ))}
+
+            <BanUserModal
+              isOpen={banModalUserId !== null}
+              duration={banDuration}
+              onDurationChange={setBanDuration}
+              onCancel={() => {
+                setBanModalUserId(null);
+                setBanDuration(0);
+              }}
+              onConfirm={handleBanUser}
+            />
+          </>
         ) : (
           <div className="dashboard-table-row">
             <span className="dashboard-cell">Aucun utilisateur trouvé.</span>
