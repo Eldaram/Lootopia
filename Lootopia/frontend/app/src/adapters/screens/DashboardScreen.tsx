@@ -69,7 +69,7 @@ export const DashboardScreen = () => {
   const filteredUsers = users.filter((u) => {
     const matchesRole = filterRole === "all" || u.role === filterRole;
     const matchesStatus =
-      filterStatus === "all" || u.status === (filterStatus === "active" ? 1 : 0);
+      filterStatus === "all" || u.status === (filterStatus === "active" ? 0: 1);
     const matchesSearch =
       u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase());
