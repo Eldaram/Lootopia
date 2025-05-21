@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSession } from "../../services/authService";
-import '../../../src/styles.css';
+import "../../../src/styles.css";
 import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch";
 
 export const DashboardScreen = () => {
@@ -17,14 +17,33 @@ export const DashboardScreen = () => {
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour du status");
+      if (!res.ok) throw new Error("Erreur lors de la mise à jour du statut");
 
       const updatedUsers = users.map(user =>
         user.id === userId ? { ...user, status: newStatus } : user
       );
       setUsers(updatedUsers);
     } catch (err) {
-      console.error("Erreur mise à jour status:", err);
+      console.error("Erreur mise à jour statut:", err);
+    }
+  };
+
+  const handleChangeRole = async (userId: number, newRole: string) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      if (!res.ok) throw new Error("Erreur lors de la mise à jour du rôle");
+
+      const updatedUsers = users.map(user =>
+        user.id === userId ? { ...user, role: newRole } : user
+      );
+      setUsers(updatedUsers);
+    } catch (err) {
+      console.error("Erreur mise à jour rôle:", err);
     }
   };
 
@@ -33,7 +52,7 @@ export const DashboardScreen = () => {
       const session = await getSession();
       setUser(session);
 
-      if (session?.role === 'admin') {
+      if (session?.role === "admin") {
         const res = await fetch("http://localhost:3000/api/users", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -74,13 +93,26 @@ export const DashboardScreen = () => {
         {Array.isArray(users) && users.length > 0 ? (
           users.map((u, index) => (
             <div key={index} className="dashboard-table-row">
-              <span className="dashboard-cell"><ToggleSwitch
-                checked={u.status === 1}
-                onChange={() => handleToggleStatus(u.id, u.status)}
-              /></span>
+              <span className="dashboard-cell">
+                <ToggleSwitch
+                  checked={u.status === 1}
+                  onChange={() => handleToggleStatus(u.id, u.status)}
+                />
+              </span>
               <span className="dashboard-cell">{u.username}</span>
               <span className="dashboard-cell">{u.email}</span>
-              <span className="dashboard-cell">{u.role}</span>
+              <span className="dashboard-cell">
+                <select
+                  value={u.role}
+                  onChange={(e) => handleChangeRole(u.id, e.target.value)}
+                  className="role-select"
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                  <option value="moderator">Modérateur</option>
+                  <option value="organizer">Organisateur</option>
+                </select>
+              </span>
             </div>
           ))
         ) : (

@@ -27,18 +27,12 @@ export default async function handler(req, res) {
 
     if (req.method === "PUT") {
       const { id } = req.query;
-      const { status } = req.body;
+      const { status, role } = req.body;
 
-      if (!id || typeof status === "undefined") {
-        return res.status(400).json({ error: "ID et status requis" });
-      }
-
-      const updated = await db("users").where({ id }).update({ status });
+      const updated = await db("users").where({ id }).update({ status, role });
 
       if (updated) {
-        return res
-          .status(200)
-          .json({ message: "Status mis à jour avec succès" });
+        return res.status(200).json({ message: "User mis à jour avec succès" });
       } else {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
       }
