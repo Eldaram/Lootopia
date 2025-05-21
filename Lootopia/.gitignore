@@ -2,9 +2,11 @@
 
 # dependencies
 node_modules/
+**/package-lock.json
 
 # Expo
 .expo/
+.next/
 dist/
 web-build/
 expo-env.d.ts
@@ -36,3 +38,6 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+expo-env.d.ts
+next-env.d.ts
