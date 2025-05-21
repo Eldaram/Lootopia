@@ -1,11 +1,32 @@
 import { useEffect, useState } from "react";
 import { getSession } from "../../services/authService";
 import '../../../src/styles.css';
-import { Text, ScrollView, View } from "react-native";
+import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch";
 
 export const DashboardScreen = () => {
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+
+  const handleToggleStatus = async (userId: number, currentStatus: number) => {
+    const newStatus = currentStatus === 1 ? 0 : 1;
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("Erreur lors de la mise à jour du status");
+
+      const updatedUsers = users.map(user =>
+        user.id === userId ? { ...user, status: newStatus } : user
+      );
+      setUsers(updatedUsers);
+    } catch (err) {
+      console.error("Erreur mise à jour status:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -13,86 +34,61 @@ export const DashboardScreen = () => {
       setUser(session);
 
       if (session?.role === 'admin') {
-          const res = await fetch("http://localhost:3000/api/users", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          });
+        const res = await fetch("http://localhost:3000/api/users", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
 
-          if (!res.ok) {
-            throw new Error("Erreur de récupération des utilisateurs");
-          }
+        if (!res.ok) {
+          throw new Error("Erreur de récupération des utilisateurs");
+        }
 
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            setUsers(data);
-          }
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setUsers(data);
+        }
       }
     };
 
     fetchSession();
   }, []);
 
-  if (!user) return <Text>Chargement...</Text>;
+  if (!user) return <p>Chargement...</p>;
 
   if (user.role !== "admin") {
-    return <Text className="denied">Vous n'avez pas l'autorisation d'accéder à cette page</Text>;
+    return <p className="denied">Vous n'avez pas l'autorisation d'accéder à cette page</p>;
   }
 
   return (
-    <ScrollView className="container">
-      <Text className="title">Gestion des utilisateurs</Text>
+    <div className="dashboard-container">
+      <h1 className="dashboard-title">Gestion des utilisateurs</h1>
 
-      <View style={{ marginTop: 20, backgroundColor: '#f2f2f2' }}>
-        <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', padding: 10 }}>
-          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Action</Text>
-          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Nom</Text>
-          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Email</Text>
-          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Rôle</Text>
-        </View>
+      <div className="dashboard-table-container">
+        <div className="dashboard-table-header">
+          <strong className="dashboard-header-cell">Action</strong>
+          <strong className="dashboard-header-cell">Nom</strong>
+          <strong className="dashboard-header-cell">Email</strong>
+          <strong className="dashboard-header-cell">Rôle</strong>
+        </div>
 
         {Array.isArray(users) && users.length > 0 ? (
           users.map((u, index) => (
-            <View key={index} style={{ flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
-              <Text
-      onPress={async () => {
-        const newStatus = u.status === 1 ? 0 : 1;
-        try {
-          const res = await fetch(`http://localhost:3000/api/users?id=${u.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: newStatus }),
-          });
-
-          if (!res.ok) throw new Error("Erreur lors de la mise à jour du status");
-
-          const updatedUsers = users.map(user =>
-            user.id === u.id ? { ...user, status: newStatus } : user
-          );
-          setUsers(updatedUsers);
-        } catch (err) {
-          console.error("Erreur mise à jour status:", err);
-        }
-      }}
-      style={{
-        flex: 1,
-        textAlign: "center",
-        color: u.status === 1 ? "green" : "red",
-        textDecorationLine: "underline",
-      }}
-    >
-      {u.status === 1 ? "Désactiver" : "Activer"}
-    </Text>
-              <Text style={{ flex: 1, textAlign: 'center' }}>{u.username}</Text>
-              <Text style={{ flex: 1, textAlign: 'center' }}>{u.email}</Text>
-              <Text style={{ flex: 1, textAlign: 'center' }}>{u.role}</Text>
-            </View>
+            <div key={index} className="dashboard-table-row">
+              <span className="dashboard-cell"><ToggleSwitch
+                checked={u.status === 1}
+                onChange={() => handleToggleStatus(u.id, u.status)}
+              /></span>
+              <span className="dashboard-cell">{u.username}</span>
+              <span className="dashboard-cell">{u.email}</span>
+              <span className="dashboard-cell">{u.role}</span>
+            </div>
           ))
         ) : (
-          <View style={{ flexDirection: 'row', padding: 10 }}>
-            <Text style={{ flex: 1, textAlign: 'center' }}>Aucun utilisateur trouvé.</Text>
-          </View>
+          <div className="dashboard-table-row">
+            <span className="dashboard-cell">Aucun utilisateur trouvé.</span>
+          </div>
         )}
-      </View>
-    </ScrollView>
+      </div>
+    </div>
   );
 };
