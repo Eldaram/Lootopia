@@ -10,7 +10,6 @@ export const DashboardScreen = () => {
   const handleToggleStatus = async (userId: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
 
-    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -23,13 +22,9 @@ export const DashboardScreen = () => {
         user.id === userId ? { ...user, status: newStatus } : user
       );
       setUsers(updatedUsers);
-    } catch (err) {
-      console.error("Erreur mise à jour statut:", err);
-    }
   };
 
   const handleChangeRole = async (userId: number, newRole: string) => {
-    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -42,9 +37,6 @@ export const DashboardScreen = () => {
         user.id === userId ? { ...user, role: newRole } : user
       );
       setUsers(updatedUsers);
-    } catch (err) {
-      console.error("Erreur mise à jour rôle:", err);
-    }
   };
 
   useEffect(() => {
@@ -57,10 +49,6 @@ export const DashboardScreen = () => {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
-
-        if (!res.ok) {
-          throw new Error("Erreur de récupération des utilisateurs");
-        }
 
         const data = await res.json();
         if (Array.isArray(data)) {
