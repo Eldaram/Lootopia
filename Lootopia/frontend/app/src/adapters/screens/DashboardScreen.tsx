@@ -13,7 +13,6 @@ export const DashboardScreen = () => {
       setUser(session);
 
       if (session?.role === 'admin') {
-        try {
           const res = await fetch("http://localhost:3000/api/users", {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -26,12 +25,7 @@ export const DashboardScreen = () => {
           const data = await res.json();
           if (Array.isArray(data)) {
             setUsers(data);
-          } else {
-            console.error("Les données récupérées ne sont pas un tableau", data);
           }
-        } catch (err) {
-          console.error("Erreur de récupération des utilisateurs", err);
-        }
       }
     };
 
@@ -49,17 +43,45 @@ export const DashboardScreen = () => {
       <Text className="title">Gestion des utilisateurs</Text>
 
       <View style={{ marginTop: 20, backgroundColor: '#f2f2f2' }}>
-        {/* Table header */}
         <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', padding: 10 }}>
+          <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Action</Text>
           <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Nom</Text>
           <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Email</Text>
           <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Rôle</Text>
         </View>
 
-        {/* Table body */}
         {Array.isArray(users) && users.length > 0 ? (
           users.map((u, index) => (
             <View key={index} style={{ flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+              <Text
+      onPress={async () => {
+        const newStatus = u.status === 1 ? 0 : 1;
+        try {
+          const res = await fetch(`http://localhost:3000/api/users?id=${u.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+
+          if (!res.ok) throw new Error("Erreur lors de la mise à jour du status");
+
+          const updatedUsers = users.map(user =>
+            user.id === u.id ? { ...user, status: newStatus } : user
+          );
+          setUsers(updatedUsers);
+        } catch (err) {
+          console.error("Erreur mise à jour status:", err);
+        }
+      }}
+      style={{
+        flex: 1,
+        textAlign: "center",
+        color: u.status === 1 ? "green" : "red",
+        textDecorationLine: "underline",
+      }}
+    >
+      {u.status === 1 ? "Désactiver" : "Activer"}
+    </Text>
               <Text style={{ flex: 1, textAlign: 'center' }}>{u.username}</Text>
               <Text style={{ flex: 1, textAlign: 'center' }}>{u.email}</Text>
               <Text style={{ flex: 1, textAlign: 'center' }}>{u.role}</Text>

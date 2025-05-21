@@ -322,26 +322,20 @@ body.dark .menu-icon {
 
 /* Dashboard */
 
-/* Tableau avec un fond derrière */
 .table-container {
   margin-top: 20px;
   margin-bottom: 20px;
   padding: 10px;
   border-radius: 8px;
   background-color: #f9f9f9;
-  /* Fond doux derrière le tableau */
   border: 1px solid #ddd;
-  /* Bordure autour du tableau */
   width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Ombre douce autour du tableau */
 }
 
-/* En-têtes du tableau */
 .table-header {
   flex-direction: row;
   background-color: #f2f2f2;
-  /* Fond pour l'en-tête */
   padding: 10px;
   margin-bottom: 10px;
   border-bottom: 2px solid #ccc;
@@ -349,17 +343,14 @@ body.dark .menu-icon {
   justify-content: space-between;
 }
 
-/* Cellules des en-têtes */
 .header-cell {
   flex: 1;
   font-weight: bold;
   text-align: center;
   padding: 5px;
   border-right: 1px solid #ccc;
-  /* Bordure droite entre les en-têtes */
 }
 
-/* Lignes du tableau */
 .table-row {
   flex-direction: row;
   padding: 10px;
@@ -367,34 +358,28 @@ body.dark .menu-icon {
   display: flex;
   justify-content: space-between;
   background-color: #fff;
-  /* Fond blanc pour les lignes */
 }
 
-/* Cellules du tableau */
 .cell {
   flex: 1;
   text-align: center;
   padding: 5px;
   border-left: 1px solid #ccc;
-  /* Bordure gauche entre les cellules */
 }
 
-/* Bordure du tableau */
 .table-row:last-child {
   border-bottom: none;
-  /* Pas de bordure en bas de la dernière ligne */
 }
 
-/* Bordures autour de chaque ligne */
 .table-row:hover {
   background-color: #f5f5f5;
-  /* Fond légèrement gris pour l'hover */
 }
 
-/* Ajout d'un fond derrière les cellules */
 .table-row td {
   border-right: 1px solid #ccc;
-  /* Bordure entre les cellules */
   padding: 12px 15px;
-  /* Plus de padding pour une meilleure lisibilité */
+}
+
+.title{
+  font-family: 'Roboto', sans-serif;
 }
