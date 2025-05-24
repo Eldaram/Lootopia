@@ -1,15 +1,15 @@
 interface BanUserModalProps {
   isOpen: boolean;
-  duration: number;
-  onDurationChange: (value: number) => void;
+  endDate: string;
+  onEndDateChange: (value: string) => void;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
 export const BanUserModal = ({
   isOpen,
-  duration,
-  onDurationChange,
+  endDate,
+  onEndDateChange,
   onCancel,
   onConfirm,
 }: BanUserModalProps) => {
@@ -20,12 +20,11 @@ export const BanUserModal = ({
       <div className="modal-content">
         <h2>Bannir l'utilisateur</h2>
         <label>
-          Durée en minutes :
+          Fin du ban :
           <input
-            type="number"
-            value={duration}
-            onChange={(e) => onDurationChange(Number(e.target.value))}
-            min={1}
+            type="datetime-local"
+            value={endDate}
+            onChange={(e) => onEndDateChange(e.target.value)}
             className="modal-input"
           />
         </label>

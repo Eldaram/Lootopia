@@ -24,14 +24,16 @@ export default async function handler(req, res) {
         "created_at",
         "updated_at",
         "disabled_time",
-        "disabled_start"
+        "disabled_start",
+        "disabled_end"
       );
       return res.status(200).json(users);
     }
 
     if (req.method === "PUT") {
       const { id } = req.query;
-      const { status, role, disabled_time, disabled_start } = req.body;
+      const { status, role, disabled_time, disabled_start, disabled_end } =
+        req.body;
 
       const updateData = {};
       if (status !== undefined) updateData.status = status;
@@ -45,6 +47,9 @@ export default async function handler(req, res) {
       }
       if (disabled_start !== undefined) {
         updateData.disabled_start = new Date(disabled_start);
+      }
+      if (disabled_end !== undefined) {
+        updateData.disabled_end = new Date(disabled_end);
       }
 
       if (Object.keys(updateData).length === 0) {

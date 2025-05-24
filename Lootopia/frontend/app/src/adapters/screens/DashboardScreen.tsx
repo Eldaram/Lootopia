@@ -12,6 +12,7 @@ export const DashboardScreen = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [banModalUserId, setBanModalUserId] = useState<number | null>(null);
   const [banDuration, setBanDuration] = useState<number>(0);
+  const [banEndDate, setBanEndDate] = useState<string>("");
 
   const handleToggleStatus = async (userId: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
@@ -80,30 +81,31 @@ export const DashboardScreen = () => {
   });
 
   const handleBanUser = async () => {
-    if (banModalUserId === null || banDuration <= 0) return;
+    if (!banModalUserId || !banEndDate) return;
   
     const now = new Date().toISOString();
+  
     try {
       const res = await fetch(`http://localhost:3000/api/users?id=${banModalUserId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           disabled_start: now,
-          disabled_time: banDuration,
+          disabled_end: banEndDate,
         }),
       });
   
-      if (!res.ok) throw new Error("Erreur lors du bannissement de l'utilisateur");
+      if (!res.ok) throw new Error("Erreur lors du bannissement");
   
       const updatedUsers = users.map(user =>
         user.id === banModalUserId
-          ? { ...user, disable_start: now, disable_time: banDuration }
+          ? { ...user, disable_start: now, disable_end: banEndDate }
           : user
       );
   
       setUsers(updatedUsers);
       setBanModalUserId(null);
-      setBanDuration(0);
+      setBanEndDate("");
     } catch (err) {
       console.error("Erreur de bannissement :", err);
     }
@@ -172,14 +174,15 @@ export const DashboardScreen = () => {
 
             <BanUserModal
               isOpen={banModalUserId !== null}
-              duration={banDuration}
-              onDurationChange={setBanDuration}
+              endDate={banEndDate}
+              onEndDateChange={setBanEndDate}
               onCancel={() => {
                 setBanModalUserId(null);
-                setBanDuration(0);
+                setBanEndDate("");
               }}
               onConfirm={handleBanUser}
             />
+
           </>
         ) : (
           <div className="dashboard-table-row">
