@@ -88,8 +88,8 @@ export const DashboardScreen = () => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          disable_start: now,
-          disable_time: banDuration,
+          disabled_start: now,
+          disabled_time: banDuration,
         }),
       });
   
