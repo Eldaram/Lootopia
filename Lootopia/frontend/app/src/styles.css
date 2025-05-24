@@ -512,3 +512,16 @@ input:checked+.slider:before {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.ban-timer {
+  font-size: 0.8rem;
+  color: red;
+  margin-top: 4px;
+}
+
+.duration-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
