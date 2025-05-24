@@ -9,3 +9,5 @@ export const ProfileScreen = () => {
     </div>
   );
 };
+
+export default ProfileScreen;
