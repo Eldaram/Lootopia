@@ -12,10 +12,22 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick }: User
   const [remainingTime, setRemainingTime] = useState<string>("");
 
   useEffect(() => {
-    if (!user.disable_end) return;
+    if (!user.disabled_start || !user.disabled_end) return;
   
-    const interval = setInterval(() => {
-      const end = new Date(user.disable_end).getTime();
+    const start = new Date(user.disabled_start).getTime();
+    const end = new Date(user.disabled_end).getTime();
+    const now = Date.now();
+  
+    console.log("BAN CHECK", {
+      start: new Date(user.disabled_start),
+      end: new Date(user.disabled_end),
+      now: new Date(now),
+    });
+  
+    if (isNaN(start) || isNaN(end)) return; // invalid dates
+    if (now < start || now >= end) return;
+  
+    const updateRemainingTime = () => {
       const now = Date.now();
       const diff = end - now;
   
@@ -30,11 +42,16 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick }: User
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
   
-      setRemainingTime(`${days}j ${hours}h ${minutes}m ${seconds < 10 ? "0" : ""}${seconds}s`);
-    }, 1000);
+      setRemainingTime(
+        `${days}j ${hours}h ${minutes}m ${seconds < 10 ? "0" : ""}${seconds}s`
+      );
+    };
+  
+    updateRemainingTime();
+    const interval = setInterval(updateRemainingTime, 1000);
   
     return () => clearInterval(interval);
-  }, [user.disable_end]);  
+  }, [user.disabled_start, user.disabled_end]);   
 
   return (
     <div className="dashboard-table-row">

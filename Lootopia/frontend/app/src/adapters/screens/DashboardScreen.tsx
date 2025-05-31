@@ -63,8 +63,13 @@ export const DashboardScreen = () => {
         }
         const data = await res.json();
         if (Array.isArray(data)) {
-          setUsers(data);
-        }
+          const normalizedUsers = data.map((u) => ({
+            ...u,
+            disabled_start: u.disabled_start ? new Date(u.disabled_start).toISOString() : null,
+            disabled_end: u.disabled_end ? new Date(u.disabled_end).toISOString() : null,
+          }));
+          setUsers(normalizedUsers);
+        }        
       }
     };
     fetchSession();
@@ -99,7 +104,7 @@ export const DashboardScreen = () => {
   
       const updatedUsers = users.map(user =>
         user.id === banModalUserId
-          ? { ...user, disable_start: now, disable_end: banEndDate }
+          ? { ...user, disabled_start: now, disabled_end: banEndDate }
           : user
       );
   
