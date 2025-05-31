@@ -24,7 +24,7 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick }: User
       now: new Date(now),
     });
   
-    if (isNaN(start) || isNaN(end)) return; // invalid dates
+    if (isNaN(start) || isNaN(end)) return;
     if (now < start || now >= end) return;
   
     const updateRemainingTime = () => {
@@ -60,10 +60,11 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick }: User
           checked={user.status === 1}
           onChange={() => onToggleStatus(user.id, user.status)}
         />
-        <button className="ban-button" onClick={() => onBanClick(user.id)}>
-          Bannir
-        </button>
-        {remainingTime && (
+        {!remainingTime ? (
+          <button className="ban-button" onClick={() => onBanClick(user.id)}>
+            Bannir
+          </button>
+        ) : (
           <div className="ban-timer">⏳ {remainingTime}</div>
         )}
       </span>
