@@ -11,12 +11,10 @@ export const DashboardScreen = () => {
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [banModalUserId, setBanModalUserId] = useState<number | null>(null);
-  const [banDuration, setBanDuration] = useState<number>(0);
   const [banEndDate, setBanEndDate] = useState<string>("");
 
   const handleToggleStatus = async (userId: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
-    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -27,13 +25,9 @@ export const DashboardScreen = () => {
         user.id === userId ? { ...user, status: newStatus } : user
       );
       setUsers(updatedUsers);
-    } catch (err) {
-      console.error("Erreur mise à jour statut:", err);
-    }
   };
 
   const handleChangeRole = async (userId: number, newRole: string) => {
-    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -44,9 +38,6 @@ export const DashboardScreen = () => {
         user.id === userId ? { ...user, role: newRole } : user
       );
       setUsers(updatedUsers);
-    } catch (err) {
-      console.error("Erreur mise à jour rôle:", err);
-    }
   };
 
   useEffect(() => {
@@ -89,8 +80,6 @@ export const DashboardScreen = () => {
     if (!banModalUserId || !banEndDate) return;
   
     const now = new Date().toISOString();
-  
-    try {
       const res = await fetch(`http://localhost:3000/api/users?id=${banModalUserId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -111,9 +100,6 @@ export const DashboardScreen = () => {
       setUsers(updatedUsers);
       setBanModalUserId(null);
       setBanEndDate("");
-    } catch (err) {
-      console.error("Erreur de bannissement :", err);
-    }
   };  
 
   if (!user) return <p>Chargement...</p>;
@@ -121,6 +107,13 @@ export const DashboardScreen = () => {
   if (user.role !== "admin") {
     return <p className="denied">Vous n'avez pas l'autorisation d'accéder à cette page</p>;
   }
+
+  const handleUnbanSuccess = (userId: number) => {
+    const updatedUsers = users.map(user => 
+      user.id === userId ? { ...user, disabled_start: null, disabled_end: null } : user
+    );
+    setUsers(updatedUsers);
+  };
 
   return (
     <div className="dashboard-container">
@@ -174,6 +167,7 @@ export const DashboardScreen = () => {
                 onToggleStatus={handleToggleStatus}
                 onChangeRole={handleChangeRole}
                 onBanClick={setBanModalUserId}
+                onUnbanSuccess={handleUnbanSuccess}
               />
             ))}
 
