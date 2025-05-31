@@ -11,6 +11,7 @@ interface UserRowProps {
 
 export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnbanSuccess }: UserRowProps) => {
   const [remainingTime, setRemainingTime] = useState<string>("");
+  const [interval, setIntervalState] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!user.disabled_start || !user.disabled_end) return;
@@ -20,7 +21,10 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnba
     const now = Date.now();
 
     if (isNaN(start) || isNaN(end)) return;
-    if (now < start || now >= end) return;
+    if (now >= end) {
+      setRemainingTime("");
+      return;
+    }
 
     const updateRemainingTime = () => {
       const now = Date.now();
@@ -28,7 +32,9 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnba
 
       if (diff <= 0) {
         setRemainingTime("");
-        clearInterval(interval);
+        if (interval) {
+          clearInterval(interval);
+        }
         return;
       }
 
@@ -43,25 +49,29 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnba
     };
 
     updateRemainingTime();
-    const interval = setInterval(updateRemainingTime, 1000);
 
-    return () => clearInterval(interval);
+    const newInterval = setInterval(updateRemainingTime, 1000);
+    setIntervalState(newInterval);
+
+    return () => clearInterval(newInterval);
+
   }, [user.disabled_start, user.disabled_end]);
 
   const handleUnbanClick = async () => {
-      const res = await fetch(`http://localhost:3000/api/users?id=${user.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          disabled_start: null,
-          disabled_end: null,  
-        }),
-      });
+    const res = await fetch(`http://localhost:3000/api/users?id=${user.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        disabled_start: null,
+        disabled_end: null,  
+      }),
+    });
 
-      if (!res.ok) throw new Error("Erreur lors du débannissement");
+    if (!res.ok) throw new Error("Erreur lors du débannissement");
 
-      onUnbanSuccess(user.id); 
-      setRemainingTime("");
+    onUnbanSuccess(user.id); 
+    setRemainingTime(""); 
+    if (interval) clearInterval(interval);
   };
 
   return (

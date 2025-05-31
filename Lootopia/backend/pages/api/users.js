@@ -46,10 +46,12 @@ export default async function handler(req, res) {
         ).padStart(2, "0")}:00`;
       }
       if (disabled_start !== undefined) {
-        updateData.disabled_start = new Date(disabled_start);
+        updateData.disabled_start =
+          disabled_start === null ? null : new Date(disabled_start);
       }
       if (disabled_end !== undefined) {
-        updateData.disabled_end = new Date(disabled_end);
+        updateData.disabled_end =
+          disabled_end === null ? null : new Date(disabled_end);
       }
 
       if (Object.keys(updateData).length === 0) {
