@@ -9,16 +9,20 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useLocation } from 'wouter';
 import { getSession, clearSession } from '@/app/src/services/authService'; 
-import '../../../app/src/styles.css'; 
+import { useRouter } from 'expo-router';
+import { Colors } from '@/constants/Colors';
 
-export const SideMenu: React.FC = () => {
+interface SideMenuProps {
+  theme: typeof Colors.light;
+}
+
+export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
   const { width, height } = useWindowDimensions();
-  const [, setLocation] = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null); 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); 
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -73,7 +77,7 @@ export const SideMenu: React.FC = () => {
   const handleLogout = async () => {
     await clearSession(); 
     setIsLoggedIn(false);
-    setLocation('/login');
+    router.push('/login');
   };
 
   return (
@@ -89,7 +93,7 @@ export const SideMenu: React.FC = () => {
     >
       <ImageBackground
         source={
-          isDarkMode
+          theme === Colors.dark
             ? require('@/assets/images/menu-background-dark.png')
             : require('@/assets/images/menu-background.png')
         }
@@ -103,7 +107,7 @@ export const SideMenu: React.FC = () => {
         }}
       >
         <TouchableOpacity
-          onPress={() => setLocation('/')}
+          onPress={() => router.push('/')}
           style={{
             alignSelf: 'center',
             padding: 10,
@@ -134,7 +138,7 @@ export const SideMenu: React.FC = () => {
                 if (item.label === 'Déconnexion') {
                   handleLogout();
                 } else {
-                  setLocation(item.to);
+                  router.push(item.to as any);
                 }
               }}
               style={{

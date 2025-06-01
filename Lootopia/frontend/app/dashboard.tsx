@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getSession } from "../../services/authService";
-import "../../../src/styles.css";
+import { getSession } from "./src/services/authService";
+import './src/styles.css';
 import { UserRow } from "@/components/ui/dashboard/UserRow";
 import { BanUserModal } from "@/components/ui/dashboard/BanUserModal";
 

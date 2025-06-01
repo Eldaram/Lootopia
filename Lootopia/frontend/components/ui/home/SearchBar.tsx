@@ -1,31 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import '../../../app/src/styles.css';
+import { Colors } from '@/constants/Colors';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  theme: typeof Colors.light;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
   const [query, setQuery] = useState('');
+  const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5);
+
+  useLayoutEffect(() => {
+    const updateInputWidth = () => {
+      const screenWidth = Dimensions.get('window').width;
+      setInputWidth(screenWidth * 0.5);
+    };
+
+    updateInputWidth();
+
+    const subscription = Dimensions.addEventListener('change', updateInputWidth);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const handleSearch = () => {
     onSearch(query);
   };
 
   return (
-    <div className="search-bar">
-       <button onClick={handleSearch} className="icon-button">
-        <Icon name="search" size={16} />
-      </button>
-      <input
-        type="text"
-        placeholder="Rechercher..."
-        className="search-input"
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme.cardBackground,
+        padding: 10,
+        borderRadius: 12,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        marginBottom: 20,
+        marginHorizontal: 20,
+      }}
+    >
+      <TextInput
+        style={{
+          flex: 1,
+          width: inputWidth,
+          height: 40,
+          paddingLeft: 10,
+          fontSize: 16,
+          borderRadius: 12,
+          color: theme.text, 
+          backgroundColor: theme.background, 
+        }}
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChangeText={setQuery}
+        placeholder="Rechercher..."
+        placeholderTextColor={theme.icon} 
       />
-    </div>
+      <TouchableOpacity onPress={handleSearch} style={{ padding: 10 }}>
+        <Icon name="search" size={20} color={theme.icon} /> 
+      </TouchableOpacity>
+    </View>
   );
 };
 

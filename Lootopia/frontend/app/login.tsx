@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert } from "react-native";
 import { useLocation } from "wouter";
 import { storeSession } from "@/app/src/services/authService";
+import './src/styles.css';
 
 //login en attendant session utilisateur
 const LoginScreen = () => {

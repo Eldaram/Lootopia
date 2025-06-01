@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../../src/styles.css';
+import './src/styles.css';
 
 export const ProfileScreen = () => {
   return (
