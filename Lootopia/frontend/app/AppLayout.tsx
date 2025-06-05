@@ -39,7 +39,7 @@ const themeName = isDarkMode ? 'dark' : 'light';
       toValue,
       duration: 300,
       useNativeDriver: true,
-    }).start();
+    }).start();    
   
     setIsMenuOpen(!isMenuOpen);
   };  
@@ -50,7 +50,7 @@ const themeName = isDarkMode ? 'dark' : 'light';
       Animated.timing(menuTranslateX, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start();      
     }
   };
@@ -70,7 +70,13 @@ const themeName = isDarkMode ? 'dark' : 'light';
         </>
       )}
   
-      <Animated.View style={{ flex: 1, width: '100%', marginLeft: menuTranslateX }}>
+        <Animated.View
+        style={{
+          flex: 1,
+          width: '100%',
+          transform: [{ translateX: menuTranslateX }],
+        }}
+      >
         <View style={{ flexDirection: Platform.OS === 'web' && screenWidth < 768 ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10 }}>
           <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={toggleMenu}>
             <Icon name="bars" size={40} color={theme.icon} />

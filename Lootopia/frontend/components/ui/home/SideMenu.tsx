@@ -7,6 +7,7 @@ import {
   ImageBackground,
   ScrollView,
   useWindowDimensions,
+  useColorScheme,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getSession, clearSession } from '@/app/src/services/authService'; 
@@ -19,10 +20,11 @@ interface SideMenuProps {
 
 export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
   const { width, height } = useWindowDimensions();
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null); 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); 
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -37,17 +39,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
     };
 
     fetchUserRole();
-    const checkDarkMode = () => {
-      const darkModeEnabled = document.documentElement.classList.contains('dark');
-      setIsDarkMode(darkModeEnabled);
-    };
-
-    checkDarkMode();
-    window.addEventListener('darkmodechange', checkDarkMode);
-
-    return () => {
-      window.removeEventListener('darkmodechange', checkDarkMode);
-    };
   }, []); 
 
   const menuItems = [

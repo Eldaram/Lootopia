@@ -3,7 +3,7 @@ import { serialize } from "cookie";
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     return res.status(200).end();
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     });
 
     res.setHeader("Set-Cookie", cookie);
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
