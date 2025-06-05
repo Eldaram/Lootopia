@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert } from "react-native";
-import { useLocation } from "wouter";
 import { storeSession } from "@/app/src/services/authService";
+import { useRouter } from "expo-router";
 import './src/styles.css';
 
-//login en attendant session utilisateur
 const LoginScreen = () => {
   const [email, setEmail] = useState("admin@gmail.com");
   const [password, setPassword] = useState("admin");
-  const [_, setLocation] = useLocation();
+
+  const router = useRouter(); 
 
   const login = async () => {
     try {
@@ -23,7 +23,9 @@ const LoginScreen = () => {
       if (data.success) {
         await storeSession(data.user);
         Alert.alert("Connecté en tant que", data.user.role);
-        setLocation("/");
+        
+        router.push("/");
+        
       } else {
         Alert.alert("Erreur", "Identifiants incorrects");
       }

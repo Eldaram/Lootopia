@@ -8,6 +8,7 @@ import {
   ScrollView,
   useWindowDimensions,
   useColorScheme,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getSession, clearSession } from '@/app/src/services/authService'; 
@@ -25,6 +26,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
+  const buttonWidth = Platform.OS === 'android' ? 170 : 190;
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -77,7 +79,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: width * 0.19,
+        width: width < 768 ? width * 0.7 : width * 0.2,
         height: height,
         zIndex: 1000,
       }}
@@ -144,6 +146,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
                 shadowOpacity: 0.1,
                 shadowRadius: 4,
                 elevation: 2,
+                width: buttonWidth,
               }}
             >
               <View style={{ width: 30, alignItems: 'center' }}>

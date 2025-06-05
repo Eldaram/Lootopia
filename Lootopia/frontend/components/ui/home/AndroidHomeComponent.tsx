@@ -19,26 +19,6 @@ interface ShopOffer {
   description: string;
 }
 
-interface MenuProps {
-  toggleMenu: () => void;
-}
-
-export const Menu: React.FC<MenuProps> = ({ toggleMenu }) => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
-
-  return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-      <TouchableOpacity onPress={toggleMenu}>
-        <Icon name="bars" size={40} color={theme.icon} />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Icon name="user-circle" size={40} color={theme.icon} />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 //TODO : changer Stanly par le username
 export const Header = () => {
   const colorScheme = useColorScheme();

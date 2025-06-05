@@ -22,10 +22,12 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   const [menuTranslateX, setMenuTranslateX] = useState(new Animated.Value(0));
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
-   const systemColorScheme = useColorScheme(); 
-   const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
-const themeName = isDarkMode ? 'dark' : 'light'; 
+  const systemColorScheme = useColorScheme(); 
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
+  const themeName = isDarkMode ? 'dark' : 'light'; 
   const theme = Colors[themeName];  
+  const menuWidth = Platform.OS === 'web' ? screenWidth * 0.2 : screenWidth * 0.8;
+  const isSmallScreen = screenWidth < 768;
   
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
@@ -64,36 +66,46 @@ const themeName = isDarkMode ? 'dark' : 'light';
             activeOpacity={1}
             onPress={handleOutsidePress}
           />
-          <ScrollView style={{ position: 'absolute', top: 0, left: 0, width: '20%', height: '100%', zIndex: 20 }}>
+          <ScrollView style={{ position: 'absolute', top: 0, left: 0, width: menuWidth, height: '100%', zIndex: 20 }}>
             <SideMenu theme={theme}/>
           </ScrollView>
         </>
       )}
   
-        <Animated.View
+      <Animated.View
         style={{
           flex: 1,
           width: '100%',
           transform: [{ translateX: menuTranslateX }],
         }}
       >
-        <View style={{ flexDirection: Platform.OS === 'web' && screenWidth < 768 ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10 }}>
+        <View style={{ 
+          // For Android, align items horizontally
+          flexDirection: Platform.OS === 'android' ? 'row' : (isSmallScreen ? 'column' : 'row'),
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: 10 
+        }}>
           <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={toggleMenu}>
             <Icon name="bars" size={40} color={theme.icon} />
           </TouchableOpacity>
   
-          <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
-            setIsMenuOpen(false); 
-            router.push('/');
-          }}>
-            <Image source={require('@/assets/images/logo.png')} style={{ width: 120, height: 120, resizeMode: 'contain' }} />
-          </TouchableOpacity>
+          {Platform.OS !== 'android' && (
+            <>
+              <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
+                setIsMenuOpen(false); 
+                router.push('/');
+              }}>
+                <Image source={require('@/assets/images/logo.png')} style={{ width: 120, height: 120, resizeMode: 'contain' }} />
+              </TouchableOpacity>
   
-          <SearchBar onSearch={setSearchQuery} theme={theme}/>
+              <SearchBar onSearch={setSearchQuery} theme={theme}/>
+            </>
+          )}
   
           <View style={{ flexDirection: Platform.OS === 'web' && screenWidth < 768 ? 'column' : 'row', alignItems: 'center' }}>
             <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={toggleTheme}>
-            <Icon name={themeName === 'light' ? 'moon-o' : 'sun-o'} size={30} color={theme.icon} />
+              <Icon name={themeName === 'light' ? 'moon-o' : 'sun-o'} size={30} color={theme.icon} />
             </TouchableOpacity>
             <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
               setIsMenuOpen(false);

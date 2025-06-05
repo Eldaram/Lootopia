@@ -1,4 +1,4 @@
-import { BoutiqueSection, ButtonGrid, EvenementsSection, Header, Menu } from '@/components/ui/home/AndroidHomeComponent';
+import { BoutiqueSection, ButtonGrid, EvenementsSection, Header } from '@/components/ui/home/AndroidHomeComponent';
 import { BottomBar } from '@/components/ui/home/BottomBar';
 import EvenementCard from '@/components/ui/home/EvenementCard';
 import HuntingCard from '@/components/ui/home/HuntingCard';
@@ -59,16 +59,12 @@ export default function Home() {
     return (
       <View style={{ flex: 1, backgroundColor: theme.background }}>
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-          <Menu toggleMenu={toggleMenu} />
           <Header />
           <ButtonGrid />
           <EvenementsSection />
           <BoutiqueSection />
         </ScrollView>
         <BottomBar />
-        <TouchableOpacity onPress={toggleDarkMode} style={{ position: 'absolute', bottom: 20, right: 20 }}>
-          <Icon name={isDarkMode ? 'sun-o' : 'moon-o'} size={30} color={theme.icon} />
-        </TouchableOpacity>
       </View>
     );
   }
