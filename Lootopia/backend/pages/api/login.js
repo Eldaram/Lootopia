@@ -2,16 +2,13 @@ import db from "../../services/db";
 import { serialize } from "cookie";
 
 export default async function handler(req, res) {
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    return res.status(200).end();
-  }
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method !== "POST") {
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST")
     return res.status(405).json({ message: "Méthode non autorisée" });
-  }
 
   const { email, password } = req.body;
 
@@ -20,6 +17,21 @@ export default async function handler(req, res) {
 
     if (!user) {
       return res.status(401).json({ message: "Identifiants invalides" });
+    }
+
+    if (parseInt(user.status) === 1) {
+      return res.status(403).json({ message: "Ce compte est désactivé." });
+    }
+
+    const now = new Date();
+    if (user.disabled_end && new Date(user.disabled_end) > now) {
+      const banEnd = new Date(user.disabled_end).toLocaleString("fr-FR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+      return res
+        .status(403)
+        .json({ message: `Ce compte est banni jusqu'au ${banEnd}.` });
     }
 
     const session = {
@@ -32,14 +44,10 @@ export default async function handler(req, res) {
     const cookie = serialize("session", JSON.stringify(session), {
       httpOnly: true,
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 jour de connexion
+      maxAge: 60 * 60 * 24, // 1 jour
     });
 
     res.setHeader("Set-Cookie", cookie);
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
     return res.status(200).json({ success: true, user: session });
   } catch (error) {
     console.error("Erreur login:", error);
