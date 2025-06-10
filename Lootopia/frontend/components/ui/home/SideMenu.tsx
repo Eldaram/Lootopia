@@ -16,10 +16,10 @@ import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 
 interface SideMenuProps {
-  theme: typeof Colors.light;
+  themeColors: typeof Colors.light;
 }
 
-export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
+export const SideMenu: React.FC<SideMenuProps> = ({ themeColors })=> {
   const { width, height } = useWindowDimensions();
   const [userRole, setUserRole] = useState<string | null>(null); 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); 
@@ -86,7 +86,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ theme })=> {
     >
       <ImageBackground
         source={
-          theme === Colors.dark
+          themeColors === Colors.dark
             ? require('@/assets/images/menu-background-dark.png')
             : require('@/assets/images/menu-background.png')
         }

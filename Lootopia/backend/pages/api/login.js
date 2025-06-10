@@ -39,12 +39,13 @@ export default async function handler(req, res) {
       email: user.email,
       role: user.role,
       username: user.username,
+      appearance_id: user.appearance_id,
     };
 
     const cookie = serialize("session", JSON.stringify(session), {
       httpOnly: true,
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 jour
+      maxAge: 60 * 60 * 24,
     });
 
     res.setHeader("Set-Cookie", cookie);

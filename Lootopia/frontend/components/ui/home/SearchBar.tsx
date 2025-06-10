@@ -5,10 +5,10 @@ import { Colors } from '@/constants/Colors';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  theme: typeof Colors.light;
+  themeColors: typeof Colors.light;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, themeColors }) => {
   const [query, setQuery] = useState('');
   const [inputWidth, setInputWidth] = useState(Dimensions.get('window').width * 0.5);
 
@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: theme.cardBackground,
+        backgroundColor: themeColors.cardBackground,
         padding: 10,
         borderRadius: 12,
         elevation: 3,
@@ -56,16 +56,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, theme }) => {
           paddingLeft: 10,
           fontSize: 16,
           borderRadius: 12,
-          color: theme.text, 
-          backgroundColor: theme.background, 
+          color: themeColors.text, 
+          backgroundColor: themeColors.background, 
         }}
         value={query}
         onChangeText={setQuery}
         placeholder="Rechercher..."
-        placeholderTextColor={theme.icon} 
+        placeholderTextColor={themeColors.icon} 
       />
       <TouchableOpacity onPress={handleSearch} style={{ padding: 10 }}>
-        <Icon name="search" size={20} color={theme.icon} /> 
+        <Icon name="search" size={20} color={themeColors.icon} /> 
       </TouchableOpacity>
     </View>
   );
