@@ -132,9 +132,13 @@ export const DashboardScreen = () => {
         <Picker
           selectedValue={filterRole}
           onValueChange={setFilterRole}
-          style={[styles.filterPicker]}
+          style={[styles.filterPicker,{
+            backgroundColor: themeColors.cardBackground,
+            color: themeColors.text,
+            borderColor: themeColors.background,
+          },]}
         >
-          <Picker.Item label="Tous rôles" value="all" />
+          <Picker.Item label="Tous les rôles" value="all" />
           <Picker.Item label="Admin" value="admin" />
           <Picker.Item label="User" value="user" />
           <Picker.Item label="Modérateur" value="moderator" />
@@ -143,9 +147,13 @@ export const DashboardScreen = () => {
         <Picker
           selectedValue={filterStatus}
           onValueChange={setFilterStatus}
-          style={[styles.filterPicker]}
+          style={[styles.filterPicker,{
+            backgroundColor: themeColors.cardBackground,
+            color: themeColors.text,
+            borderColor: themeColors.background,
+          },]}
         >
-          <Picker.Item label="Tous statuts" value="all" />
+          <Picker.Item label="Tous les statuts" value="all" />
           <Picker.Item label="Actif" value="active" />
           <Picker.Item label="Inactif" value="inactive" />
         </Picker>
@@ -219,6 +227,7 @@ const styles = StyleSheet.create({
   filterPicker: {
     flex: 0.9,
     height: Platform.OS === "web" ? 40 : 50,
+    borderRadius: 8,
   },
   tableHeader: {
     flexDirection: "row",
