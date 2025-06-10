@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
-import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { ToggleSwitch } from "@/components/ui/dashboard/ToggleSwitch"; 
+import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '@/constants/ThemeProvider'; 
+import { Colors } from "@/constants/Colors";
 
 interface UserRowProps {
   user: any;
@@ -9,7 +13,16 @@ interface UserRowProps {
   onUnbanSuccess: (userId: number) => void;
 }
 
-export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnbanSuccess }: UserRowProps) => {
+export const UserRow = ({
+  user,
+  onToggleStatus,
+  onChangeRole,
+  onBanClick,
+  onUnbanSuccess,
+}: UserRowProps) => {
+  const { theme } = useTheme();
+  const themeColors = Colors[theme]; 
+
   const [remainingTime, setRemainingTime] = useState<string>("");
   const [interval, setIntervalState] = useState<NodeJS.Timeout | null>(null);
 
@@ -63,53 +76,110 @@ export const UserRow = ({ user, onToggleStatus, onChangeRole, onBanClick, onUnba
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         disabled_start: null,
-        disabled_end: null,  
+        disabled_end: null,
       }),
     });
 
     if (!res.ok) throw new Error("Erreur lors du débannissement");
 
-    onUnbanSuccess(user.id); 
-    setRemainingTime(""); 
+    onUnbanSuccess(user.id);
+    setRemainingTime("");
     if (interval) clearInterval(interval);
   };
 
   return (
-    <div className="dashboard-table-row">
-      <span className="dashboard-cell">
-        <ToggleSwitch
-          checked={user.status === 1}
-          onChange={() => onToggleStatus(user.id, user.status)}
-        />
+    <View style={[styles.row, { backgroundColor: themeColors.cardBackground }]}>
+      <View style={styles.cell}>
+        <View style={styles.toggleContainer}>
+          <ToggleSwitch
+            checked={user.status === 1}
+            onChange={() => onToggleStatus(user.id, user.status)}
+          />
+          {!remainingTime ? (
+            <TouchableOpacity style={[styles.banButton, { backgroundColor: themeColors.warning }]} onPress={() => onBanClick(user.id)}>
+              <Text style={[styles.banButtonText, { color: themeColors.text }]}>Bannir</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.banInfo}>
+              <Text style={[styles.banTimer, { color: themeColors.warning }]}>⏳ {remainingTime}</Text>
+              <TouchableOpacity style={[styles.unbanButton, { backgroundColor: themeColors.success }]} onPress={handleUnbanClick}>
+                <Text style={styles.unbanButtonText}>Débannir</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
 
-        {!remainingTime ? (
-          <button className="ban-button" onClick={() => onBanClick(user.id)}>
-            Bannir
-          </button>
-        ) : (
-          <span className="ban-info">
-            <span className="ban-timer">⏳ {remainingTime}</span>
-            <button className="unban-button" onClick={handleUnbanClick}>
-              Débannir
-            </button>
-          </span>
-        )}
-      </span>
-
-      <span className="dashboard-cell">{user.username}</span>
-      <span className="dashboard-cell">{user.email}</span>
-      <span className="dashboard-cell">
-        <select
-          value={user.role}
-          onChange={(e) => onChangeRole(user.id, e.target.value)}
-          className="role-select"
+      <View style={styles.cell}>
+        <Text style={{ color: themeColors.text }}>{user.username}</Text>
+      </View>
+      <View style={styles.cell}>
+        <Text style={{ color: themeColors.text }}>{user.email}</Text>
+      </View>
+      <View style={styles.cell}>
+        <Picker
+          selectedValue={user.role}
+          onValueChange={(value) => onChangeRole(user.id, value)}
+          style={[styles.rolePicker, { backgroundColor: themeColors.cardBackground, color: themeColors.text, borderColor: themeColors.background }]}
         >
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-          <option value="moderator">Modérateur</option>
-          <option value="organizer">Organisateur</option>
-        </select>
-      </span>
-    </div>
+          <Picker.Item label="Admin" value="admin" />
+          <Picker.Item label="User" value="user" />
+          <Picker.Item label="Modérateur" value="moderator" />
+          <Picker.Item label="Organisateur" value="organizer" />
+        </Picker>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  cell: {
+    flex: 1,
+    alignItems: "center",
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  banButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  banButtonText: {
+    fontSize: 16,
+  },
+  banInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  banTimer: {
+    marginRight: 8,
+    fontSize: 14,
+  },
+  unbanButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  unbanButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  rolePicker: {
+    height: 50,
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 2,
+  },
+});
+
