@@ -1,18 +1,117 @@
+// import { BoutiqueSection, ButtonGrid, EvenementsSection, Header } from '@/components/ui/home/AndroidHomeComponent';
+// import { BottomBar } from '@/components/ui/home/BottomBar';
+// import EvenementCard from '@/components/ui/home/EvenementCard';
+// import HuntingCard from '@/components/ui/home/HuntingCard';
+// import { Colors } from '@/constants/Colors';
+// import { useState } from 'react';
+// import { Animated, Dimensions, Platform, ScrollView, TouchableOpacity, TouchableWithoutFeedback, useColorScheme } from 'react-native';
+// import { Text, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+
+// export default function Home() {
+//   const screenWidth = Dimensions.get('window').width;
+//   const systemColorScheme = useColorScheme();
+//   const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
+//   const theme = Colors[isDarkMode ? 'dark' : 'light'];
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const [menuTranslateX] = useState(new Animated.Value(0));
+//   const [searchQuery, setSearchQuery] = useState('');
+
+//   const handleOutsidePress = () => {
+//     if (isMenuOpen) {
+//       setIsMenuOpen(false);
+//       Animated.timing(menuTranslateX, {
+//         toValue: 0,
+//         duration: 300,
+//         useNativeDriver: true,
+//       }).start();
+//     }
+//   };
+
+//   const handleSearch = (query: string) => {
+//     setSearchQuery(query);
+//     console.log('Search Query:', query);
+//   };
+
+//   const toggleMenu = () => {
+//     if (isMenuOpen) {
+//       setIsMenuOpen(false);
+//       Animated.timing(menuTranslateX, {
+//         toValue: 0,
+//         duration: 300,
+//         useNativeDriver: true,
+//       }).start();
+//     } else {
+//       setIsMenuOpen(true);
+//       Animated.timing(menuTranslateX, {
+//         toValue: screenWidth * 0.2,
+//         duration: 300,
+//         useNativeDriver: true,
+//       }).start();
+//     }
+//   };
+
+//   const toggleDarkMode = () => {
+//     setIsDarkMode((prevMode) => !prevMode);
+//   };
+
+//   if (Platform.OS === 'android') {
+//     return (
+//       <View style={{ flex: 1, backgroundColor: theme.background }}>
+//         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+//           <Header />
+//           <ButtonGrid />
+//           <EvenementsSection />
+//           <BoutiqueSection />
+//         </ScrollView>
+//         <BottomBar />
+//       </View>
+//     );
+//   }
+
+//   if (Platform.OS === 'web') {
+//     return (
+//       <View style={{ flex: 1, backgroundColor: theme.background }}>
+//         <TouchableWithoutFeedback onPress={handleOutsidePress}>
+//           <View style={{ flex: 1 }}>
+//             <Animated.View
+//               style={{
+//                 flex: 1,
+//                 marginLeft: menuTranslateX,
+//               }}
+//             >
+//               <ScrollView
+//                 style={{
+//                   flex: 1,
+//                   padding: 16,
+//                   backgroundColor: theme.background,
+//                 }}
+//               >
+//                 <HuntingCard theme={theme} />
+//                 <EvenementCard theme={theme} />
+//               </ScrollView>
+//             </Animated.View>
+//           </View>
+//         </TouchableWithoutFeedback>
+//       </View>
+//     );
+//   }
+// }
 import { BoutiqueSection, ButtonGrid, EvenementsSection, Header } from '@/components/ui/home/AndroidHomeComponent';
 import { BottomBar } from '@/components/ui/home/BottomBar';
 import EvenementCard from '@/components/ui/home/EvenementCard';
 import HuntingCard from '@/components/ui/home/HuntingCard';
 import { Colors } from '@/constants/Colors';
 import { useState } from 'react';
-import { Animated, Dimensions, Platform, ScrollView, TouchableOpacity, TouchableWithoutFeedback, useColorScheme } from 'react-native';
+import { Animated, Dimensions, Platform, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useTheme } from '@/constants/ThemeProvider'; // ✅ importer le hook de thème
 
 export default function Home() {
   const screenWidth = Dimensions.get('window').width;
-  const systemColorScheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
-  const theme = Colors[isDarkMode ? 'dark' : 'light'];
+  const { theme } = useTheme(); // ✅ hook global
+  const themeColors = Colors[theme]; // ✅ application du thème
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuTranslateX] = useState(new Animated.Value(0));
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,30 +133,18 @@ export default function Home() {
   };
 
   const toggleMenu = () => {
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-      Animated.timing(menuTranslateX, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      setIsMenuOpen(true);
-      Animated.timing(menuTranslateX, {
-        toValue: screenWidth * 0.2,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const toggleDarkMode = () => {
-    setIsDarkMode((prevMode) => !prevMode);
+    const toValue = isMenuOpen ? 0 : screenWidth * 0.2;
+    Animated.timing(menuTranslateX, {
+      toValue,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setIsMenuOpen(!isMenuOpen);
   };
 
   if (Platform.OS === 'android') {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1, backgroundColor: themeColors.background }}>
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
           <Header />
           <ButtonGrid />
@@ -71,7 +158,7 @@ export default function Home() {
 
   if (Platform.OS === 'web') {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1, backgroundColor: themeColors.background }}>
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
           <View style={{ flex: 1 }}>
             <Animated.View
@@ -84,11 +171,11 @@ export default function Home() {
                 style={{
                   flex: 1,
                   padding: 16,
-                  backgroundColor: theme.background,
+                  backgroundColor: themeColors.background,
                 }}
               >
-                <HuntingCard theme={theme} />
-                <EvenementCard theme={theme} />
+                <HuntingCard theme={themeColors} />
+                <EvenementCard theme={themeColors} />
               </ScrollView>
             </Animated.View>
           </View>
