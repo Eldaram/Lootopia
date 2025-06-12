@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Text, FlatList, Dimensions, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { getSession } from '@/app/src/services/authService';
+import { useTheme } from '@/constants/ThemeProvider';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -19,24 +20,39 @@ interface ShopOffer {
   description: string;
 }
 
-//TODO : changer Stanly par le username
 export const Header = () => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
+ const { theme, toggleTheme } = useTheme();
+   const themeName = theme;
+   const themeColors = Colors[themeName];
+   const [userName, setUserName] = useState<string | null>(null); 
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+    useEffect(() => {
+      const fetchUserSession = async () => {
+        const session = await getSession();
+        if (session) {
+          setUserName(session.username);
+          setIsLoggedIn(true);
+        }
+      };
+    
+      fetchUserSession();
+    }, []);    
 
   return (
     <View style={{ marginVertical: 20 }}>
-      <Text style={{ fontSize: 36, fontWeight: 'bold', color: theme.text }}>
-        Hi! Stanly <Text style={{ fontSize: 30, marginLeft: 10 }}>🖐️</Text>
+      <Text style={{ fontSize: 36, fontWeight: 'bold', color: themeColors.text }}>
+        Hi! {userName ?? 'Invité'} <Text style={{ fontSize: 30, marginLeft: 10 }}>🖐️</Text>
       </Text>
-      <Text style={{ fontSize: 12, color: theme.icon }}>Welcome Back</Text>
+      <Text style={{ fontSize: 12, color: themeColors.icon }}>Welcome Back</Text>
     </View>
   );
 };
 
 export const ButtonGrid = () => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
+  const { theme, toggleTheme } = useTheme();
+   const themeName = theme;
+   const themeColors = Colors[themeName];
 
   const buttons = ['Organiser', 'Chasses disponibles', 'Mes chasses', 'Mes artéfacts'];
 
@@ -45,11 +61,7 @@ export const ButtonGrid = () => {
       {buttons.map((text, index) => (
         <TouchableOpacity key={index} style={{ width: '48%', height: 120, marginBottom: 16 }}>
           <LinearGradient
-            colors={
-              index % 3 === 0
-                ? [theme.tint, theme.background]
-                : [theme.background, theme.tint]
-            }
+            colors={index % 3 === 0 ? ['#F9968B', '#FF6347'] : ['#176A6C', '#2CCED2']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -61,6 +73,10 @@ export const ButtonGrid = () => {
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.8,
               shadowRadius: 2,
+              borderTopRightRadius: index === 3 ? 100 : 100,
+              borderTopLeftRadius: 20,
+              borderBottomRightRadius: index === 3 ? 20 : 20, 
+              borderBottomLeftRadius: 20,
             }}
           >
             <Icon name={index % 2 === 0 ? 'map' : 'search'} size={30} color="white" />
@@ -72,10 +88,10 @@ export const ButtonGrid = () => {
   );
 };
 
-//TODO: a remplacer par 3 events au hazard
 export const EvenementsSection = () => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
+  const { theme, toggleTheme } = useTheme();
+   const themeName = theme;
+   const themeColors = Colors[themeName];
 
   const eventsData: Event[] = [
     { id: '1', title: 'Chasse 1', description: 'Chasse à la créature mystérieuse.' },
@@ -88,7 +104,7 @@ export const EvenementsSection = () => {
       style={{
         marginRight: 16,
         width: screenWidth * 0.6,
-        backgroundColor: theme.tint,
+        backgroundColor: themeColors.cardBackground,
         borderRadius: 10,
         padding: 16,
         shadowColor: '#000',
@@ -127,7 +143,7 @@ export const EvenementsSection = () => {
 
   return (
     <View>
-      <Text style={{ fontWeight: 'bold', fontSize: 20, marginVertical: 20, color: theme.text }}>
+      <Text style={{ fontWeight: 'bold', fontSize: 20, marginVertical: 20, color: themeColors.text }}>
         Événements
       </Text>
       <FlatList
@@ -143,8 +159,10 @@ export const EvenementsSection = () => {
 
 //TODO : remplacer donnée par 2 offre boutique au hazard
 export const BoutiqueSection = () => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
+  const { theme, toggleTheme } = useTheme();
+   const themeName = theme;
+   const themeColors = Colors[themeName];
+
 
   const shopOffers: ShopOffer[] = [
     { id: '1', title: 'Pack de Chasses', description: 'Augmente ton nombre de chasses disponibles.' },
@@ -156,7 +174,7 @@ export const BoutiqueSection = () => {
       style={{
         flex: 1,
         marginRight: 8,
-        backgroundColor: theme.cardBackground,
+        backgroundColor: themeColors.cardBackground,
         padding: 12,
         borderRadius: 10,
         shadowColor: '#000',
@@ -165,20 +183,20 @@ export const BoutiqueSection = () => {
         shadowRadius: 4,
       }}
     >
-      <Text style={{ fontWeight: 'bold', fontSize: 16, color: theme.text }}>{item.title}</Text>
-      <Text style={{ fontSize: 12, color: theme.icon }}>{item.description}</Text>
+      <Text style={{ fontWeight: 'bold', fontSize: 16, color: themeColors.text }}>{item.title}</Text>
+      <Text style={{ fontSize: 12, color: themeColors.icon }}>{item.description}</Text>
     </View>
   );
 
   return (
     <View>
-      <Text style={{ fontWeight: 'bold', fontSize: 20, marginVertical: 20, color: theme.text }}>
+      <Text style={{ fontWeight: 'bold', fontSize: 20, marginVertical: 20, color: themeColors.text }}>
         Boutique
       </Text>
 
       <View
         style={{
-          backgroundColor: theme.background,
+          backgroundColor: themeColors.background,
           padding: 16,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },

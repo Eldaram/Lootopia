@@ -122,12 +122,14 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
         <View style={{ 
           flexDirection: Platform.OS === 'android' ? 'row' : (isSmallScreen ? 'column' : 'row'),
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: Platform.OS === 'android' ? 'flex-end' : 'space-between',
           padding: 10 
         }}>
-          <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={toggleMenu}>
-            <Icon name="bars" size={40} color={themeColors.icon} />
-          </TouchableOpacity>
+          {Platform.OS === 'web' && (
+              <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={toggleMenu}>
+                <Icon name="bars" size={40} color={themeColors.icon} />
+                </TouchableOpacity>
+            )}
   
           {Platform.OS !== 'android' && (
             <>
