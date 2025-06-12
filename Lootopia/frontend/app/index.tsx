@@ -51,7 +51,6 @@ export default function Home() {
           <EvenementsSection />
           <BoutiqueSection />
         </ScrollView>
-        <BottomBar />
       </View>
     );
   }
