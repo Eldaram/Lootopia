@@ -93,6 +93,8 @@ export default function HuntsScreen() {
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false} 
       />
     </View>
   );
