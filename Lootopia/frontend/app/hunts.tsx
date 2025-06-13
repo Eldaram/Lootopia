@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 
 type Hunt = {
   id: number;
@@ -20,6 +21,7 @@ type Hunt = {
 
 export default function HuntsScreen() {
   const [hunts, setHunts] = useState<Hunt[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchHunts() {
@@ -68,7 +70,10 @@ export default function HuntsScreen() {
               )}
             </View>
   
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } })}
+            >
               <Text style={styles.buttonText}>Participer</Text>
             </TouchableOpacity>
           </View>
