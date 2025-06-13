@@ -1,10 +1,10 @@
 // aide.tsx
 import { View, Text } from 'react-native';
 
-export default function MesChassesScreen() {
+export default function CreateHuntScreen() {
   return (
     <View>
-      <Text>Mes Chasses</Text>
+      <Text>Organiser</Text>
     </View>
   );
 }

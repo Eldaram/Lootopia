@@ -38,7 +38,7 @@ export const BottomBar = () => {
 
       <TouchableOpacity
         style={{ alignItems: 'center', zIndex: 1 }}
-        onPress={() => router.push('/')}  // Navigation vers la page d'accueil
+        onPress={() => router.push('/')}
       >
         <Image
           source={require('@/assets/images/home-logo.png')}
@@ -54,7 +54,7 @@ export const BottomBar = () => {
 
       <TouchableOpacity
         style={{ alignItems: 'center' }}
-        onPress={() => router.push('/boutique')}  
+        onPress={() => router.push('/shop')}  
       >
         <Icon name="shopping-cart" size={24} color="#fff" />
         <Text style={{ color: '#fff', fontSize: 12, marginTop: 4 }}>Boutique</Text>

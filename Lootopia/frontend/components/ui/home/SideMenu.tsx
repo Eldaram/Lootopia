@@ -45,21 +45,21 @@ export const SideMenu: React.FC<SideMenuProps> = ({ themeColors })=> {
 
   const menuItems = [
     { label: 'Accueil', icon: 'home', to: '/' },
-    { label: 'Organiser', icon: 'cogs', to: '/organiser', role: 'admin' }, 
-    { label: 'Mes Chasses', icon: 'bullseye', to: '/mes-chasses' },
-    { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' },
+    { label: 'Organiser', icon: 'cogs', to: '/createHunts', role: 'admin' }, 
+    { label: 'Mes Chasses', icon: 'bullseye', to: '/myHunts' },
+    { label: 'Chasses disponibles', icon: 'gamepad', to: '/hunts' },
     { label: 'Artefacts', icon: 'gem', to: '/artefacts' },
     { label: 'Classement', icon: 'list', to: '/classement' },
     { label: 'Tableau de bord', icon: 'tachometer', to: '/dashboard', role: 'admin' },
-    { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' },
-    { label: 'Aide', icon: 'question-circle', to: '/aide' },
+    { label: 'Boutique', icon: 'shopping-cart', to: '/shop' },
+    { label: 'Aide', icon: 'question-circle', to: '/help' },
     { label: 'Connexion', icon: 'sign-in', to: '/login' }, 
     { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion' },
   ];
 
   const filteredMenuItems = menuItems.filter(item => {
     if (isLoggedIn === false) {
-      return ['/', '/chasses-disponibles', '/classement', '/boutique', '/aide', '/login'].includes(item.to);
+      return ['/', '/hunts', '/classement', '/shop', '/help', '/login'].includes(item.to);
     }
     if (isLoggedIn === true) {
       return item.label !== 'Connexion' && (!item.role || item.role === userRole);
