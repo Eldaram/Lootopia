@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 
 type Hunt = {
@@ -13,10 +7,9 @@ type Hunt = {
   title: string;
   description?: string;
   duration: string;
-  // TODO: récupérer l'image depuis l'API
-  image?: string;        
-  gain?: number;         
-  tag?: string;    
+  image?: string;
+  gain?: number;
+  tag?: string;
 };
 
 export default function HuntsScreen() {
@@ -26,7 +19,7 @@ export default function HuntsScreen() {
   useEffect(() => {
     async function fetchHunts() {
       try {
-        const res = await fetch("http://localhost:3000/api/hunts");
+        const res = await fetch("http://192.168.102.180:3000/api/hunts");
         if (!res.ok) throw new Error("Erreur de récupération des chasses disponibles");
         const data: Hunt[] = await res.json();
         setHunts(data);
@@ -41,35 +34,33 @@ export default function HuntsScreen() {
   const renderItem = ({ item, index }: { item: Hunt; index: number }) => {
     const daysLeft = getDaysLeft(item.duration);
     const circleColor = index % 2 === 0 ? '#76CDCD' : '#26474E';
-  
-    console.log(`ID: ${item.id}, Duration: ${item.duration}, Days Left: ${daysLeft}`);
-  
+
     return (
       <View style={styles.card}>
         <Text style={styles.id}>#{item.id}</Text>
-  
+
         <View style={styles.cardRow}>
           <View style={[styles.circlePlaceholder, { backgroundColor: circleColor }]} />
           <View style={styles.rightContent}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.description}>{item.description || 'Aucune description'}</Text>
-  
+
             <View style={styles.gainContainer}>
               <Text style={styles.gainText}>
                 {item.gain ?? 0} 👑
               </Text>
 
               <Text style={styles.duration}>
-              ⏳ {getDaysLeft(item.duration)} j
+                ⏳ {daysLeft} j
               </Text>
-  
+
               {item.tag && (
                 <View style={styles.tag}>
                   <Text style={styles.tagText}>{item.tag}</Text>
                 </View>
               )}
             </View>
-  
+
             <TouchableOpacity
               style={styles.button}
               onPress={() => router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } })}
@@ -81,7 +72,7 @@ export default function HuntsScreen() {
       </View>
     );
   };
-  
+
   function getDaysLeft(date: string): number {
     const now = new Date();
     const end = new Date(date);
@@ -96,7 +87,7 @@ export default function HuntsScreen() {
         data={hunts}
         renderItem={({ item, index }) => renderItem({ item, index })}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
+        numColumns={Platform.OS === 'android' ? 1 : 2} 
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false} 
@@ -111,7 +102,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   titlePage: {
-    fontSize: 22,
+    fontSize: Platform.OS === 'android' ? 18 : 22, 
     fontWeight: 'bold',
     margin: 10,
   },
@@ -126,12 +117,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     position: 'relative',
+    width: Platform.OS === 'android' ? '100%' : '45%',  
+    height: Platform.OS === 'android' ? 250 : 220, 
   },
   id: {
     position: 'absolute',
     top: 8,
     right: 10,
-    fontSize: 12,
+    fontSize: Platform.OS === 'android' ? 10 : 12,
     color: '#aaa',
   },
   cardRow: {
@@ -139,26 +132,26 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   circlePlaceholder: {
-    height: 200,
-    width: 200,
-    borderRadius: 100,
-    backgroundColor: '#76CDCD', 
+    height: Platform.OS === 'android' ? 120 : 200, 
+    width: Platform.OS === 'android' ? 120 : 200,
+    borderRadius: 100, 
+    backgroundColor: '#76CDCD',
     marginRight: 10,
-  },  
+  },
   rightContent: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
   },
   title: {
-    fontSize: 15,
+    fontSize: Platform.OS === 'android' ? 13 : 15,
     fontWeight: 'bold',
     marginTop: 4,
     marginBottom: 4,
     textAlign: 'left',
   },
   description: {
-    fontSize: 13,
+    fontSize: Platform.OS === 'android' ? 11 : 13, 
     marginBottom: 4,
     textAlign: 'left',
   },
@@ -169,7 +162,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: Platform.OS === 'android' ? 11 : 13, 
   },
   gainContainer: {
     flexDirection: 'row',
@@ -184,7 +177,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: Platform.OS === 'android' ? 11 : 13, 
   },
   tag: {
     backgroundColor: '#4ade80',
@@ -193,7 +186,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   tagText: {
-    fontSize: 12,
+    fontSize: Platform.OS === 'android' ? 10 : 12, 
     fontWeight: 'bold',
     color: '#065f46',
   },
@@ -207,6 +200,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: Platform.OS === 'android' ? 11 : 13, 
   },
 });
+
