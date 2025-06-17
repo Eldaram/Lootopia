@@ -49,6 +49,7 @@ export default function MapScreen() {
     );
   }
 
+  // HTML content for the leaflet map
   const html = `
     <html>
       <head>
