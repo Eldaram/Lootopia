@@ -1,62 +1,46 @@
-
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
-import { useLocalSearchParams } from 'expo-router';
+import type { LocationObjectCoords } from 'expo-location';
 
-export default function HuntDetailScreen() {
-  const { id } = useLocalSearchParams();
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+export default function MapScreen() {
+  const [location, setLocation] = useState<LocationObjectCoords | null>(null);
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission refusée pour accéder à la localisation');
+        alert("Permission refusée");
         return;
       }
-
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation);
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords); 
     })();
   }, []);
 
-  if (!location) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Chargement de la localisation...</Text>
-        {errorMsg && <Text style={{ color: 'red' }}>{errorMsg}</Text>}
-      </View>
-    );
-  }
+  if (!location) return <ActivityIndicator size="large" />;
 
-  const region: Region = {
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
+  const html = `
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+      </head>
+      <body style="margin:0">
+        <div id="map" style="height:100vh;width:100vw;"></div>
+        <script>
+          var map = L.map('map').setView([${location.latitude}, ${location.longitude}], 14);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+          }).addTo(map);
+          L.marker([${location.latitude}, ${location.longitude}]).addTo(map)
+            .bindPopup('Vous êtes ici').openPopup();
+        </script>
+      </body>
+    </html>
+  `;
 
-  return (
-    <View style={{ flex: 1 }}>
-      <MapView style={styles.map} region={region} showsUserLocation={true}>
-        <Marker coordinate={region} title="Vous êtes ici" />
-      </MapView>
-    </View>
-  );
+  return <WebView originWhitelist={['*']} source={{ html }} />;
 }
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  map: {
-    flex: 1,
-  },
-});
-
