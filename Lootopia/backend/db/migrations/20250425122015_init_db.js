@@ -91,6 +91,24 @@ exports.up = async function (knex) {
 
   await knex.schema.createTable("caches", (table) => {
     table.increments("id").primary();
+    table.string("title", 100).notNullable();
+    table.string("dimensionUnit", 20).defaultTo("metre");
+    table.string("type", 50).notNullable();
+    table.string("content", 1000).defaultTo("");
+    table.string("reward_collection").nullable().defaultTo(null);
+    table.string("reward_item").nullable().defaultTo(null);
+    table
+      .integer("hunt_id")
+      .unsigned()
+      .nullable()
+      .references("id")
+      .inTable("hunts")
+      .onDelete("SET NULL");
+    table.integer("order_index").unsigned().defaultTo(0);
+    table.smallint("difficulty").unsigned().defaultTo(1);
+    table.integer("points").unsigned().defaultTo(10);
+    table.string("image_url").nullable();
+    table.string("hint", 500).defaultTo("");
     table.string("dimensions", 100);
     table.integer("coordinates");
     table.smallint("visibility");

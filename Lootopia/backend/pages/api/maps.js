@@ -32,10 +32,28 @@ async function validateAndApplyDefaults(data) {
 }
 
 export default async function handler(req, res) {
+  // Configuration CORS
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
+
+  // Gérer la requête préliminaire OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end(); // Répondre OK sans rien faire d'autre
+  }
+
   try {
     // Méthode GET : Récupère toutes les maps ou une map spécifique
     if (req.method === "GET") {
-      const { id } = req.query;
+      const { id, partner_id } = req.query;
 
       if (id) {
         // Récupérer une map spécifique par ID
@@ -46,6 +64,10 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(map);
+      } else if (partner_id) {
+        // Récupérer les maps filtrées par partner_id
+        const maps = await db("maps").where("partner_id", partner_id);
+        return res.status(200).json(maps);
       } else {
         // Récupérer toutes les maps
         const maps = await db("maps");

@@ -37,10 +37,27 @@ async function validateAndApplyDefaults(data, isUpdate = false) {
 }
 
 export default async function handler(req, res) {
+  // Configuration CORS
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
+
+  // Gérer la requête préliminaire OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end(); // Répondre OK sans rien faire d'autre
+  }
   try {
     // Méthode GET : Récupère toutes les collections ou une collection spécifique
     if (req.method === "GET") {
-      const { id } = req.query;
+      const { id, admin_id } = req.query;
 
       if (id) {
         // Récupérer une collection spécifique par ID
@@ -51,6 +68,10 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(collection);
+      } else if (admin_id) {
+        // Récupérer les collections filtrées par admin_id
+        const collections = await db("collections").where("admin_id", admin_id);
+        return res.status(200).json(collections);
       } else {
         // Récupérer toutes les collections
         const collections = await db("collections");
