@@ -11,7 +11,9 @@ type Hunt = {
   duration: string;
   image?: string;
   gain?: number;
-  tag?: string;
+  max_participants?: number;
+  chat_enabled?: boolean;
+  search_delay?: number;
 };
 
 export default function HuntsScreen() {
@@ -19,6 +21,8 @@ export default function HuntsScreen() {
   const router = useRouter();
   const { theme } = useTheme(); 
   const themeColors = Colors[theme];
+  const [expandedHuntIds, setExpandedHuntIds] = useState<number[]>([]);
+
 
   useEffect(() => {
     async function fetchHunts() {
@@ -26,7 +30,9 @@ export default function HuntsScreen() {
         const res = await fetch("http://192.168.102.109:3000/api/hunts");
         if (!res.ok) throw new Error("Erreur de récupération des chasses disponibles");
         const data: Hunt[] = await res.json();
-        setHunts(data);
+        const now = new Date();
+        const activeHunts = data.filter(hunt => new Date(hunt.duration) > now);
+        setHunts(activeHunts);
       } catch (err) {
         console.error(err);
       }
@@ -35,36 +41,44 @@ export default function HuntsScreen() {
     fetchHunts();
   }, []);
 
+  const toggleExpand = (id: number) => {
+    setExpandedHuntIds((prev) =>
+      prev.includes(id) ? prev.filter(hid => hid !== id) : [...prev, id]
+    );
+  };  
+
   const renderItem = ({ item, index }: { item: Hunt; index: number }) => {
     const daysLeft = getDaysLeft(item.duration);
     const circleColor = index % 2 === 0 ? '#76CDCD' : '#26474E';
-
+    const isExpanded = expandedHuntIds.includes(item.id);
+  
     return (
-      <View style={[styles.card, { backgroundColor: themeColors.cardBackground }]}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => toggleExpand(item.id)}
+        style={[styles.card, { backgroundColor: themeColors.cardBackground }]}
+      >
         <Text style={styles.id}>#{item.id}</Text>
-
+  
         <View style={styles.cardRow}>
           <View style={[styles.circlePlaceholder, { backgroundColor: circleColor }]} />
           <View style={styles.rightContent}>
             <Text style={[styles.title, { color: themeColors.text }]}>{item.title}</Text>
             <Text style={[styles.description, { color: themeColors.text }]}>{item.description || 'Aucune description'}</Text>
-
+  
             <View style={styles.gainContainer}>
-              <Text style={styles.gainText}>
-                {item.gain ?? 0} 👑
-              </Text>
-
-              <Text style={styles.duration}>
-                ⏳ {daysLeft} j
-              </Text>
-
-              {item.tag && (
-                <View style={styles.tag}>
-                  <Text style={styles.tagText}>{item.tag}</Text>
-                </View>
-              )}
+              <Text style={styles.gainText}>{item.gain ?? 0} 👑</Text>
+              <Text style={styles.duration}>⏳ {daysLeft} j</Text>
             </View>
-
+  
+            {isExpanded && (
+              <View style={[styles.expandedSection, { backgroundColor: themeColors.cardBackground }]}>
+                <Text style={[styles.extraInfo, { color: themeColors.text }]}>👥 Participants max : {item.max_participants ?? 'N/A'}</Text>
+                <Text style={[styles.extraInfo, { color: themeColors.text }]}>💬 Chat activé : {item.chat_enabled ? 'Oui' : 'Non'}</Text>
+                <Text style={[styles.extraInfo, { color: themeColors.text }]}>⏱️ Délai de recherche : {item.search_delay ?? 'N/A'} s</Text>
+              </View>
+            )}
+  
             <TouchableOpacity
               style={styles.button}
               onPress={() => router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } })}
@@ -73,9 +87,9 @@ export default function HuntsScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
-  };
+  };  
 
   function getDaysLeft(date: string): number {
     const now = new Date();
@@ -121,9 +135,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     position: 'relative',
-    width: Platform.OS === 'android' ? '100%' : '45%',  
-    height: Platform.OS === 'android' ? 250 : 220, 
+    width: Platform.OS === 'android' ? '100%' : '45%',
   },
+  
   id: {
     position: 'absolute',
     top: 8,
@@ -206,5 +220,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: Platform.OS === 'android' ? 11 : 13, 
   },
+  expandedSection: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 8,
+  },
+  extraInfo: {
+    fontSize: Platform.OS === 'android' ? 11 : 13,
+    color: '#111827',
+    marginBottom: 4,
+  },  
 });
 
