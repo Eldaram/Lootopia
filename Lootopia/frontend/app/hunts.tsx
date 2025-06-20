@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 type Hunt = {
   id: number;
@@ -15,11 +17,13 @@ type Hunt = {
 export default function HuntsScreen() {
   const [hunts, setHunts] = useState<Hunt[]>([]);
   const router = useRouter();
+  const { theme } = useTheme(); 
+  const themeColors = Colors[theme];
 
   useEffect(() => {
     async function fetchHunts() {
       try {
-        const res = await fetch("http://192.168.102.180:3000/api/hunts");
+        const res = await fetch("http://192.168.102.109:3000/api/hunts");
         if (!res.ok) throw new Error("Erreur de récupération des chasses disponibles");
         const data: Hunt[] = await res.json();
         setHunts(data);
@@ -36,14 +40,14 @@ export default function HuntsScreen() {
     const circleColor = index % 2 === 0 ? '#76CDCD' : '#26474E';
 
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, { backgroundColor: themeColors.cardBackground }]}>
         <Text style={styles.id}>#{item.id}</Text>
 
         <View style={styles.cardRow}>
           <View style={[styles.circlePlaceholder, { backgroundColor: circleColor }]} />
           <View style={styles.rightContent}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description || 'Aucune description'}</Text>
+            <Text style={[styles.title, { color: themeColors.text }]}>{item.title}</Text>
+            <Text style={[styles.description, { color: themeColors.text }]}>{item.description || 'Aucune description'}</Text>
 
             <View style={styles.gainContainer}>
               <Text style={styles.gainText}>
@@ -81,8 +85,8 @@ export default function HuntsScreen() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Text style={styles.titlePage}>Chasses disponibles 🟢</Text>
+    <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <Text style={[styles.titlePage, { color: themeColors.text }]}>Chasses disponibles 🟢</Text>
       <FlatList
         data={hunts}
         renderItem={({ item, index }) => renderItem({ item, index })}
