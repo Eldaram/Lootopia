@@ -143,23 +143,53 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
               <SearchBar onSearch={setSearchQuery} themeColors={themeColors} />
             </>
           )}
-  
-          <View style={{ flexDirection: Platform.OS === 'web' && screenWidth < 768 ? 'column' : 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={handleToggleTheme}>
-              <Icon name={themeName === 'light' ? 'moon-o' : 'sun-o'} size={30} color={themeColors.icon} />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
-              setIsMenuOpen(false);
-              router.push('/login');
+
+          {Platform.OS === 'android' ? (
+            <View style={{
+              position: 'absolute',
+              top: 30,
+              right: 20,
+              flexDirection: 'row',
+              gap: 20,
+              zIndex: 99,
             }}>
-              <Icon name="user-circle" size={40} color={themeColors.icon} />
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity onPress={handleToggleTheme}>
+                <Icon name={themeName === 'light' ? 'moon-o' : 'sun-o'} size={30} color={themeColors.icon} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                setIsMenuOpen(false);
+                router.push('/login');
+              }}>
+                <Icon name="user-circle" size={35} color={themeColors.icon} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={{ flexDirection: screenWidth < 768 ? 'column' : 'row', alignItems: 'center' }}>
+              <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={handleToggleTheme}>
+                <Icon name={themeName === 'light' ? 'moon-o' : 'sun-o'} size={30} color={themeColors.icon} />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
+                setIsMenuOpen(false);
+                router.push('/login');
+              }}>
+                <Icon name="user-circle" size={40} color={themeColors.icon} />
+              </TouchableOpacity>
+            </View>
+          )}
+
         </View>
   
-        <ScrollView contentContainerStyle={{ padding: 16, flexGrow: 1, backgroundColor: themeColors.background }}>
-          {children}
-        </ScrollView>
+        <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          paddingTop: Platform.OS === 'android' ? 50 : 16,
+          flexGrow: 1,
+          backgroundColor: themeColors.background,
+        }}
+      >
+        {children}
+      </ScrollView>
+
       </Animated.View>
     </View>
   );  
