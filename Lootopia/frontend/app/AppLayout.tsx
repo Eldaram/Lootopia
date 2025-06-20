@@ -150,7 +150,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
             </TouchableOpacity>
             <TouchableOpacity style={{ margin: 10, padding: 8, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
               setIsMenuOpen(false);
-              router.push('/profile');
+              router.push('/login');
             }}>
               <Icon name="user-circle" size={40} color={themeColors.icon} />
             </TouchableOpacity>

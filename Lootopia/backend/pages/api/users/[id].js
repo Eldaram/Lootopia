@@ -24,7 +24,8 @@ export default async function handler(req, res) {
         "disabled_time",
         "disabled_start",
         "disabled_end",
-        "appearance_id"
+        "appearance_id",
+        "money"
       )
       .where({ id })
       .first();
@@ -44,6 +45,7 @@ export default async function handler(req, res) {
       disabled_start,
       disabled_end,
       appearance_id,
+      money,
     } = req.body;
 
     const updateData = {};
@@ -65,6 +67,7 @@ export default async function handler(req, res) {
       updateData.disabled_end =
         disabled_end === null ? null : new Date(disabled_end);
     }
+    if (money !== undefined) updateData.money = money;
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: "Aucune donnée à mettre à jour" });
