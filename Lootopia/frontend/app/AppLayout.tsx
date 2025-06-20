@@ -182,7 +182,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
         <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingTop: Platform.OS === 'android' ? 50 : 16,
+          paddingTop: Platform.OS === 'android' ? 50 : 0,
           flexGrow: 1,
           backgroundColor: themeColors.background,
         }}
