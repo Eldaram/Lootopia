@@ -18,6 +18,7 @@ export const Colors = {
     warning: '#ff9800',
     error: '#f44336',
     success: '#4caf50',
+    light_turquoise: '#2CCED2', 
   },
   dark: {
     text: '#fff', 
@@ -30,6 +31,7 @@ export const Colors = {
     warning: '#ff9800',
     error: '#f44336',
     success: '#4caf50',
+    light_turquoise: '#2CCED2', 
   },
 };
 

@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import type { LocationObjectCoords } from 'expo-location';
 import { useTheme } from '@/constants/ThemeProvider';
 import { Colors } from '@/constants/Colors';
+import HuntInfo from '@/components/ui/map/HuntInfo';
 
 export default function MapScreen() {
   const [location, setLocation] = useState<LocationObjectCoords | null>(null);
@@ -84,7 +85,19 @@ const html = `
   </html>
 `;
 
-  return <WebView originWhitelist={['*']} source={{ html }} />;
+return (
+  <View style={{ flex: 1 }}>
+    <WebView
+      originWhitelist={['*']}
+      source={{ html }}
+      style={{ flex: 1 }}
+    />
+
+    <View style={styles.overlay}>
+      <HuntInfo />
+    </View>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -98,5 +111,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: '#444',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-start', 
   },
 });
