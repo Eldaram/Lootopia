@@ -3,6 +3,47 @@ import Constants from 'expo-constants';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
+// Types
+interface HuntData {
+  title: string;
+  description: string;
+  world: number;
+  duration: number;
+  durationUnit: string;
+  mode: number;
+  max_participants: number;
+  unlimited_participants: boolean;
+  chat_enabled: boolean;
+  map_id: number;
+  participation_fee: number;
+  currency: string;
+  search_delay: number;
+  search_delay_unit: string;
+}
+
+interface StepData {
+  id?: number;
+  title: string;
+  location: string;
+  dimensions: number;
+  dimensionUnit: string;
+  visibility: number;
+  type: string;
+  content: string;
+  reward_collection: string;
+  reward_item: string;
+  latitude?: number;
+  longitude?: number;
+  partner_id?: number;
+  hunt_id?: number;
+  order_index?: number;
+  status?: number;
+}
+
+interface ErrorObject {
+  [key: string]: string | undefined;
+}
+
 const HuntFormPage = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [huntId, setHuntId] = useState<string | null>(null);
@@ -10,17 +51,16 @@ const HuntFormPage = () => {
   const [saving, setSaving] = useState<boolean>(false);
   const [maps, setMaps] = useState<any[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<ErrorObject>({});
   const [successMessage, setSuccessMessage] = useState<string>('');
-  
-  // État pour les informations de la chasse
-  const [huntData, setHuntData] = useState({
+
+  const [huntData, setHuntData] = useState<HuntData>({
     title: '',
     description: '',
-    world: 1, // 1: VR, 2: Carte
+    world: 1,
     duration: 1,
-    durationUnit: 'heure', // heure, semaine, mois, annee, infini
-    mode: 1, // 1: public, 2: privé
+    durationUnit: 'heure',
+    mode: 1,
     max_participants: 10,
     unlimited_participants: false,
     chat_enabled: true,
@@ -31,27 +71,27 @@ const HuntFormPage = () => {
     search_delay_unit: 'minutes'
   });
 
-  // État pour les étapes
-  const [steps, setSteps] = useState<any[]>([]);
+  const [steps, setSteps] = useState<StepData[]>([]);
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [showAddStep, setShowAddStep] = useState<boolean>(false);
-  const [newStep, setNewStep] = useState({
+  const [newStep, setNewStep] = useState<StepData>({
     title: '',
     location: '',
     dimensions: 1,
     dimensionUnit: 'metre',
     visibility: 1,
-    type: 'qr_code', // qr_code, image, texte, cache_finale
+    type: 'qr_code',
     content: '',
     reward_collection: '',
     reward_item: ''
   });
 
-  // Récupération de l'ID depuis l'URL
+  const [editingStepId, setEditingStepId] = useState<number | null>(null);
+
   useEffect(() => {
     const pathSegments = window.location.pathname.split('/');
     const urlId = pathSegments[pathSegments.length - 1];
-    
+
     if (urlId === 'hunt' || urlId === 'new') {
       setIsEdit(false);
     } else {
@@ -59,61 +99,89 @@ const HuntFormPage = () => {
       setHuntId(urlId);
       loadHuntData(urlId);
     }
-    
+
     loadMaps();
     loadCollections();
   }, []);
 
-  // Fonction pour convertir la durée en format Date pour l'API
+  const handleNumberInput = (
+    field: keyof HuntData,
+    operation: 'increment' | 'decrement',
+    min = 0,
+    max = 999
+  ) => {
+    setHuntData((prev: HuntData) => {
+      const currentValue = prev[field] as number;
+      let newValue = currentValue;
+
+      if (operation === 'increment' && currentValue < max) {
+        newValue = currentValue + 1;
+      } else if (operation === 'decrement' && currentValue > min) {
+        newValue = currentValue - 1;
+      }
+
+      return { ...prev, [field]: newValue };
+    });
+
+    if (errors[field]) {
+      setErrors((prev: ErrorObject) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handleStepNumberInput = (
+    field: keyof StepData,
+    operation: 'increment' | 'decrement',
+    min = 0,
+    max = 999
+  ) => {
+    setNewStep((prev: StepData) => {
+      const currentValue = Number(prev[field]);
+      let newValue = currentValue;
+
+      if (operation === 'increment' && currentValue < max) {
+        newValue = currentValue + 1;
+      } else if (operation === 'decrement' && currentValue > min) {
+        newValue = currentValue - 1;
+      }
+
+      return { ...prev, [field]: newValue };
+    });
+  };
+
+  const handleInputChange = (field: keyof HuntData, value: any) => {
+    setHuntData((prev: HuntData) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev: ErrorObject) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   const convertDurationToDate = (duration: number, unit: string): Date => {
     const now = new Date();
     let milliseconds = 0;
-    
     switch (unit) {
-      case 'heure':
-        milliseconds = duration * 60 * 60 * 1000;
-        break;
-      case 'semaine':
-        milliseconds = duration * 7 * 24 * 60 * 60 * 1000;
-        break;
-      case 'mois':
-        milliseconds = duration * 30 * 24 * 60 * 60 * 1000;
-        break;
-      case 'annee':
-        milliseconds = duration * 365 * 24 * 60 * 60 * 1000;
-        break;
-      case 'infini':
-        return new Date(2099, 11, 31); // Date très lointaine pour "infini"
-      default:
-        milliseconds = duration * 60 * 60 * 1000; // Par défaut en heures
+      case 'heure': milliseconds = duration * 60 * 60 * 1000; break;
+      case 'semaine': milliseconds = duration * 7 * 24 * 60 * 60 * 1000; break;
+      case 'mois': milliseconds = duration * 30 * 24 * 60 * 60 * 1000; break;
+      case 'annee': milliseconds = duration * 365 * 24 * 60 * 60 * 1000; break;
+      case 'infini': return new Date(2099, 11, 31);
+      default: milliseconds = duration * 60 * 60 * 1000;
     }
-    
     return new Date(now.getTime() + milliseconds);
   };
 
-  // Fonction pour convertir le délai de recherche en format TIME
   const convertSearchDelayToTime = (delay: number, unit: string): string => {
     let totalSeconds = 0;
-    
     switch (unit) {
-      case 'secondes':
-        totalSeconds = delay;
-        break;
-      case 'minutes':
-        totalSeconds = delay * 60;
-        break;
-      case 'heures':
-        totalSeconds = delay * 3600;
-        break;
-      default:
-        totalSeconds = delay * 60; // Par défaut en minutes
+      case 'secondes': totalSeconds = delay; break;
+      case 'minutes': totalSeconds = delay * 60; break;
+      case 'heures': totalSeconds = delay * 3600; break;
+      default: totalSeconds = delay * 60;
     }
-    
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const loadHuntData = async (id: string) => {
@@ -122,37 +190,28 @@ const HuntFormPage = () => {
     try {
       const response = await fetch(`${API_URL}/hunts?id=${id}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`Erreur ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setHuntData({
-          ...data[0],
-          // Convertir la durée depuis le format Date si nécessaire
-          duration: 1, // Vous devrez adapter cette logique selon votre format
-          durationUnit: 'heure'
-        });
-      } else if (!Array.isArray(data)) {
-        setHuntData({
-          ...data,
-          duration: 1,
-          durationUnit: 'heure'
-        });
-      }
-      
-      // Charger les étapes existantes
+      const hunt = Array.isArray(data) && data.length > 0 ? data[0] : data;
+
+      setHuntData((prev: HuntData) => ({
+        ...prev,
+        ...hunt,
+        duration: 1,
+        durationUnit: 'heure'
+      }));
+
       await loadSteps(id);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Erreur lors du chargement:', error);
-      setErrors({ global: `Erreur lors du chargement: ${error.message}` });
+      setErrors({ global: `Erreur lors du chargement: ${(error as Error).message}` });
     } finally {
       setLoading(false);
     }
@@ -259,50 +318,6 @@ const HuntFormPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNumberInput = (field: keyof typeof huntData, operation: 'increment' | 'decrement', min: number = 0, max: number = 999) => {
-    setHuntData(prev => {
-      const currentValue = prev[field] as number;
-      let newValue = currentValue;
-      
-      if (operation === 'increment' && currentValue < max) {
-        newValue = currentValue + 1;
-      } else if (operation === 'decrement' && currentValue > min) {
-        newValue = currentValue - 1;
-      }
-      
-      return { ...prev, [field]: newValue };
-    });
-    
-    // Effacer l'erreur pour ce champ s'il y en a une
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  };
-
-  const handleStepNumberInput = (field: keyof typeof newStep, operation: 'increment' | 'decrement', min: number = 0, max: number = 999) => {
-    setNewStep(prev => {
-      const currentValue = prev[field] as number;
-      let newValue = currentValue;
-      
-      if (operation === 'increment' && currentValue < max) {
-        newValue = currentValue + 1;
-      } else if (operation === 'decrement' && currentValue > min) {
-        newValue = currentValue - 1;
-      }
-      
-      return { ...prev, [field]: newValue };
-    });
-  };
-
-  const handleInputChange = (field: keyof typeof huntData, value: any) => {
-    setHuntData(prev => ({ ...prev, [field]: value }));
-    
-    // Effacer l'erreur pour ce champ s'il y en a une
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  };
-
   const handleSaveHunt = async (): Promise<void> => {
     if (!validateForm()) {
       return;
@@ -350,6 +365,34 @@ const HuntFormPage = () => {
       
       const result = await response.json();
       console.log('Réponse de l\'API:', result);
+
+      const savedHuntId = result.id; // récupère l'ID renvoyé
+
+      if (!isEdit) {
+        for (let [index, step] of steps.entries()) {
+
+          const stepData = {
+            ...step,
+            title: step.title.trim(),
+            location: step.location.trim(),
+            hunt_id: savedHuntId,
+            order_index: index,
+            status: 1,
+            latitude: 48.8566,
+            longitude: 2.3522,
+            visibility: step.visibility
+          };
+          
+
+          await fetch(`${API_URL}/caches`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(stepData)
+          });
+        }
+      }
+
       
       setSuccessMessage(isEdit ? 'Chasse modifiée avec succès' : 'Chasse créée avec succès');
       
@@ -358,65 +401,45 @@ const HuntFormPage = () => {
         window.location.href = '/organiser';
       }, 2000);
       
-    } catch (error) {
-      console.error('Erreur sauvegarde:', error);
-      setErrors({ global: `Erreur lors de la sauvegarde: ${error.message}` });
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error('Erreur sauvegarde:', err);
+      setErrors({ global: `Erreur lors de la sauvegarde: ${err.message}` });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleAddStep = async (): Promise<void> => {
+  const handleAddStep = (): void => {
     if (!newStep.title.trim()) {
       setErrors({ stepTitle: 'Le titre de l\'étape est requis' });
       return;
     }
-    
-    try {
-      const stepData = {
-        ...newStep,
-        title: newStep.title.trim(),
-        location: newStep.location.trim(),
-        latitude: 48.8566, // Coordonnées par défaut - à améliorer avec géolocalisation
-        longitude: 2.3522,
-        partner_id: 1,
-        hunt_id: huntId || null // Associer à la chasse si en mode édition
-      };
-      console.log(stepData);
-      
-      const response = await fetch(`${API_URL}/caches`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(stepData)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Erreur lors de l\'ajout de l\'étape');
-      }
-      
-      const savedStep = await response.json();
-      setSteps(prev => [...prev, savedStep]);
-      setNewStep({
-        title: '',
-        location: '',
-        dimensions: 1,
-        dimensionUnit: 'metre',
-        visibility: 1,
-        type: 'qr_code',
-        content: '',
-        reward_collection: '',
-        reward_item: ''
-      });
-      setShowAddStep(false);
-      setErrors(prev => ({ ...prev, stepTitle: undefined }));
-      
-    } catch (error) {
-      console.error('Erreur ajout étape:', error);
-      setErrors({ stepTitle: `Erreur: ${error.message}` });
-    }
+  
+    const localStep = {
+      ...newStep,
+      id: Date.now(), // id temporaire pour React
+      latitude: 48.8566,
+      longitude: 2.3522,
+      partner_id: 1
+    };
+  
+    setSteps(prev => [...prev, localStep]);
+    setNewStep({
+      title: '',
+      location: '',
+      dimensions: 1,
+      dimensionUnit: 'metre',
+      visibility: 1,
+      type: 'qr_code',
+      content: '',
+      reward_collection: '',
+      reward_item: ''
+    });
+    setShowAddStep(false);
+    setErrors(prev => ({ ...prev, stepTitle: undefined }));
   };
+  
 
   const handleDeleteStep = async (stepId: number): Promise<void> => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette étape ?')) {
@@ -451,6 +474,81 @@ const HuntFormPage = () => {
       puzzle: '🧩 Puzzle'
     };
     return types[type] || type;
+  };
+
+  const handleEditStep = (stepId: number): void => {
+    const stepToEdit = steps.find((s) => s.id === stepId);
+    if (!stepToEdit) return;
+
+    setNewStep({
+      ...stepToEdit,
+      reward_collection: stepToEdit.reward_collection || '',
+      reward_item: stepToEdit.reward_item || '',
+    });
+    setEditingStepId(stepId);
+    setShowAddStep(true);
+  };
+
+  const handleSaveStep = async (): Promise<void> => {
+    if (!newStep.title.trim()) {
+      setErrors({ stepTitle: 'Le titre de l\'étape est requis' });
+      return;
+    }
+
+    const stepPayload = {
+      ...newStep,
+      title: newStep.title.trim(),
+      location: newStep.location.trim(),
+      latitude: 48.8566,
+      longitude: 2.3522,
+      partner_id: 1,
+      visibility: newStep.visibility,
+    };
+
+    if (editingStepId !== null) {
+      // Modifier une étape existante
+      try {
+        const response = await fetch(`${API_URL}/caches?id=${editingStepId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(stepPayload)
+        });
+
+        if (!response.ok) throw new Error('Erreur mise à jour');
+
+        const updatedSteps = steps.map((s) =>
+          s.id === editingStepId ? { ...s, ...stepPayload } : s
+        );
+        setSteps(updatedSteps);
+      } catch (error) {
+        console.error('Erreur mise à jour étape:', error);
+        alert('Erreur lors de la modification');
+      }
+    } else {
+      // Ajouter une nouvelle étape
+      const localStep = {
+        ...stepPayload,
+        id: Date.now(),
+      };
+      setSteps((prev) => [...prev, localStep]);
+    }
+
+    // Réinitialiser le formulaire
+    setNewStep({
+      title: '',
+      location: '',
+      dimensions: 1,
+      dimensionUnit: 'metre',
+      visibility: 1,
+      type: 'qr_code',
+      content: '',
+      reward_collection: '',
+      reward_item: ''
+    });
+    setEditingStepId(null);
+    setShowAddStep(false);
+    setErrors((prev) => ({ ...prev, stepTitle: undefined }));
   };
 
   if (loading) {
@@ -829,7 +927,7 @@ const HuntFormPage = () => {
                 <div key={step.id} className="step-card">
                   <div
                     className="step-header"
-                    onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
+                    onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id ?? null)}
                   >
                     <div>
                       <h3 className="step-title">
@@ -843,9 +941,24 @@ const HuntFormPage = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteStep(step.id);
+                          if (typeof step.id === 'number') {
+                            handleEditStep(step.id);
+                          }
                         }}
-                        className="step-delete-btn"
+                        className="step-btn"
+                        type="button"
+                        title="Modifier cette étape"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (typeof step.id === 'number') {
+                            handleDeleteStep(step.id);
+                          }
+                        }}
+                        className="step-btn"
                         type="button"
                         title="Supprimer cette étape"
                       >
@@ -959,7 +1072,13 @@ const HuntFormPage = () => {
                           <input
                             type="number"
                             value={newStep.dimensions}
-                            onChange={(e) => setNewStep(prev => ({ ...prev, dimensions: parseInt(e.target.value) || 1 }))}
+                            onChange={(e) => {
+                              const numericValue = Number(e.target.value);
+                              setNewStep(prev => ({
+                                ...prev,
+                                dimensions: isNaN(numericValue) ? 1 : numericValue
+                              }));
+                            }}
                             className="number-input"
                             min="1"
                           />
@@ -989,20 +1108,20 @@ const HuntFormPage = () => {
                         👁️ Visibilité
                       </label>
                       <div className="visibility-toggle">
-                        <button
-                          onClick={() => setNewStep(prev => ({ ...prev, visibility: true }))}
-                          className={`visibility-btn ${newStep.visibility == 1 ? 'toggle-btn success' : 'toggle-btn inactive'}`}
-                          type="button"
-                        >
-                          👁️ Visible
-                        </button>
-                        <button
-                          onClick={() => setNewStep(prev => ({ ...prev, visibility: false }))}
-                          className={`visibility-btn ${newStep.visibility == 2 ? 'toggle-btn error' : 'toggle-btn inactive'}`}
-                          type="button"
-                        >
-                          🚫 Cachée
-                        </button>
+                      <button
+                        onClick={() => setNewStep(prev => ({ ...prev, visibility: 1 }))}
+                        className={`visibility-btn ${newStep.visibility === 1 ? 'toggle-btn success' : 'toggle-btn inactive'}`}
+                        type="button"
+                      >
+                        👁️ Visible
+                      </button>
+                      <button
+                        onClick={() => setNewStep(prev => ({ ...prev, visibility: 2 }))}
+                        className={`visibility-btn ${newStep.visibility === 2 ? 'toggle-btn error' : 'toggle-btn inactive'}`}
+                        type="button"
+                      >
+                        🚫 Cachée
+                      </button>
                       </div>
                     </div>
 
@@ -1108,15 +1227,16 @@ const HuntFormPage = () => {
                     {/* Boutons d'action */}
                     <div className="step-actions">
                       <button
-                        onClick={handleAddStep}
+                        onClick={handleSaveStep}
                         className="step-action-btn step-action-primary"
                         type="button"
                       >
-                        ✅ Ajouter l'étape
+                        {editingStepId !== null ? '💾 Enregistrer les modifications' : '✅ Ajouter l\'étape'}
                       </button>
                       <button
                         onClick={() => {
                           setShowAddStep(false);
+                          setEditingStepId(null);
                           setErrors(prev => ({ ...prev, stepTitle: undefined }));
                         }}
                         className="step-action-btn step-action-secondary"

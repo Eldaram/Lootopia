@@ -30,7 +30,12 @@ const cacheSchema = Yup.object({
     .oneOf(["metre", "kilometre", "centimetre"], "Unité de dimension invalide")
     .default("metre"),
 
-  visibility: Yup.boolean().default(true),
+  visibility: Yup.number()
+    .integer("La visibilité doit être un entier")
+    .min(0, "Valeur trop basse")
+    .max(32767, "Valeur trop élevée") // Limite du smallint PostgreSQL
+    .default(1)
+    .required("La visibilité est requise"),
 
   type: Yup.string()
     .oneOf(
@@ -48,10 +53,9 @@ const cacheSchema = Yup.object({
   reward_item: Yup.string().nullable().default(null),
 
   hunt_id: Yup.number()
+    .required("Une chasse doit être associée à cette étape")
     .integer()
-    .min(1, "L'ID de la chasse doit être valide")
-    .nullable()
-    .default(null),
+    .min(1, "L'ID de la chasse doit être valide"),
 
   partner_id: Yup.number()
     .integer()

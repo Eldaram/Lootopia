@@ -247,7 +247,7 @@
   gap: var(--spacing-sm);
 }
 
-.step-delete-btn {
+.step-btn {
   background: none;
   border: none;
   font-size: 1.2em;
@@ -258,7 +258,7 @@
   color: var(--text-muted);
 }
 
-.step-delete-btn:hover {
+.step-btn:hover {
   background: var(--error-color);
   color: white;
   transform: scale(1.1);

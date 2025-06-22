@@ -312,12 +312,10 @@ async function handlePost(req, res) {
 
   const validatedData = await validateAndTransformData(data);
 
-  const [newId] = await db("hunts").insert(validatedData).returning("id");
-
-  const newHunt = await db("hunts").where("id", newId).first();
-
-  res.status(201).json(formatForFrontend(newHunt));
+  const [inserted] = await db("hunts").insert(validatedData).returning("id");
+  res.status(201).json({ id: inserted.id }); // ✅ on extrait bien le vrai id
 }
+
 
 // PUT /api/hunts?id=xx
 async function handlePut(req, res) {
