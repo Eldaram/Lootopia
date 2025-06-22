@@ -9,12 +9,12 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useLocation } from 'wouter';
+import { useRouter } from 'expo-router';
 import '../../../app/src/styles.css'; 
 
 export const SideMenu: React.FC = () => {
   const { width, height } = useWindowDimensions();
-  const [, setLocation] = useLocation();
+  const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -31,16 +31,16 @@ export const SideMenu: React.FC = () => {
   }, []);
 
   const menuItems = [
-    { label: 'Accueil', icon: 'home', to: '/' },
-    { label: 'Organiser(Organisateur)', icon: 'cogs', to: '/organiser' },
-    { label: 'Mes Chasses', icon: 'bullseye', to: '/mes-chasses' },
-    { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' },
-    { label: 'Artefacts', icon: 'gem', to: '/artefacts' },
-    { label: 'Classement', icon: 'list', to: '/classement' },
-    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/tableau-de-bord' },
-    { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' },
-    { label: 'Aide', icon: 'question-circle', to: '/aide' },
-    { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion' },
+    { label: 'Accueil', icon: 'home', to: '/' as const },
+    { label: 'Espace organisateur', icon: 'cogs', to: '/organiser' as const },
+    { label: 'Mes Chasses', icon: 'bullseye', to: '/mes-chasses' as const },
+    { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' as const },
+    { label: 'Artefacts', icon: 'gem', to: '/artefacts' as const },
+    { label: 'Classement', icon: 'list', to: '/classement' as const },
+    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/tableau-de-bord' as const },
+    { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' as const },
+    { label: 'Aide', icon: 'question-circle', to: '/aide' as const },
+    { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion'as const  },
   ];
 
   return (
@@ -70,7 +70,7 @@ export const SideMenu: React.FC = () => {
         }}
       >
         <TouchableOpacity
-          onPress={() => setLocation('/')}
+          onPress={() => router.push('/')}
           style={{
             alignSelf: 'center',
             padding: 10,
@@ -97,7 +97,7 @@ export const SideMenu: React.FC = () => {
           {menuItems.map((item, index) => (
             <TouchableOpacity
             key={index}
-            onPress={() => setLocation(item.to)}
+            onPress={() => router.push(item.to)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',

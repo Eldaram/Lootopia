@@ -3,6 +3,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import '../../../app/src/styles.css';
 import Constants from 'expo-constants';
 import { useLocation } from 'wouter';
+import { useRouter } from 'expo-router';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -30,11 +31,11 @@ const HuntCard: React.FC = () => {
   const [hunts, setHunts] = useState<Hunt[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ active: 0, inactive: 0, totalParticipants: 0 });
-  const [location, setLocation] = useLocation();
+  const router = useRouter();
 
   // Navigation vers création
   const handleCreateNew = () => {
-    setLocation('/hunt');
+    router.push('/hunt');
   };
 
   const scrollToCard = (index: number) => {
@@ -63,7 +64,7 @@ const HuntCard: React.FC = () => {
 
   // Navigation vers édition
   const handleEdit = (huntId: number) => {
-    setLocation(`/hunt/${huntId}`);
+    router.push(`/hunt/${huntId}`);
   };
 
   const handleDelete = async (huntId: number) => {

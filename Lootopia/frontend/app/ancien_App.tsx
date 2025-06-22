@@ -3,7 +3,7 @@ import React from 'react';
 import './src/styles.css';
 import { Route, Switch } from 'wouter';
 import { ProfileScreen } from '@/app/src/adapters/screens/ProfileScreen';
-import { AppLayout } from '@/app/AppLayout';
+import { AppLayout } from '@/app/ancien_AppLayout';
 import { OrganisateurScreen } from '@/app/src/adapters/screens/OrganisateurScreen';
 import HuntFormPage from '@/app/src/adapters/screens/HuntFormPage';
 

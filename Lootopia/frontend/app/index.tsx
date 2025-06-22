@@ -1,3 +1,3 @@
-import App from '@/app/App';
+import { HomeScreen } from '@/app/src/adapters/screens/HomeScreen';
 
-export default App;
+export default HomeScreen;

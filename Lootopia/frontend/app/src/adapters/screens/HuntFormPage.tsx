@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Constants from 'expo-constants';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -45,6 +46,8 @@ interface ErrorObject {
 }
 
 const HuntFormPage = () => {
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const [huntId, setHuntId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -89,20 +92,18 @@ const HuntFormPage = () => {
   const [editingStepId, setEditingStepId] = useState<number | null>(null);
 
   useEffect(() => {
-    const pathSegments = window.location.pathname.split('/');
-    const urlId = pathSegments[pathSegments.length - 1];
-
-    if (urlId === 'hunt' || urlId === 'new') {
-      setIsEdit(false);
-    } else {
+    if (id && id !== 'new') {
       setIsEdit(true);
-      setHuntId(urlId);
-      loadHuntData(urlId);
+      setHuntId(String(id));
+      loadHuntData(String(id));
+    } else {
+      setIsEdit(false);
     }
-
+  
     loadMaps();
     loadCollections();
-  }, []);
+  }, [id]);
+  
 
   const handleNumberInput = (
     field: keyof HuntData,
@@ -398,7 +399,7 @@ const HuntFormPage = () => {
       
       // Rediriger après un délai pour montrer le message de succès
       setTimeout(() => {
-        window.location.href = '/organiser';
+        router.push('/organiser');
       }, 2000);
       
     } catch (error: unknown) {
@@ -1255,7 +1256,7 @@ const HuntFormPage = () => {
         {/* Boutons de sauvegarde */}
         <div className="form-actions">
           <button
-            onClick={() => window.location.href = '/organiser'}
+            onClick={() => router.push('/organiser')}
             className="form-btn form-btn-cancel"
             type="button"
           >
