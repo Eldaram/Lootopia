@@ -1,6 +1,5 @@
 /* ===== VARIABLES CSS AMÉLIORÉES ===== */
 :root {
-  /* Couleurs principales */
   --primary-color: #2563eb;
   --primary-hover: #1d4ed8;
   --secondary-color: #64748b;
@@ -12,47 +11,42 @@
   --error-hover: #dc2626;
   --info-color: #3b82f6;
   --info-hover: #2563eb;
-  
-  /* Couleurs de texte */
+
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
   --text-inverse: #ffffff;
-  
-  /* Couleurs de fond */
+
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
   --bg-tertiary: #f3f4f6;
   --hover-bg: #f9fafb;
   --border-color: #e5e7eb;
-  
-  /* Ombres */
+
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --shadow-light: rgba(0, 0, 0, 0.1);
-  
-  /* Animations */
+
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
-  
-  /* Spacing */
+
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
-  /* Border radius */
+
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 }
 
+/* Modes light et dark */
 .light {
   --text-color: var(--text-primary);
   --background-color: #f5f5f5;
@@ -65,17 +59,29 @@
   --background-color: #11151D;
   --card-background-color: #222D41;
   --icon-color: #ffffff;
-  
-  /* Ajustements pour le mode sombre */
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
   --bg-primary: #1f2937;
   --bg-secondary: #111827;
   --bg-tertiary: #0f172a;
   --hover-bg: #374151;
   --border-color: #374151;
   --shadow-light: rgba(0, 0, 0, 0.3);
+}
+
+[title]:hover::after {
+  content: none !important;
+  display: none !important;
+  position: static !important;
+  background: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  white-space: normal !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;
+  z-index: auto !important;
 }
 
 /* ===== STYLES AMÉLIORÉS POUR LE FORMULAIRE ===== */
