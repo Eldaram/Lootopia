@@ -56,8 +56,8 @@
 
 .dark {
   --text-color: #ffffff;
-  --background-color: #11151D;
-  --card-background-color: #222D41;
+  --background-color: #11151d;
+  --card-background-color: #222d41;
   --icon-color: #ffffff;
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
@@ -163,13 +163,18 @@
 }
 
 .form-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left var(--transition-slow);
 }
 
@@ -214,8 +219,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Améliorations des étapes */
@@ -240,7 +249,11 @@
   justify-content: space-between;
   align-items: center;
   transition: background-color var(--transition-fast);
-  background: linear-gradient(135deg, var(--card-background-color), var(--bg-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color),
+    var(--bg-secondary)
+  );
 }
 
 .step-header:hover {
@@ -351,13 +364,18 @@
 }
 
 .add-step-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent, var(--info-color), transparent);
+  background: linear-gradient(
+    135deg,
+    transparent,
+    var(--info-color),
+    transparent
+  );
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
@@ -389,7 +407,11 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
-  background: linear-gradient(135deg, var(--card-background-color), var(--bg-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color),
+    var(--bg-secondary)
+  );
   box-shadow: var(--shadow-md);
   animation: slideDown var(--transition-normal);
 }
@@ -478,13 +500,18 @@
 }
 
 .toggle-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   transition: left var(--transition-slow);
 }
 
@@ -534,13 +561,18 @@
 }
 
 .file-upload-area::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent, var(--info-color), transparent);
+  background: linear-gradient(
+    135deg,
+    transparent,
+    var(--info-color),
+    transparent
+  );
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
@@ -625,39 +657,39 @@
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
   }
-  
+
   .hunt-form-container {
     padding: var(--spacing-lg);
   }
-  
+
   .step-details-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .reward-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .number-input-container {
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-sm);
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .form-btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .hunt-form-title {
     font-size: 1.5rem;
   }
-  
+
   .step-header-actions {
     flex-direction: column;
     gap: var(--spacing-xs);
@@ -668,23 +700,23 @@
   .hunt-form-title {
     font-size: 1.25rem;
   }
-  
+
   .hunt-form-card {
     padding: var(--spacing-lg);
   }
-  
+
   .step-actions {
     flex-direction: column;
   }
-  
+
   .file-upload-area {
     padding: var(--spacing-lg);
   }
-  
+
   .file-upload-icon {
     font-size: 2em;
   }
-  
+
   .add-step-icon {
     font-size: 1.5em;
   }
@@ -719,7 +751,7 @@
 }
 
 .loading-spinner::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 3px;
   left: 3px;
@@ -750,7 +782,7 @@
 /* (Tous les styles existants restent inchangés) */
 
 .web-container {
-display: flex;
+  display: flex;
   flex-direction: column;
   background-color: var(--background-color);
   height: 100%;
@@ -978,8 +1010,8 @@ display: flex;
   gap: 4px;
 }
 
-.creation-date, 
-.duration-date, 
+.creation-date,
+.duration-date,
 .update-date {
   font-size: 12px;
   color: var(--text-muted);
@@ -1035,11 +1067,34 @@ display: flex;
 }
 
 .light .hunt-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #f8f9ff 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #f8f9ff 100%
+  );
 }
 
 .dark .hunt-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #1a1a2a 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #1a1a2a 100%
+  );
+}
+
+.hunt-card.closed {
+  opacity: 0.6;
+  filter: grayscale(80%);
+  border-left: 6px solid #9e9e9e;
+}
+
+.hunt-card.inactive {
+  opacity: 0.7;
+  border-left: 6px solid #f44336;
+}
+
+.hunt-card.active {
+  border-left: 6px solid #4caf50;
 }
 
 .map-card {
@@ -1047,11 +1102,19 @@ display: flex;
 }
 
 .light .map-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #f8fff8 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #f8fff8 100%
+  );
 }
 
 .dark .map-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #1a2a1a 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #1a2a1a 100%
+  );
 }
 
 .collection-card {
@@ -1059,11 +1122,19 @@ display: flex;
 }
 
 .light .collection-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #fff8f0 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #fff8f0 100%
+  );
 }
 
 .dark .collection-card {
-  background: linear-gradient(135deg, var(--card-background-color) 0%, #2a1a0a 100%);
+  background: linear-gradient(
+    135deg,
+    var(--card-background-color) 0%,
+    #2a1a0a 100%
+  );
 }
 
 /* Amélioration des boutons de navigation */
@@ -1098,7 +1169,6 @@ display: flex;
   margin-top: 34px;
   justify-content: center;
   justify-content: space-between;
-
 }
 
 .evenement-card-row {
@@ -1109,7 +1179,7 @@ display: flex;
   margin-left: 60px;
 }
 
-.evenement-card-section{
+.evenement-card-section {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1216,7 +1286,7 @@ display: flex;
 /* SideMenu Section */
 
 .menu-background {
-  background-image: url('/assets/images/menu-background.png');
+  background-image: url("/assets/images/menu-background.png");
   background-size: cover;
   background-position: center;
 }
@@ -1242,7 +1312,7 @@ display: flex;
 }
 
 body.dark .menu-background {
-  background-image: url('/assets/images/menu-background-dark.png');
+  background-image: url("/assets/images/menu-background-dark.png");
 }
 
 body.dark .menu-item {
@@ -1272,23 +1342,23 @@ body.dark .menu-icon {
   }
 
   .hunting-card {
-       width: 90vw;
+    width: 90vw;
   }
 
   /* Responsive pour les nouvelles fonctionnalités */
   .stats-row {
     gap: 10px;
   }
-  
+
   .stat-item {
     font-size: 12px;
     padding: 6px 10px;
   }
-  
+
   .card-actions {
     gap: 4px;
   }
-  
+
   .action-btn {
     width: 28px;
     height: 28px;
@@ -1297,7 +1367,6 @@ body.dark .menu-icon {
 }
 
 @media (prefers-color-scheme: dark) {
-
   .menu,
   .style-menu,
   .icon-button {
@@ -1641,8 +1710,12 @@ body.dark .menu-icon {
 
 /* Animation de spin pour le loading */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Styles pour les inputs et selects du formulaire */
@@ -1764,4 +1837,50 @@ body.dark .menu-icon {
 
 .form-group {
   margin-bottom: 16px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  margin-top: 5px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  transition: 0.4s;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50;
+}
+
+input:checked + .slider::before {
+  transform: translateX(18px);
 }

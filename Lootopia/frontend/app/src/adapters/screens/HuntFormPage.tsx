@@ -46,6 +46,7 @@ interface ErrorObject {
 }
 
 const HuntFormPage = () => {
+  console.log(API_URL);
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);

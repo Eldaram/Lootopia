@@ -67,6 +67,26 @@ const huntSchema = Yup.object({
     .min(0, "Le statut doit être valide")
     .max(3, "Le statut doit être valide")
     .default(1), // 0: brouillon, 1: actif, 2: suspendu, 3: terminé
+
+  closed_at: Yup.date().nullable(),
+});
+
+const huntCreateSchema = huntSchema; // inchangé
+
+const huntUpdateSchema = Yup.object({
+  title: Yup.string().min(3).max(100).trim(),
+  description: Yup.string().max(500),
+  world: Yup.number().integer().min(1).max(2),
+  duration: Yup.date().min(new Date()),
+  mode: Yup.number().integer().min(1).max(2),
+  max_participants: Yup.number().integer().min(1).max(999999),
+  chat_enabled: Yup.boolean(),
+  map_id: Yup.number().integer().min(1),
+  participation_fee: Yup.number().min(0).max(9999.99),
+  search_delay: Yup.string().matches(/^\d{2}:\d{2}:\d{2}$/),
+  partner_id: Yup.number().integer().min(1),
+  status: Yup.number().integer().min(0).max(4),
+  closed_at: Yup.date().nullable(),
 });
 
 // Parse la durée depuis frontend vers Date (durée fin)
@@ -184,7 +204,7 @@ async function validateAndTransformData(data, isUpdate = false) {
   try {
     const transformedData = { ...data };
 
-    // Transformer la durée si nécessaire
+    // Transformer la durée
     if (
       data.duration &&
       typeof data.duration === "number" &&
@@ -197,7 +217,7 @@ async function validateAndTransformData(data, isUpdate = false) {
       delete transformedData.durationUnit;
     }
 
-    // Transformer le délai de recherche si nécessaire
+    // Transformer le délai de recherche
     if (
       data.search_delay &&
       typeof data.search_delay === "number" &&
@@ -210,8 +230,9 @@ async function validateAndTransformData(data, isUpdate = false) {
       delete transformedData.search_delay_unit;
     }
 
-    // Valider via Yup
-    const validatedData = await huntSchema.validate(transformedData, {
+    const schema = isUpdate ? huntUpdateSchema : huntCreateSchema;
+
+    const validatedData = await schema.validate(transformedData, {
       abortEarly: false,
       stripUnknown: true,
     });
@@ -247,6 +268,7 @@ function formatForFrontend(hunt) {
   formatted.mode_label = hunt.mode === 1 ? "Public" : "Privé";
   formatted.is_active = hunt.status === 1;
   formatted.is_expired = new Date(hunt.duration) < new Date();
+  formatted.closed_at = hunt.closed_at || null;
 
   return formatted;
 }
@@ -316,7 +338,6 @@ async function handlePost(req, res) {
   res.status(201).json({ id: inserted.id }); // ✅ on extrait bien le vrai id
 }
 
-
 // PUT /api/hunts?id=xx
 async function handlePut(req, res) {
   const { id } = req.query;
@@ -326,6 +347,11 @@ async function handlePut(req, res) {
   const data = req.body;
 
   const validatedData = await validateAndTransformData(data, true);
+
+  // Clôture automatique : si status = 4 et closed_at non fourni, on force la date
+  if (validatedData.status === 4 && !validatedData.closed_at) {
+    validatedData.closed_at = new Date();
+  }
 
   await db("hunts").where("id", id).update(validatedData);
 

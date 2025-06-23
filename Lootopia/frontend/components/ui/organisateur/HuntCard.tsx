@@ -147,7 +147,28 @@ const HuntCard: React.FC = () => {
     const [hours, minutes] = delay.split(':');
     return `${hours}h${minutes}`;
   };
-  
+
+  const handleCloseHunt = async (huntId: number) => {
+    if (window.confirm("Clôturer cette chasse ? Cette action est irréversible.")) {
+      try {
+        const response = await fetch(`${API_URL}/hunts?id=${huntId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: 4 }), // Clôturée
+        });
+
+        if (response.ok) {
+          const updated = await response.json();
+          setHunts(hunts.map(h => h.id === huntId ? updated : h));
+        } else {
+          alert("Erreur lors de la clôture de la chasse.");
+        }
+      } catch (err) {
+        console.error("Erreur lors de la clôture :", err);
+        alert("Erreur inattendue.");
+      }
+    }
+  };  
 
   useEffect(() => {
     const fetchHunts = async () => {
@@ -248,19 +269,37 @@ const HuntCard: React.FC = () => {
           {hunts.map((hunt) => {
             const modeInfo = getModeInfo(hunt.mode);
             return (
-              <div key={hunt.id} className="hunting-card hunt-card">
+              <div
+                key={hunt.id}
+                className={`hunting-card hunt-card ${
+                  hunt.status === 4 ? 'closed' :
+                  hunt.status === 0 ? 'inactive' :
+                  'active'
+                }`}
+              >
                 <div className="card-header">
                   <div className="card-icon">
                     <Icon name={modeInfo.icon} size={24} color={modeInfo.color} />
                   </div>
                   <div className="card-actions">
-                    <button 
-                      className={`action-btn status-btn ${hunt.status === 1 ? 'active' : 'inactive'}`}
-                      onClick={() => toggleStatus(hunt.id, hunt.status)}
-                      title={hunt.status === 1 ? 'Désactiver' : 'Activer'}
-                    >
-                      <Icon name={hunt.status === 1 ? 'play' : 'pause'} size={14} />
-                    </button>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={hunt.status === 1}
+                        onChange={() => {
+                          if (hunt.status === 1) {
+                            if (window.confirm('Voulez-vous vraiment désactiver cette chasse ?')) {
+                              toggleStatus(hunt.id, hunt.status);
+                            }
+                          } else {
+                            if (window.confirm('Voulez-vous vraiment activer cette chasse ?')) {
+                              toggleStatus(hunt.id, hunt.status);
+                            }
+                          }
+                        }}
+                      />
+                      <span className="slider round" title={hunt.status === 1 ? 'Active' : 'Inactive'}></span>
+                    </label>
                     <button 
                       className="action-btn edit-btn"
                       onClick={() => handleEdit(hunt.id)}
@@ -268,6 +307,15 @@ const HuntCard: React.FC = () => {
                     >
                       <Icon name="edit" size={14} />
                     </button>
+                    {hunt.status !== 4 && (
+                      <button
+                        className="action-btn close-btn"
+                        onClick={() => handleCloseHunt(hunt.id)}
+                        title="Clôturer"
+                      >
+                        <Icon name="lock" size={14} />
+                      </button>
+                    )}
                     <button 
                       className="action-btn delete-btn"
                       onClick={() => handleDelete(hunt.id)}
@@ -286,6 +334,12 @@ const HuntCard: React.FC = () => {
                     <Icon name={modeInfo.icon} size={12} style={{ color: modeInfo.color }} />
                     <span>{modeInfo.name}</span>
                   </div>
+                  {hunt.status === 4 && (
+                    <div className="detail-row">
+                      <Icon name="lock" size={12} style={{ color: '#9e9e9e' }} />
+                      <span>Clôturée</span>
+                    </div>
+                  )}
                   <div className="detail-row">
                     <Icon name="users" size={12} />
                     <span>{hunt.max_participants} places</span>
