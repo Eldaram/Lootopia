@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import dynamic from 'next/dynamic';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -23,7 +24,7 @@ interface HuntData {
 }
 
 interface StepData {
-  id?: number;
+  id?: number | string;
   title: string;
   location: string;
   dimensions: number;
@@ -57,6 +58,11 @@ const HuntFormPage = () => {
   const [collections, setCollections] = useState<any[]>([]);
   const [errors, setErrors] = useState<ErrorObject>({});
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const DynamicMap = dynamic(() => import('@/components/DynamicMap'), {
+    ssr: false,
+    loading: () => <p>Chargement de la carte...</p>,
+  });
+
 
   const [huntData, setHuntData] = useState<HuntData>({
     title: '',
@@ -76,13 +82,13 @@ const HuntFormPage = () => {
   });
 
   const [steps, setSteps] = useState<StepData[]>([]);
-  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [expandedStep, setExpandedStep] = useState<number | string | null>(null);
   const [showAddStep, setShowAddStep] = useState<boolean>(false);
   const [newStep, setNewStep] = useState<StepData>({
     title: '',
     location: '',
     dimensions: 1,
-    dimensionUnit: 'metre',
+    dimensionUnit: 'kilometre',
     visibility: 1,
     type: 'qr_code',
     content: '',
@@ -90,7 +96,7 @@ const HuntFormPage = () => {
     reward_item: ''
   });
 
-  const [editingStepId, setEditingStepId] = useState<number | null>(null);
+  const [editingStepId, setEditingStepId] = useState<string | number | null>(null);
 
   useEffect(() => {
     if (id && id !== 'new') {
@@ -417,21 +423,21 @@ const HuntFormPage = () => {
       setErrors({ stepTitle: 'Le titre de l\'étape est requis' });
       return;
     }
-  
+
     const localStep = {
       ...newStep,
-      id: Date.now(), // id temporaire pour React
+      id: `temp-${Date.now()}`, // ID temporaire unique
       latitude: 48.8566,
       longitude: 2.3522,
-      partner_id: 1
+      partner_id: 1,
     };
-  
+
     setSteps(prev => [...prev, localStep]);
     setNewStep({
       title: '',
       location: '',
       dimensions: 1,
-      dimensionUnit: 'metre',
+      dimensionUnit: 'kilometre',
       visibility: 1,
       type: 'qr_code',
       content: '',
@@ -441,6 +447,7 @@ const HuntFormPage = () => {
     setShowAddStep(false);
     setErrors(prev => ({ ...prev, stepTitle: undefined }));
   };
+
   
 
   const handleDeleteStep = async (stepId: number): Promise<void> => {
@@ -478,7 +485,8 @@ const HuntFormPage = () => {
     return types[type] || type;
   };
 
-  const handleEditStep = (stepId: number): void => {
+  const handleEditStep = (stepId: number | string | undefined): void => {
+    if (stepId === undefined) return; // sécurité
     const stepToEdit = steps.find((s) => s.id === stepId);
     if (!stepToEdit) return;
 
@@ -507,51 +515,95 @@ const HuntFormPage = () => {
       visibility: newStep.visibility,
     };
 
+    const isTemporaryStep =
+      editingStepId !== null &&
+      typeof editingStepId === 'string' &&
+      editingStepId.startsWith('temp-');
+
+    // Cas modification
     if (editingStepId !== null) {
-      // Modifier une étape existante
-      try {
-        const response = await fetch(`${API_URL}/caches?id=${editingStepId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(stepPayload)
-        });
+      if (!isTemporaryStep) {
+        // Modifier une étape existante dans la base
+        try {
+          const response = await fetch(`${API_URL}/caches?id=${editingStepId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(stepPayload),
+          });
 
-        if (!response.ok) throw new Error('Erreur mise à jour');
-
-        const updatedSteps = steps.map((s) =>
-          s.id === editingStepId ? { ...s, ...stepPayload } : s
-        );
-        setSteps(updatedSteps);
-      } catch (error) {
-        console.error('Erreur mise à jour étape:', error);
-        alert('Erreur lors de la modification');
+          if (!response.ok) throw new Error('Erreur mise à jour');
+        } catch (error) {
+          console.error('Erreur mise à jour étape:', error);
+          alert('Erreur lors de la modification');
+          return;
+        }
       }
+
+      // Met à jour l’étape localement (temporaire ou réelle)
+      setSteps((prev) =>
+        prev.map((s) => s.id === editingStepId ? { ...s, ...stepPayload } : s)
+      );
     } else {
-      // Ajouter une nouvelle étape
+      // Nouvelle étape
       const localStep = {
         ...stepPayload,
-        id: Date.now(),
+        id: `temp-${Date.now()}`, // ID temporaire unique
       };
       setSteps((prev) => [...prev, localStep]);
     }
 
-    // Réinitialiser le formulaire
+    // Reset du formulaire
     setNewStep({
       title: '',
       location: '',
       dimensions: 1,
-      dimensionUnit: 'metre',
+      dimensionUnit: 'kilometre',
       visibility: 1,
       type: 'qr_code',
       content: '',
       reward_collection: '',
-      reward_item: ''
+      reward_item: '',
     });
     setEditingStepId(null);
     setShowAddStep(false);
     setErrors((prev) => ({ ...prev, stepTitle: undefined }));
   };
+
+
+  const moveStepUp = (index: number) => {
+    if (index === 0) return;
+    const newSteps = [...steps];
+    [newSteps[index - 1], newSteps[index]] = [newSteps[index], newSteps[index - 1]];
+    setSteps(newSteps);
+  };
+
+  const moveStepDown = (index: number) => {
+    if (index === steps.length - 1) return;
+    const newSteps = [...steps];
+    [newSteps[index], newSteps[index + 1]] = [newSteps[index + 1], newSteps[index]];
+    setSteps(newSteps);
+  };
+
+
+  const dynamicMapMemo = useMemo(() => (
+    <DynamicMap
+      latitude={newStep.latitude || 48.8566}
+      longitude={newStep.longitude || 2.3522}
+      radius={newStep.dimensions}
+      unit="km"
+      onChange={(lat, lng, radius, unit) =>
+        setNewStep(prev => ({
+          ...prev,
+          latitude: lat,
+          longitude: lng,
+          dimensions: radius,
+          dimensionUnit: 'kilometre',
+        }))
+      }
+    />
+  ), [newStep.latitude, newStep.longitude, newStep.dimensions]);
+
 
   if (loading) {
     return (
@@ -931,21 +983,48 @@ const HuntFormPage = () => {
                     className="step-header"
                     onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id ?? null)}
                   >
-                    <div>
-                      <h3 className="step-title">
-                        Étape {index + 1}: {step.title || 'Sans titre'}
-                      </h3>
-                      <p className="step-type">
-                        {getStepTypeLabel(step.type)}
-                      </p>
+                    <div className="step-header-content">
+                      <div className="step-controls">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveStepUp(index);
+                          }}
+                          title="Déplacer vers le haut"
+                          className="step-btn"
+                          disabled={index === 0}
+                        >
+                          ⬆️
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveStepDown(index);
+                          }}
+                          title="Déplacer vers le bas"
+                          className="step-btn"
+                          disabled={index === steps.length - 1}
+                        >
+                          ⬇️
+                        </button>
+                      </div>
+
+                      <div className="step-main-info">
+                        <h3 className="step-title">
+                          Étape {index + 1}: {step.title || 'Sans titre'}
+                        </h3>
+                        <p className="step-type">
+                          {getStepTypeLabel(step.type)}
+                        </p>
+                      </div>
                     </div>
+
                     <div className="step-header-actions">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (typeof step.id === 'number') {
-                            handleEditStep(step.id);
-                          }
+                          handleEditStep(step.id);
                         }}
                         className="step-btn"
                         type="button"
@@ -956,9 +1035,7 @@ const HuntFormPage = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (typeof step.id === 'number') {
-                            handleDeleteStep(step.id);
-                          }
+                          handleEditStep(step.id);
                         }}
                         className="step-btn"
                         type="button"
@@ -1041,20 +1118,8 @@ const HuntFormPage = () => {
                     </div>
 
                     {/* Lieu */}
-                    <div className="hunt-form-field">
-                      <label className="hunt-form-label">
-                        📍 Lieu (Google Maps)
-                      </label>
-                      <div className="location-input-container">
-                        <input
-                          type="text"
-                          value={newStep.location}
-                          onChange={(e) => setNewStep(prev => ({ ...prev, location: e.target.value }))}
-                          className="hunt-form-input location-input"
-                          placeholder="Adresse ou coordonnées"
-                        />
-                        <span className="location-icon">📍</span>
-                      </div>
+                    <div className="map-container">
+                      {dynamicMapMemo}
                     </div>
 
                     {/* Dimensions */}
@@ -1097,9 +1162,7 @@ const HuntFormPage = () => {
                           onChange={(e) => setNewStep(prev => ({ ...prev, dimensionUnit: e.target.value }))}
                           className="hunt-form-select"
                         >
-                          <option value="metre">Mètre(s)</option>
                           <option value="kilometre">Kilomètre(s)</option>
-                          <option value="centimetre">Centimètre(s)</option>
                         </select>
                       </div>
                     </div>

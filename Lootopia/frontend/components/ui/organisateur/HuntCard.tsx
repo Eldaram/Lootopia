@@ -32,6 +32,9 @@ const HuntCard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ active: 0, inactive: 0, totalParticipants: 0 });
   const router = useRouter();
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const [filterStatus, setFilterStatus] = useState<'all' | 0 | 1 | 3 | 4>('all');
+
 
   // Navigation vers création
   const handleCreateNew = () => {
@@ -40,7 +43,7 @@ const HuntCard: React.FC = () => {
 
   const scrollToCard = (index: number) => {
     if (scrollRef.current) {
-      const cardWidth = scrollRef.current.offsetWidth;
+      const cardWidth = scrollRef.current.firstElementChild?.clientWidth || 0;
       scrollRef.current.scrollTo({
         left: index * cardWidth,
         behavior: 'smooth',
@@ -196,6 +199,24 @@ const HuntCard: React.FC = () => {
     fetchHunts();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!scrollRef.current) return;
+
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const cardWidth = scrollRef.current.firstElementChild?.clientWidth || 1;
+
+      const index = Math.round(scrollLeft / cardWidth);
+      currentIndex.current = index;
+      setScrollIndex(index);
+    };
+
+    const el = scrollRef.current;
+    el?.addEventListener('scroll', handleScroll);
+
+    return () => el?.removeEventListener('scroll', handleScroll);
+  }, []);
+
   if (loading) {
     return (
       <div>
@@ -227,6 +248,11 @@ const HuntCard: React.FC = () => {
     );
   }
 
+  const filteredHunts = filterStatus === 'all'
+  ? hunts
+  : hunts.filter(h => h.status === filterStatus);
+
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -236,27 +262,34 @@ const HuntCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="stats-row" style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-        <div className="stat-item">
-          <Icon name="check-circle" size={16} style={{ color: '#4CAF50' }} />
-          <span>Actives: {stats.active}</span>
-        </div>
-        <div className="stat-item">
-          <Icon name="times-circle" size={16} style={{ color: '#f44336' }} />
-          <span>Inactives: {stats.inactive}</span>
-        </div>
-        <div className="stat-item">
-          <Icon name="users" size={16} style={{ color: '#2196f3' }} />
-          <span>Places totales: {stats.totalParticipants}</span>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div>
+        <strong>Total :</strong> {hunts.length} chasses | <strong>Affichées :</strong> {filteredHunts.length}
       </div>
+      <div>
+        <label htmlFor="filter-select" style={{ marginRight: '8px' }}><strong>Filtrer :</strong></label>
+        <select
+          id="filter-select"
+          value={filterStatus}
+          onChange={(e) => {
+            const val = e.target.value;
+            setFilterStatus(val === 'all' ? 'all' : parseInt(val) as 0 | 1 | 3 | 4);
+          }}
+          className="filter-select"
+        >
+          <option value="all">Toutes les chasses</option>
+          <option value="1">Actives</option>
+          <option value="0">Inactives</option>
+          <option value="3">Brouillons</option>
+          <option value="4">Clôturées</option>
+        </select>
+      </div>
+    </div>
 
       <div className="hunting-card-row">
         <button 
-          onClick={handlePrev} 
-          className="icon-button"
-          disabled={currentIndex.current === 0}
-          style={{ opacity: currentIndex.current === 0 ? 0.5 : 1 }}
+          onClick={handlePrev}
+          className={`icon-button ${scrollIndex === 0 ? 'disabled' : ''}`}
         >
           <Icon name="chevron-left" size={30} />
         </button>
@@ -266,7 +299,7 @@ const HuntCard: React.FC = () => {
           ref={scrollRef}
           style={{ overflowX: 'hidden', display: 'flex' }}
         >
-          {hunts.map((hunt) => {
+          {filteredHunts.map((hunt) => {
             const modeInfo = getModeInfo(hunt.mode);
             return (
               <div
@@ -282,6 +315,13 @@ const HuntCard: React.FC = () => {
                     <Icon name={modeInfo.icon} size={24} color={modeInfo.color} />
                   </div>
                   <div className="card-actions">
+                    <button 
+                      className="action-btn edit-btn"
+                      onClick={() => handleEdit(hunt.id)}
+                      title="Éditer"
+                    >
+                      <Icon name="edit" size={14} />
+                    </button>
                     <label className="switch">
                       <input
                         type="checkbox"
@@ -300,13 +340,6 @@ const HuntCard: React.FC = () => {
                       />
                       <span className="slider round" title={hunt.status === 1 ? 'Active' : 'Inactive'}></span>
                     </label>
-                    <button 
-                      className="action-btn edit-btn"
-                      onClick={() => handleEdit(hunt.id)}
-                      title="Éditer"
-                    >
-                      <Icon name="edit" size={14} />
-                    </button>
                     {hunt.status !== 4 && (
                       <button
                         className="action-btn close-btn"
@@ -331,39 +364,25 @@ const HuntCard: React.FC = () => {
                 
                 <div className="card-details">
                   <div className="detail-row">
-                    <Icon name={modeInfo.icon} size={12} style={{ color: modeInfo.color }} />
-                    <span>{modeInfo.name}</span>
-                  </div>
-                  {hunt.status === 4 && (
-                    <div className="detail-row">
-                      <Icon name="lock" size={12} style={{ color: '#9e9e9e' }} />
-                      <span>Clôturée</span>
-                    </div>
-                  )}
-                  <div className="detail-row">
-                    <Icon name="users" size={12} />
-                    <span>{hunt.max_participants} places</span>
-                  </div>
-                  <div className="detail-row">
-                    <Icon name="clock-o" size={12} />
-                    <span>Délai: {formatSearchDelay(hunt.search_delay)}</span>
-                  </div>
-                  <div className="detail-row">
                     <Icon name="circle" size={8} style={{ color: getStatusColor(hunt.status) }} />
                     <span>{getStatusText(hunt.status)}</span>
                   </div>
-                  {hunt.participation_fee > 0 && (
-                    <div className="detail-row">
-                      <Icon name="euro" size={12} />
-                      <span>{hunt.participation_fee}€</span>
-                    </div>
-                  )}
-                  {hunt.chat_enabled && (
-                    <div className="detail-row">
-                      <Icon name="comments" size={12} style={{ color: '#4CAF50' }} />
-                      <span>Chat activé</span>
-                    </div>
-                  )}
+                  <div className="detail-row">
+                    <Icon name="calendar" size={12} />
+                    <span>Créée le {new Date(hunt.created_at).toLocaleDateString('fr-FR')}</span>
+                  </div>
+                  <div className="detail-row">
+                    <Icon name="refresh" size={12} />
+                    <span>Mise à jour le {hunt.updated_at ? new Date(hunt.updated_at).toLocaleDateString('fr-FR') : '—'}</span>
+                  </div>
+                  <div className="detail-row">
+                    <Icon name="clock-o" size={12} />
+                    <span>Fin : {formatDuration(hunt.duration)}</span>
+                  </div>
+                  <div className="detail-row">
+                    <Icon name="euro" size={12} />
+                    <span>{hunt.participation_fee} €</span>
+                  </div>
                 </div>
 
                 <div className="card-footer">
@@ -382,8 +401,8 @@ const HuntCard: React.FC = () => {
         <button 
           onClick={handleNext} 
           className="icon-button"
-          disabled={currentIndex.current === hunts.length - 1}
-          style={{ opacity: currentIndex.current === hunts.length - 1 ? 0.5 : 1 }}
+          disabled={scrollIndex >= hunts.length - 1}
+          style={{ opacity: scrollIndex >= hunts.length - 1 ? 0.5 : 1 }}
         >
           <Icon name="chevron-right" size={30} />
         </button>

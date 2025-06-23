@@ -54,7 +54,7 @@ const cacheSchema = Yup.object({
 
   hunt_id: Yup.number()
     .required("Une chasse doit être associée à cette étape")
-    .integer()
+    .integer("L'ID de la chasse doit être un entier")
     .min(1, "L'ID de la chasse doit être valide"),
 
   partner_id: Yup.number()
