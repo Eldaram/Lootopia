@@ -360,7 +360,6 @@ const HuntCard: React.FC = () => {
                 </div>
                 
                 <h3 className="card-title">{hunt.title}</h3>
-                <p className="card-description">{hunt.description}</p>
                 
                 <div className="card-details">
                   <div className="detail-row">
@@ -368,16 +367,8 @@ const HuntCard: React.FC = () => {
                     <span>{getStatusText(hunt.status)}</span>
                   </div>
                   <div className="detail-row">
-                    <Icon name="calendar" size={12} />
-                    <span>Créée le {new Date(hunt.created_at).toLocaleDateString('fr-FR')}</span>
-                  </div>
-                  <div className="detail-row">
-                    <Icon name="refresh" size={12} />
-                    <span>Mise à jour le {hunt.updated_at ? new Date(hunt.updated_at).toLocaleDateString('fr-FR') : '—'}</span>
-                  </div>
-                  <div className="detail-row">
-                    <Icon name="clock-o" size={12} />
-                    <span>Fin : {formatDuration(hunt.duration)}</span>
+                    <Icon name="users" size={12} />
+                    <span>{hunt.max_participants ?? "∞"} participants max</span>
                   </div>
                   <div className="detail-row">
                     <Icon name="euro" size={12} />
@@ -388,6 +379,9 @@ const HuntCard: React.FC = () => {
                 <div className="card-footer">
                   <small className="creation-date">
                     Créée le {new Date(hunt.created_at).toLocaleDateString('fr-FR')}
+                  </small>
+                  <small className="update-date">
+                    Mise à jour le {hunt.updated_at ? new Date(hunt.updated_at).toLocaleDateString('fr-FR') : '—'}
                   </small>
                   <small className="duration-date">
                     Fin: {formatDuration(hunt.duration)}

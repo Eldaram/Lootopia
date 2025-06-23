@@ -285,6 +285,16 @@ const HuntFormPage = () => {
       
       const data = await response.json();
       setSteps(Array.isArray(data) ? data : []);
+
+      if (Array.isArray(data) && data.length > 0) {
+        const firstStep = data[0];
+        setNewStep((prev) => ({
+          ...prev,
+          latitude: firstStep.latitude ?? 48.8566,
+          longitude: firstStep.longitude ?? 2.3522
+        }));
+      }
+      console.log(data);
     } catch (error) {
       console.error('Erreur étapes:', error);
       setSteps([]);
@@ -386,8 +396,8 @@ const HuntFormPage = () => {
             hunt_id: savedHuntId,
             order_index: index,
             status: 1,
-            latitude: 48.8566,
-            longitude: 2.3522,
+            latitude: newStep.latitude!,
+            longitude: newStep.longitude!,
             visibility: step.visibility
           };
           
@@ -427,8 +437,8 @@ const HuntFormPage = () => {
     const localStep = {
       ...newStep,
       id: `temp-${Date.now()}`, // ID temporaire unique
-      latitude: 48.8566,
-      longitude: 2.3522,
+      latitude: newStep.latitude!,
+      longitude: newStep.longitude!,
       partner_id: 1,
     };
 
@@ -492,6 +502,8 @@ const HuntFormPage = () => {
 
     setNewStep({
       ...stepToEdit,
+      latitude: stepToEdit.latitude ?? 48.8566,
+      longitude: stepToEdit.longitude ?? 2.3522,
       reward_collection: stepToEdit.reward_collection || '',
       reward_item: stepToEdit.reward_item || '',
     });
@@ -509,8 +521,8 @@ const HuntFormPage = () => {
       ...newStep,
       title: newStep.title.trim(),
       location: newStep.location.trim(),
-      latitude: 48.8566,
-      longitude: 2.3522,
+      latitude: newStep.latitude!,
+      longitude: newStep.longitude!,
       partner_id: 1,
       visibility: newStep.visibility,
     };

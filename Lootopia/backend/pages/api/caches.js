@@ -139,8 +139,8 @@ function formatCacheForFrontend(cache) {
   formatted.dimension_display = `${cache.dimensions} ${cache.dimensionUnit}`;
   formatted.is_active = cache.status === 1;
   formatted.has_reward = !!(cache.reward_collection && cache.reward_item);
-  formatted.latitude = cache.location?.y ?? null;
-  formatted.longitude = cache.location?.x ?? null;
+  formatted.latitude = cache.latitude ?? null;
+  formatted.longitude = cache.longitude ?? null;
 
   return formatted;
 }
@@ -323,7 +323,11 @@ async function handleGetCaches(req, res) {
           .orderBy("created_at", "asc");
     }
 
-    const caches = await query;
+    const caches = await query.select(
+      "caches.*",
+      db.raw("ST_X(location) AS longitude"),
+      db.raw("ST_Y(location) AS latitude")
+    );
 
     if (!caches || caches.length === 0) {
       if (id) {
