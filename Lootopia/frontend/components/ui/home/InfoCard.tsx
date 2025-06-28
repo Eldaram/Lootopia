@@ -1,33 +1,95 @@
 import React from 'react';
-import '../../../app/src/styles.css';
+import { View, Text, Image } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
-export const InfoCard: React.FC = () => {
+interface InfoCardProps {
+  theme: typeof Colors.light;
+}
+
+export const InfoCard: React.FC<InfoCardProps> = ({ theme }) => {
   return (
-    <div className="info-card">
-      <div className="info-section">
-        <p className="info-title">Achetez le !</p>
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/263/263115.png"
-          alt="Gems"
-          className="info-image"
+    <View
+      style={{
+        height: 300,
+        backgroundColor: theme.cardBackground, 
+        borderRadius: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 16,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        gap: 12,
+      }}
+    >
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            marginBottom: 8,
+            color: theme.text,
+          }}
+        >
+          Achetez le !
+        </Text>
+
+        <Image
+          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/263/263115.png' }}
+          style={{ width: 50, height: 50, marginVertical: 8 }}
         />
-        <p className="info-price">3,99 €</p>
-        <p className="info-description">1500 Gemmes +<br />3000 pièces d’or</p>
-      </div>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            color: '#e67e22',
+          }}
+        >
+          3,99 €
+        </Text>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 12,
+            marginTop: 4,
+            color: theme.icon,
+          }}
+        >
+          1500 Gemmes +{'\n'}3000 pièces d’or
+        </Text>
+      </View>
 
-      <div className="info-section">
-        <p className="info-title">Mes derniers artéfacts</p>
-        <p className="info-item">👁️ L’œil d’Astra</p>
-        <p className="info-item">👁️ L’œil d’Astra</p>
-        <p className="info-item">👁️ L’œil d’Astra</p>
-      </div>
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            marginBottom: 8,
+            color: theme.text, 
+          }}
+        >
+          Mes derniers artéfacts
+        </Text>
 
-      <div className="info-section">
-        <p className="info-title">Meilleurs Chasseurs</p>
-        <p className="info-item">🥇 ShadowFlux</p>
-        <p className="info-item">🥈 ShadowFlux</p>
-        <p className="info-item">🥉 ShadowFlux</p>
-      </div>
-    </div>
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>👁️ L’œil d’Astra</Text>
+      </View>
+
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            marginBottom: 8,
+            color: theme.text, 
+          }}
+        >
+          Meilleurs Chasseurs
+        </Text>
+
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥇 ShadowFlux</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥈 ShadowFlux</Text>
+        <Text style={{ fontSize: 14, marginTop: 4, color: theme.icon }}>🥉 ShadowFlux</Text>
+      </View>
+    </View>
   );
 };
