@@ -61,6 +61,9 @@ export const ButtonGrid = () => {
     if (text === 'Chasses disponibles') {
       router.push('/hunts'); 
     }
+    if (text === 'Mes chasses') {
+      router.push('/myHunts'); 
+    }
   };
 
   return (
