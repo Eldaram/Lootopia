@@ -111,7 +111,12 @@ export default function MyHuntsScreen() {
                 </View>
               )}
     
-              <JoinHuntButton item={item} />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => router.push(`/hunt/${item.id}`)}
+              >
+                <Text style={styles.buttonText}>Continuer</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </TouchableOpacity>
