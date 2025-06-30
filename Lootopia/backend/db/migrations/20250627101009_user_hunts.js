@@ -4,8 +4,8 @@ module.exports = {
       table.increments();
       table.integer("hunt_id").references("id").inTable("hunts");
       table.integer("user_id").references("id").inTable("users");
-      table.integer("cache_id").references("id").inTable("caches");
-      table.smallint("statut");
+      // table.integer("cache_id").references("id").inTable("caches");
+      // table.smallint("statut");
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.timestamp("updated_at");
     });
