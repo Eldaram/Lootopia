@@ -38,7 +38,7 @@ const LoginScreen = () => {
 
   const login = async () => {
     try {
-      const res = await fetch("http://192.168.102.109:3000/api/login", {
+      const res = await fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

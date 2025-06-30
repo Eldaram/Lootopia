@@ -27,7 +27,7 @@ export default function HuntsScreen() {
   useEffect(() => {
     async function fetchHunts() {
       try {
-        const res = await fetch("http://192.168.102.109:3000/api/hunts");
+        const res = await fetch("http://localhost:3000/api/hunts");
         if (!res.ok) throw new Error("Erreur de récupération des chasses disponibles");
         const data: Hunt[] = await res.json();
         const now = new Date();
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 10,
   },
+  
   card: {
     flex: 1,
     backgroundColor: '#fff',
