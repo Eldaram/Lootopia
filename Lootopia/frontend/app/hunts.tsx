@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Platform } from 're
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/constants/ThemeProvider';
 import { Colors } from '@/constants/Colors';
+import JoinHuntButton from '@/components/ui/map/JoinHuntButton';
 
 type Hunt = {
   id: number;
@@ -79,12 +80,7 @@ export default function HuntsScreen() {
               </View>
             )}
   
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } })}
-            >
-              <Text style={styles.buttonText}>Participer</Text>
-            </TouchableOpacity>
+            <JoinHuntButton item={item} />
           </View>
         </View>
       </TouchableOpacity>

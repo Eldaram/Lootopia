@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
 import { getSession } from '@/app/src/services/authService';
+import JoinHuntButton from '@/components/ui/map/JoinHuntButton';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -169,13 +170,7 @@ const HuntingCard: React.FC<HuntingCardProps> = ({ theme }) => {
                       <Text style={styles.gainText}>{item.gain ?? 0} 👑</Text>
                       <Text style={styles.duration}>⏳ {daysLeft} j</Text>
                     </View>
-
-                    <TouchableOpacity
-                                  style={styles.button}
-                                  onPress={() => router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } })}
-                                >
-                                  <Text style={styles.buttonText}>Participer</Text>
-                                </TouchableOpacity>
+                    <JoinHuntButton item={item} />
                   </View>
                 </View>
               </View>
