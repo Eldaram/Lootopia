@@ -19,6 +19,7 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [isAlreadyJoined, setIsAlreadyJoined] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUserSession = async () => {
@@ -34,6 +35,34 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
 
     fetchUserSession();
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const checkIfUserJoined = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}/hunts`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const hunts = await response.json();
+          const isJoined = hunts.some((hunt: { id: number }) => hunt.id === item.id);
+          setIsAlreadyJoined(isJoined);
+        } else {
+          setIsAlreadyJoined(false);
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Erreur", "Impossible de vérifier l'inscription.");
+      }
+    };
+
+    checkIfUserJoined();
+  }, [userId, item.id]);
 
   const handleJoin = async () => {
     if (!userId) {
@@ -58,7 +87,7 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
         throw new Error("Erreur lors de la participation à la chasse.");
       }
 
-      router.push({ pathname: '/hunt/[id]', params: { id: item.id.toString() } });
+      router.push(`/hunt/${item.id}`);
     } catch (error) {
       console.error(error);
       Alert.alert("Erreur", "Impossible de rejoindre la chasse.");
@@ -67,9 +96,18 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
 
   return (
     <View>
-      <TouchableOpacity style={styles.button} onPress={handleJoin}>
-        <Text style={styles.buttonText}>Participer</Text>
-      </TouchableOpacity>
+      {!isAlreadyJoined ? (
+        <TouchableOpacity style={styles.button} onPress={handleJoin}>
+          <Text style={styles.buttonText}>Participer</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push(`/hunt/${item.id}`)}
+        >
+          <Text style={styles.buttonText}>Continuer</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
