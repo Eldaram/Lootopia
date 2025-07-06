@@ -12,6 +12,8 @@ const DynamicMap = dynamic(() => import('@/components/DynamicMap'), {
 const MapFormScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const stringId = Array.isArray(id) ? id[0] : id;
+  const isEditMode = stringId && stringId != 'index';
 
   const [form, setForm] = useState({
     name: '',
@@ -35,8 +37,6 @@ const MapFormScreen = () => {
     3: '🧭 Boussole',
     4: '📍 Flèche',
   };
-
-  const isEditMode = !!id;
 
   useEffect(() => {
     if (isEditMode) {

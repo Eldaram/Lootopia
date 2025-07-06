@@ -1,4 +1,3 @@
-import cors from "../../lib/cors.js";
 import db from "../../services/db.js";
 import * as Yup from "yup";
 
@@ -7,6 +6,7 @@ const artifactSchema = Yup.object({
   admin_id: Yup.number().required(
     "L'identifiant de l'administrateur est requis"
   ),
+  title: Yup.string().required("Le titre est requis"),
   type: Yup.number().nullable().default(null),
   theme_id: Yup.number().nullable().default(null),
   rarity: Yup.number().nullable().default(null),
@@ -42,10 +42,26 @@ async function validateAndApplyDefaults(data, isUpdate = false) {
 }
 
 export default async function handler(req, res) {
-  await cors(req, res);
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
 
-  // Réponse rapide aux requêtes OPTIONS (pré-vol)
+  // Gérer la requête préliminaire OPTIONS
   if (req.method === "OPTIONS") {
+    return res.status(200).end(); // Répondre OK sans rien faire d'autre
+  }
+
+  // Gérer les requêtes OPTIONS (preflight)
+  if (req.method === "OPTIONS") {
+    console.log("[CACHE API] Réponse OPTIONS");
     return res.status(204).end();
   }
 

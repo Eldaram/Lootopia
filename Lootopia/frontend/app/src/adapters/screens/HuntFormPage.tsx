@@ -47,7 +47,6 @@ interface ErrorObject {
 }
 
 const HuntFormPage = () => {
-  console.log(API_URL);
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
@@ -110,7 +109,36 @@ const HuntFormPage = () => {
     loadMaps();
     loadCollections();
   }, [id]);
-  
+
+  const [artifacts, setArtifacts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchArtifacts = async () => {
+      if (!newStep.reward_collection) {
+        setArtifacts([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/artifacts`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Erreur de récupération des artefacts');
+
+        const allArtifacts = await response.json();
+        const filtered = allArtifacts.filter((a: any) => a.collection_id === parseInt(newStep.reward_collection));
+        setArtifacts(filtered);
+      } catch (error) {
+        console.error('Erreur chargement artifacts:', error);
+        setArtifacts([]);
+      }
+    };
+
+    fetchArtifacts();
+  }, [newStep.reward_collection]);  
 
   const handleNumberInput = (
     field: keyof HuntData,
@@ -294,7 +322,6 @@ const HuntFormPage = () => {
           longitude: firstStep.longitude ?? 2.3522
         }));
       }
-      console.log(data);
     } catch (error) {
       console.error('Erreur étapes:', error);
       setSteps([]);
@@ -365,8 +392,6 @@ const HuntFormPage = () => {
       const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
       const method = isEdit ? 'PUT' : 'POST';
       
-      console.log('Envoi des données:', apiData);
-      
       const response = await fetch(url, {
         method,
         headers: { 
@@ -382,7 +407,6 @@ const HuntFormPage = () => {
       }
       
       const result = await response.json();
-      console.log('Réponse de l\'API:', result);
 
       const savedHuntId = result.id; // récupère l'ID renvoyé
 
@@ -1290,13 +1314,11 @@ const HuntFormPage = () => {
                           className="hunt-form-select"
                         >
                           <option value="">Choisir récompense</option>
-                          {newStep.reward_collection && (
-                            <>
-                              <option value="item1">🏅 Item 1</option>
-                              <option value="item2">🎖️ Item 2</option>
-                              <option value="item3">🏆 Item 3</option>
-                            </>
-                          )}
+                          {artifacts.map(artifact => (
+                            <option key={artifact.id} value={artifact.id}>
+                              {artifact.title}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>

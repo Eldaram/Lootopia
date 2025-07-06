@@ -180,20 +180,18 @@ export default async function handler(req, res) {
       return res.status(200).json(updatedCollection);
     }
 
-    // Méthode DELETE : Supprime une collection par ID
     if (req.method === "DELETE") {
       const { id } = req.query;
-      if (!id) {
-        return res.status(400).json({ error: "ID requis" });
+
+      if (!id || isNaN(Number(id))) {
+        return res.status(400).json({ error: "ID valide requis" });
       }
 
-      // Vérifier si la collection existe
       const collectionExists = await db("collections").where("id", id).first();
       if (!collectionExists) {
         return res.status(404).json({ error: "Collection introuvable" });
       }
 
-      // Supprimer la collection et retourner les données supprimées
       const [deletedCollection] = await db("collections")
         .where("id", id)
         .del()
@@ -208,7 +206,7 @@ export default async function handler(req, res) {
         ]);
 
       return res.status(200).json(deletedCollection);
-    }
+    }    
 
     res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
     return res.status(405).end(`Méthode ${req.method} non autorisée`);

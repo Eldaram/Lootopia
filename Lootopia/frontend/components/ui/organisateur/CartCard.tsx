@@ -23,6 +23,7 @@ const CartCard: React.FC = () => {
   const currentIndex = useRef(0);
   const [maps, setMaps] = useState<Map[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState<'all' | 0 | 1>('all');
   const router = useRouter();
 
   const scrollToCard = (index: number) => {
@@ -74,6 +75,29 @@ const CartCard: React.FC = () => {
     }
   };
 
+  const toggleStatus = async (mapId: number, currentStatus: number) => {
+    try {
+      const newStatus = currentStatus === 1 ? 0 : 1;
+      const response = await fetch(`${API_URL}/maps?id=${mapId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        const updated = await response.json();
+        setMaps(maps.map(m => m.id === mapId ? updated : m));
+      } else {
+        alert('Erreur lors de la mise à jour du statut');
+      }
+    } catch (error) {
+      console.error('Erreur statut carte :', error);
+      alert('Erreur lors de la mise à jour');
+    }
+  };
+
   const getStatusColor = (status: number) => {
     return status === 1 ? '#4CAF50' : '#f44336';
   };
@@ -116,6 +140,10 @@ const CartCard: React.FC = () => {
     router.push('/map/index');
   };
 
+  const filteredMaps = filterStatus === 'all'
+    ? maps
+    : maps.filter(map => map.status === filterStatus);
+
   if (loading) {
     return (
       <div>
@@ -149,11 +177,33 @@ const CartCard: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         <h2 className="section-title">Mes cartes ({maps.length})</h2>
         <button className="add-button" onClick={handleCreateNew}>
           <Icon name="plus" size={16} /> Nouvelle carte
         </button>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div>
+          <strong>Total :</strong> {maps.length} | <strong>Affichées :</strong> {filteredMaps.length}
+        </div>
+        <div>
+          <label htmlFor="map-filter" style={{ marginRight: '8px' }}><strong>Filtrer :</strong></label>
+          <select
+            id="map-filter"
+            value={filterStatus}
+            onChange={(e) => {
+              const val = e.target.value;
+              setFilterStatus(val === 'all' ? 'all' : parseInt(val) as 0 | 1);
+            }}
+            className="filter-select"
+          >
+            <option value="all">Toutes les cartes</option>
+            <option value="1">Actives</option>
+            <option value="0">Inactives</option>
+          </select>
+        </div>
       </div>
 
       <div className="hunting-card-row">
@@ -171,13 +221,31 @@ const CartCard: React.FC = () => {
           ref={scrollRef}
           style={{ overflowX: 'hidden', display: 'flex' }}
         >
-          {maps.map((map) => (
-            <div key={map.id} className="hunting-card map-card">
+          {filteredMaps.map((map) => (
+            <div
+              key={map.id}
+              className={`hunting-card map-card ${map.status === 0 ? 'disabled-card' : ''}`}
+            >
               <div className="card-header">
                 <div className="card-icon">
                   <Icon name={getSkinIcon(map.skin)} size={24} color="#007bff" />
                 </div>
                 <div className="card-actions">
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={map.status === 1}
+                      onChange={() => {
+                        const confirmMsg = map.status === 1
+                          ? 'Voulez-vous désactiver cette carte ?'
+                          : 'Voulez-vous activer cette carte ?';
+                        if (window.confirm(confirmMsg)) {
+                          toggleStatus(map.id, map.status);
+                        }
+                      }}
+                    />
+                    <span className="slider round" title={getStatusText(map.status)}></span>
+                  </label>
                   <button 
                     className="action-btn edit-btn"
                     onClick={() => handleEdit(map.id)}

@@ -2108,3 +2108,27 @@ body.dark,
   background: #7aa8dc;
   cursor: not-allowed;
 }
+
+.disabled-card {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.rewards-button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.rewards-button:hover {
+  background-color: #5a4bcf;
+}
+
