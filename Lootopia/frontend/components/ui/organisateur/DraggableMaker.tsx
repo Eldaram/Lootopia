@@ -1,4 +1,3 @@
-// components/DraggableMarker.tsx
 import { Marker, useMapEvents } from 'react-leaflet';
 import { useRef, useEffect, useState } from 'react';
 import L, { LatLngLiteral } from 'leaflet';
@@ -12,6 +11,12 @@ const DraggableMarker: React.FC<DraggableMarkerProps> = ({ position, onDragEnd }
   const markerRef = useRef<L.Marker>(null);
   const [pos, setPos] = useState(position);
 
+  // ✅ Met à jour le marqueur si la prop change
+  useEffect(() => {
+    setPos(position);
+  }, [position]);
+
+  // ✅ Permet de déplacer le marqueur par clic sur la carte
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;

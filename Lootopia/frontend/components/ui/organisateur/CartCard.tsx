@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import '../../../app/src/styles.css';
 import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -22,6 +23,7 @@ const CartCard: React.FC = () => {
   const currentIndex = useRef(0);
   const [maps, setMaps] = useState<Map[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const scrollToCard = (index: number) => {
     if (scrollRef.current) {
@@ -48,14 +50,16 @@ const CartCard: React.FC = () => {
   };
 
   const handleEdit = (mapId: number) => {
-    console.log(`Éditer la carte ${mapId}`);
-    // Logique pour éditer la carte
-  };
+    router.push({
+      pathname: '/map/[id]',
+      params: { id: String(mapId) }
+    });    
+  };  
 
   const handleDelete = async (mapId: number) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
       try {
-        const response = await fetch(`${API_URL}/maps/${mapId}`, {
+        const response = await fetch(`${API_URL}/maps?id=${mapId}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -108,6 +112,10 @@ const CartCard: React.FC = () => {
     fetchMaps();
   }, []);
 
+  const handleCreateNew = () => {
+    router.push('/map/index');
+  };
+
   if (loading) {
     return (
       <div>
@@ -130,7 +138,7 @@ const CartCard: React.FC = () => {
           <div className="hunting-card" style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Icon name="map-o" size={40} />
             <p style={{ color: '#666' }}>Aucune carte disponible</p>
-            <button className="add-button" style={{ marginTop: '10px' }}>
+            <button className="add-button" style={{ marginTop: '10px' }} onClick={handleCreateNew}>
               <Icon name="plus" size={16} /> Créer une carte
             </button>
           </div>
@@ -143,7 +151,7 @@ const CartCard: React.FC = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 className="section-title">Mes cartes ({maps.length})</h2>
-        <button className="add-button">
+        <button className="add-button" onClick={handleCreateNew}>
           <Icon name="plus" size={16} /> Nouvelle carte
         </button>
       </div>

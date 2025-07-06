@@ -22,7 +22,13 @@ interface Props {
   onChange: (lat: number, lng: number, radius: number, unit: 'km') => void;
 }
 
-function AutoFitCircle({ circleRef }: { circleRef: React.RefObject<LeafletCircle | null> }) {
+function AutoFitCircle({
+  circleRef,
+  radius,
+}: {
+  circleRef: React.RefObject<LeafletCircle | null>;
+  radius: number;
+}) {
   const map = useMap();
 
   useEffect(() => {
@@ -33,7 +39,7 @@ function AutoFitCircle({ circleRef }: { circleRef: React.RefObject<LeafletCircle
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [20, 20] });
     }
-  }, [map, circleRef]);
+  }, [map, circleRef, radius]);
 
   return null;
 }
@@ -45,9 +51,10 @@ export default function DynamicMap({ latitude, longitude, radius, unit, onChange
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const circleRef = useRef<LeafletCircle | null>(null);
+  const [hasSelectedSuggestion, setHasSelectedSuggestion] = useState(false);
 
   useEffect(() => {
-    if (!address || address.length < 3) {
+    if (hasSelectedSuggestion || !address || address.length < 3) {
       setSuggestions([]);
       return;
     }
@@ -79,7 +86,8 @@ export default function DynamicMap({ latitude, longitude, radius, unit, onChange
     setSuggestions([]);
     setPosition({ lat: newLat, lng: newLng });
     onChange(newLat, newLng, radius, unit);
-  };
+    setHasSelectedSuggestion(true);
+  };  
 
   return (
     <div className="dynamic-map-container">
@@ -89,7 +97,7 @@ export default function DynamicMap({ latitude, longitude, radius, unit, onChange
           <input
             type="text"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => { setAddress(e.target.value); setHasSelectedSuggestion(false); }}
             placeholder="Tapez une adresse (min. 3 lettres)"
             className="address-input"
             autoComplete="off"
@@ -119,7 +127,7 @@ export default function DynamicMap({ latitude, longitude, radius, unit, onChange
       <MapContainer
         center={position}
         zoom={13}
-        style={{ height: '400px', width: '100%' }}
+        style={{ height: '350px', width: '100%' }}
         scrollWheelZoom
       >
         <TileLayer
@@ -143,8 +151,22 @@ export default function DynamicMap({ latitude, longitude, radius, unit, onChange
             }
           }}
         />
-        <AutoFitCircle circleRef={circleRef} />
+        <AutoFitCircle circleRef={circleRef} radius={radius} />
+        <RecenterMap position={position} /> {/* 👈 Ajout ici */}
       </MapContainer>
     </div>
   );
 }
+
+function RecenterMap({ position }: { position: LatLngLiteral }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (position && map) {
+      map.setView(position); // ou map.flyTo(position, zoom)
+    }
+  }, [position, map]);
+
+  return null;
+}
+
