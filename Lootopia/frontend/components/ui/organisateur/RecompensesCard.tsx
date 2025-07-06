@@ -116,7 +116,11 @@ const RecompensesCard: React.FC = () => {
     const fetchArtifacts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/artifacts?admin_id=1`);
+        const url = collectionIdParam
+          ? `${API_URL}/artifacts?collection_id=${collectionIdParam}`
+          : `${API_URL}/artifacts?admin_id=1`;
+
+        const response = await fetch(url);
         const data = await response.json();
         setArtifacts(data);
       } catch (error) {

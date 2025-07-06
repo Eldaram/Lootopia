@@ -81,8 +81,28 @@ export default async function handler(req, res) {
         return res.status(200).json(artifact);
       } else {
         // Récupérer tous les artefacts
-        const artifacts = await db("artifacts");
+        const { id, admin_id, collection_id } = req.query;
+
+        if (id) {
+          const artifact = await db("artifacts").where("id", id).first();
+          if (!artifact) {
+            return res.status(404).json({ error: "Artefact introuvable" });
+          }
+          return res.status(200).json(artifact);
+        }
+
+        let query = db("artifacts");
+
+        if (admin_id) {
+          query = query.where("admin_id", admin_id);
+        }
+        if (collection_id) {
+          query = query.where("collection_id", collection_id);
+        }
+
+        const artifacts = await query;
         return res.status(200).json(artifacts);
+
       }
     }
 
