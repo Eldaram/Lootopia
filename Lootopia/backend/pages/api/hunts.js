@@ -72,6 +72,19 @@ const huntSchema = Yup.object({
   code_secret: Yup.string()
     .max(255, "Le code secret ne peut pas dépasser 255 caractères")
     .nullable(),
+
+  max_winner: Yup.number()
+    .integer()
+    .min(1, "Le nombre maximum de gagnants doit être d'au moins 1")
+    .max(9999, "Le nombre maximum de gagnants est trop élevé")
+    .nullable()
+    .default(null),
+
+  winner_price: Yup.number()
+    .min(0, "Le prix du gagnant ne peut pas être négatif")
+    .max(999999.99, "Le prix du gagnant est trop élevé")
+    .nullable()
+    .default(null),
 });
 
 const huntCreateSchema = huntSchema; // inchangé
@@ -91,6 +104,18 @@ const huntUpdateSchema = Yup.object({
   status: Yup.number().integer().min(0).max(4),
   closed_at: Yup.date().nullable(),
   code_secret: Yup.string().max(255).nullable(),
+  max_winner: Yup.number()
+    .integer()
+    .min(1, "Le nombre maximum de gagnants doit être d'au moins 1")
+    .max(9999, "Le nombre maximum de gagnants est trop élevé")
+    .nullable()
+    .default(null),
+
+  winner_price: Yup.number()
+    .min(0, "Le prix du gagnant ne peut pas être négatif")
+    .max(999999.99, "Le prix du gagnant est trop élevé")
+    .nullable()
+    .default(null),
 });
 
 // Parse la durée depuis frontend vers Date (durée fin)
@@ -275,6 +300,9 @@ function formatForFrontend(hunt) {
   formatted.closed_at = hunt.closed_at || null;
 
   formatted.code_secret = hunt.code_secret || null;
+
+  formatted.max_winner = hunt.max_winner;
+  formatted.winner_price = hunt.winner_price;
 
 
   return formatted;

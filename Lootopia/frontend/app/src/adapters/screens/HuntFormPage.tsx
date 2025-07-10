@@ -25,6 +25,9 @@ interface HuntData {
   currency: string;
   search_delay: number;
   search_delay_unit: string;
+  max_winner: number;
+  winner_price: number | null;
+  winner_price_title?: string;
 }
 
 interface StepData {
@@ -68,6 +71,9 @@ const HuntFormPage = () => {
   const [readOnly, setReadOnly] = useState(false);
   const { theme } = useTheme();
   const themeColors = Colors[theme]; 
+  const [artifactSearch, setArtifactSearch] = useState('');
+  const [artifactSuggestions, setArtifactSuggestions] = useState<any[]>([]);
+
 
 
   const [huntData, setHuntData] = useState<HuntData>({
@@ -84,7 +90,10 @@ const HuntFormPage = () => {
     participation_fee: 0,
     currency: 'EUR',
     search_delay: 1,
-    search_delay_unit: 'minutes'
+    search_delay_unit: 'minutes',
+    max_winner: 1,
+    winner_price: null,
+    winner_price_title: '',
   });
 
   const [steps, setSteps] = useState<StepData[]>([]);
@@ -419,6 +428,8 @@ const HuntFormPage = () => {
         search_delay: convertSearchDelayToTime(huntData.search_delay, huntData.search_delay_unit),
         partner_id: 1, // ID du partenaire connecté - à adapter selon votre authentification
         status: 1,
+        max_winner: huntData.max_winner,
+        winner_price: huntData.winner_price,
       };
       
       const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
@@ -696,7 +707,10 @@ const HuntFormPage = () => {
         participation_fee: huntData.participation_fee,
         search_delay: convertSearchDelayToTime(huntData.search_delay, huntData.search_delay_unit),
         partner_id: 1,
-        status: 3 // Brouillon
+        status: 3,
+        max_winner: huntData.max_winner,
+        winner_price: huntData.winner_price,
+
       };
   
       const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
@@ -1089,7 +1103,114 @@ const HuntFormPage = () => {
                   </select>
                 </div>
                 {errors.search_delay && <span className="error-message">{errors.search_delay}</span>}
-              </div>
+                </div>
+                
+                {/* Nombre max de gagnants */}
+                <div className="hunt-form-field">
+                  <label className="hunt-form-label">🏆 Nombre maximum de gagnants</label>
+                  <div className="number-input-group">
+                    <button
+                      onClick={() => handleNumberInput('max_winner', 'decrement', 1)}
+                      className="number-input-btn"
+                      type="button"
+                      disabled={readOnly}
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      value={huntData.max_winner}
+                      onChange={(e) => handleInputChange('max_winner', parseInt(e.target.value) || 1)}
+                      className={`number-input ${errors.max_winner ? 'input-error' : ''}`}
+                      min="1"
+                      disabled={readOnly}
+                    />
+                    <button
+                      onClick={() => handleNumberInput('max_winner', 'increment')}
+                      className="number-input-btn"
+                      type="button"
+                      disabled={readOnly}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {errors.max_winner && <span className="error-message">{errors.max_winner}</span>}
+                </div>
+
+                {/* Récompense du gagnant */}
+                <div className="hunt-form-field">
+                  <label className="hunt-form-label">🎖️ Récompense du gagnant</label>
+                  <input
+                    type="text"
+                    className="hunt-form-input"
+                    placeholder="Rechercher une récompense"
+                    value={artifactSearch}
+                    onChange={async (e) => {
+                      const query = e.target.value;
+                      setArtifactSearch(query);
+                      if (query.length > 1) {
+                        try {
+                          const res = await fetch(`${API_URL}/artifacts?admin_id=1`, {
+                            credentials: 'include'
+                          });
+                          const allArtifacts = await res.json();
+                          const suggestions = allArtifacts.filter((a: any) =>
+                            a.title.toLowerCase().includes(query.toLowerCase())
+                          );
+                          setArtifactSuggestions(suggestions);
+                        } catch (err) {
+                          console.error('Erreur recherche artifacts', err);
+                          setArtifactSuggestions([]);
+                        }
+                      } else {
+                        setArtifactSuggestions([]);
+                      }
+                    }}
+                    disabled={readOnly}
+                  />
+                  {/* Suggestions */}
+                  {artifactSuggestions.length > 0 && (
+                    <ul className="dropdown-suggestions">
+                      {artifactSuggestions.map((a) => (
+                        <li
+                          key={a.id}
+                          onClick={() => {
+                            setHuntData((prev) => ({
+                              ...prev,
+                              winner_price: a.id,
+                              winner_price_title: a.title,
+                            }));
+                            setArtifactSearch('');
+                            setArtifactSuggestions([]);
+                          }}
+                        >
+                          {a.title}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* Affichage sélectionnée */}
+                  {huntData.winner_price && (
+                    <div className="selected-artifact">
+                      ✅ {huntData.winner_price_title || 'Artefact sélectionné'}
+                      <button
+                        onClick={() =>
+                          setHuntData((prev) => ({
+                            ...prev,
+                            winner_price: null,
+                            winner_price_title: '',
+                          }))
+                        }
+                        type="button"
+                        className="clear-artifact-btn"
+                        disabled={readOnly}
+                      >
+                        ❌ Supprimer
+                      </button>
+                    </div>
+                  )}
+                </div>
 
               {/* Photo de couverture */}
               <div className="hunt-form-field">
