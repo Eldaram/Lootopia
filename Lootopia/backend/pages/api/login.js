@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: "Identifiants invalides" });
     }
 
-    if (parseInt(user.status) === 1) {
+    if (parseInt(user.status) === 0) {
       return res.status(403).json({ message: "Ce compte est désactivé." });
     }
 

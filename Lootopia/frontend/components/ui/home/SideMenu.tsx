@@ -45,7 +45,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ themeColors })=> {
 
   const menuItems = [
     { label: 'Accueil', icon: 'home', to: '/' },
-    { label: 'Organiser', icon: 'cogs', to: '/createHunts', role: 'admin' }, 
+    { label: 'Espace organisateur', icon: 'cogs', to: '/organiser' as const },
     { label: 'Mes Chasses', icon: 'bullseye', to: '/myHunts' },
     { label: 'Chasses disponibles', icon: 'gamepad', to: '/hunts' },
     { label: 'Artefacts', icon: 'gem', to: '/artefacts' },

@@ -1,10 +1,9 @@
-// aide.tsx
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
-export default function DeconnexionScreen() {
+export default function Page() {
   return (
     <View>
-      <Text>Deconnexion</Text>
+      <Text>Page Deconnexion</Text>
     </View>
   );
 }

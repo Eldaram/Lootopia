@@ -1,11 +1,21 @@
-module.exports = {
-  up: function (knex) {
-    return knex.schema.createTable('table_name', function (table) {
-      table.increments();  // Ajoute une clé primaire incrémentée
-      table.string('column_name');  // Ajoute une colonne de type chaîne
-    });
-  },
-  down: function (knex) {
-    return knex.schema.dropTable('table_name');  // Supprime la table lors du rollback
-  }
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.up = async function(knex) {
+  await knex.schema.alterTable("<table_name>", (table) => {
+    // Ajoute tes colonnes ici, exemple :
+    // table.string("example_column");
+  });
+};
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.down = async function(knex) {
+  await knex.schema.alterTable("<table_name>", (table) => {
+    // Supprime les colonnes ajoutées ici, exemple :
+    // table.dropColumn("example_column");
+  });
 };

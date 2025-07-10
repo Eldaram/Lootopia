@@ -6,6 +6,7 @@ const artifactSchema = Yup.object({
   admin_id: Yup.number().required(
     "L'identifiant de l'administrateur est requis"
   ),
+  title: Yup.string().required("Le titre est requis"),
   type: Yup.number().nullable().default(null),
   theme_id: Yup.number().nullable().default(null),
   rarity: Yup.number().nullable().default(null),
@@ -41,6 +42,29 @@ async function validateAndApplyDefaults(data, isUpdate = false) {
 }
 
 export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
+
+  // Gérer la requête préliminaire OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end(); // Répondre OK sans rien faire d'autre
+  }
+
+  // Gérer les requêtes OPTIONS (preflight)
+  if (req.method === "OPTIONS") {
+    console.log("[CACHE API] Réponse OPTIONS");
+    return res.status(204).end();
+  }
+
   try {
     // Méthode GET : Récupère tous les artefacts ou un artefact spécifique
     if (req.method === "GET") {
@@ -57,8 +81,28 @@ export default async function handler(req, res) {
         return res.status(200).json(artifact);
       } else {
         // Récupérer tous les artefacts
-        const artifacts = await db("artifacts");
+        const { id, admin_id, collection_id } = req.query;
+
+        if (id) {
+          const artifact = await db("artifacts").where("id", id).first();
+          if (!artifact) {
+            return res.status(404).json({ error: "Artefact introuvable" });
+          }
+          return res.status(200).json(artifact);
+        }
+
+        let query = db("artifacts");
+
+        if (admin_id) {
+          query = query.where("admin_id", admin_id);
+        }
+        if (collection_id) {
+          query = query.where("collection_id", collection_id);
+        }
+
+        const artifacts = await query;
         return res.status(200).json(artifacts);
+
       }
     }
 

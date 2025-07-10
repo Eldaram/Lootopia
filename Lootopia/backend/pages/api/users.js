@@ -14,7 +14,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    const users = await db("users").select(
+    const { search } = req.query;
+
+    let query = db("users").select(
       "id",
       "username",
       "email",
@@ -26,6 +28,18 @@ export default async function handler(req, res) {
       "disabled_start",
       "disabled_end"
     );
+
+    if (search) {
+      query = query.where(function () {
+        this.where("username", "ilike", `%${search}%`).orWhere(
+          "email",
+          "ilike",
+          `%${search}%`
+        );
+      });
+    }
+
+    const users = await query;
     return res.status(200).json(users);
   }
 

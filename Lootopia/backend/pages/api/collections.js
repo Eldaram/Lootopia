@@ -37,10 +37,27 @@ async function validateAndApplyDefaults(data, isUpdate = false) {
 }
 
 export default async function handler(req, res) {
+  // Configuration CORS
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
+
+  // Gérer la requête préliminaire OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end(); // Répondre OK sans rien faire d'autre
+  }
   try {
     // Méthode GET : Récupère toutes les collections ou une collection spécifique
     if (req.method === "GET") {
-      const { id } = req.query;
+      const { id, admin_id } = req.query;
 
       if (id) {
         // Récupérer une collection spécifique par ID
@@ -51,6 +68,10 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(collection);
+      } else if (admin_id) {
+        // Récupérer les collections filtrées par admin_id
+        const collections = await db("collections").where("admin_id", admin_id);
+        return res.status(200).json(collections);
       } else {
         // Récupérer toutes les collections
         const collections = await db("collections");
@@ -159,20 +180,18 @@ export default async function handler(req, res) {
       return res.status(200).json(updatedCollection);
     }
 
-    // Méthode DELETE : Supprime une collection par ID
     if (req.method === "DELETE") {
       const { id } = req.query;
-      if (!id) {
-        return res.status(400).json({ error: "ID requis" });
+
+      if (!id || isNaN(Number(id))) {
+        return res.status(400).json({ error: "ID valide requis" });
       }
 
-      // Vérifier si la collection existe
       const collectionExists = await db("collections").where("id", id).first();
       if (!collectionExists) {
         return res.status(404).json({ error: "Collection introuvable" });
       }
 
-      // Supprimer la collection et retourner les données supprimées
       const [deletedCollection] = await db("collections")
         .where("id", id)
         .del()
@@ -187,7 +206,7 @@ export default async function handler(req, res) {
         ]);
 
       return res.status(200).json(deletedCollection);
-    }
+    }    
 
     res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
     return res.status(405).end(`Méthode ${req.method} non autorisée`);

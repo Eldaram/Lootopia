@@ -1,10 +1,9 @@
-// aide.tsx
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
-export default function ArtefactsScreen() {
+export default function Page() {
   return (
     <View>
-      <Text>Artefacts</Text>
+      <Text>Page Artefacts</Text>
     </View>
   );
 }

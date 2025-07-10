@@ -9,18 +9,20 @@ const mapSchema = Yup.object({
   scale: Yup.string().default("1:1000"),
   partner_id: Yup.number().required("Le créateur est requis"),
   status: Yup.number().default(1),
+  description: Yup.string().default(""),
+  latitude: Yup.number().optional(),
+  longitude: Yup.number().optional(),
+  radius: Yup.number().optional(),
 });
 
 // Validation des données et application des valeurs par défaut
 async function validateAndApplyDefaults(data) {
   try {
-    // Valider et appliquer les valeurs par défaut
     const validatedData = await mapSchema.validate(data, {
       abortEarly: false,
       stripUnknown: false,
     });
 
-    // Ajouter le created_at si c'est une nouvelle entrée
     if (!data.id) {
       validatedData.created_at = new Date();
     }
@@ -32,107 +34,129 @@ async function validateAndApplyDefaults(data) {
 }
 
 export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "86400");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
-    // Méthode GET : Récupère toutes les maps ou une map spécifique
     if (req.method === "GET") {
-      const { id } = req.query;
+      const { id, partner_id } = req.query;
 
       if (id) {
-        // Récupérer une map spécifique par ID
-        const map = await db("maps").where("id", id).first();
+        const map = await db("maps")
+          .select("*", db.raw("ST_AsGeoJSON(location) as location_geojson"))
+          .where("id", id)
+          .first();
 
-        if (!map) {
-          return res.status(404).json({ error: "Map introuvable" });
+        if (!map) return res.status(404).json({ error: "Map introuvable" });
+
+        if (map.location_geojson) {
+          map.location = JSON.parse(map.location_geojson);
+          delete map.location_geojson;
         }
 
         return res.status(200).json(map);
-      } else {
-        // Récupérer toutes les maps
-        const maps = await db("maps");
-        return res.status(200).json(maps);
       }
+
+      let mapsQuery = db("maps").select(
+        "*",
+        db.raw("ST_AsGeoJSON(location) as location_geojson")
+      );
+
+      if (partner_id) {
+        mapsQuery = mapsQuery.where("partner_id", partner_id);
+      }
+
+      const maps = await mapsQuery;
+
+      const enrichedMaps = maps.map((map) => {
+        if (map.location_geojson) {
+          map.location = JSON.parse(map.location_geojson);
+          delete map.location_geojson;
+        }
+        return map;
+      });
+
+      return res.status(200).json(enrichedMaps);
     }
 
-    // Méthode POST : Ajoute une nouvelle map
     if (req.method === "POST") {
-      // Valider et appliquer les valeurs par défaut
       const validatedData = await validateAndApplyDefaults(req.body);
 
-      // Insérer dans la base de données et récupérer l'entrée complète
-      const [newMap] = await db("maps").insert(validatedData).returning("*");
+      const { latitude, longitude, radius, ...dataToInsert } = validatedData;
 
+      if (latitude && longitude) {
+        dataToInsert.location = db.raw(`ST_SetSRID(ST_MakePoint(?, ?), 4326)`, [
+          longitude,
+          latitude,
+        ]);
+      }
+
+      const [newMap] = await db("maps").insert(dataToInsert).returning("*");
       return res.status(201).json(newMap);
     }
 
-    // Méthode PUT : Met à jour une map existante
     if (req.method === "PUT") {
       const { id } = req.query;
-      if (!id) {
-        return res.status(400).json({ error: "ID requis" });
-      }
+      if (!id) return res.status(400).json({ error: "ID requis" });
 
-      // Récupérer l'entrée existante
       const existingMap = await db("maps").where("id", id).first();
-      if (!existingMap) {
+      if (!existingMap)
         return res.status(404).json({ error: "Map introuvable" });
-      }
 
-      // Fusionner les données existantes avec les nouvelles données
       const mergedData = { ...existingMap, ...req.body };
-
-      // Valider et appliquer les valeurs par défaut
       const validatedData = await validateAndApplyDefaults(mergedData);
 
-      // Ajouter updated_at
-      validatedData.updated_at = new Date();
+      const { latitude, longitude, radius, ...dataToUpdate } = validatedData;
 
-      // Mettre à jour et récupérer l'entrée complète
+      dataToUpdate.updated_at = new Date();
+
+      if (latitude && longitude) {
+        dataToUpdate.location = db.raw(`ST_SetSRID(ST_MakePoint(?, ?), 4326)`, [
+          longitude,
+          latitude,
+        ]);
+      }
+
       const [updatedMap] = await db("maps")
         .where("id", id)
-        .update(validatedData)
+        .update(dataToUpdate)
         .returning("*");
 
       return res.status(200).json(updatedMap);
     }
 
-    // Méthode DELETE : Supprime une map par ID
     if (req.method === "DELETE") {
       const { id } = req.query;
-      if (!id) {
-        return res.status(400).json({ error: "ID requis" });
-      }
+      if (!id) return res.status(400).json({ error: "ID requis" });
 
-      // Vérifier si la map existe
       const mapExists = await db("maps").where("id", id).first();
-      if (!mapExists) {
-        return res.status(404).json({ error: "Map introuvable" });
-      }
+      if (!mapExists) return res.status(404).json({ error: "Map introuvable" });
 
-      // Vérifier si la map est utilisée dans des chasses
       const huntsUsingMap = await db("hunts").where("map_id", id).first();
       if (huntsUsingMap) {
-        // Option 1: Empêcher la suppression et renvoyer une erreur
         return res.status(409).json({
           error:
             "Cette map ne peut pas être supprimée car elle est utilisée dans des chasses au trésor",
         });
-
-        // Option 2: Alternativement, vous pourriez désactiver la map au lieu de la supprimer
-        // await db("maps").where("id", id).update({
-        //   status: 0,
-        //   updated_at: new Date(),
-        //   disabled_time: db.raw("CURRENT_TIME"),
-        //   disabled_start: new Date()
-        // });
-        // return res.status(200).json({ message: "Map désactivée" });
       }
 
-      // Supprimer la map et retourner les données supprimées
       const [deletedMap] = await db("maps")
         .where("id", id)
         .del()
         .returning("*");
-
       return res.status(200).json(deletedMap);
     }
 
