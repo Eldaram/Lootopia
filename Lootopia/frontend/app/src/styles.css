@@ -2250,3 +2250,91 @@ body.dark,
   100% { opacity: 0; }
 }
 
+.participants-container {
+  padding: 16px;
+}
+
+.participants-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.participants-subtitle {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.participants-card {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f2f2f2;
+}
+
+.participants-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.participants-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.participants-btn {
+  background-color: #007AFF;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.participants-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.participants-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.participants-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.participants-link {
+  margin-top: 10px;
+  color: #007AFF;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.participants-picker {
+  margin: 10px 0;
+}
+
+.participants-error {
+  color: red;
+  margin-top: 10px;
+}
+
+.participants-status-excluded {
+  color: red;
+}
+
+.participants-status-active {
+  color: green;
+}

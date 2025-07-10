@@ -67,7 +67,7 @@ const HuntFormPage = () => {
   });
   const [readOnly, setReadOnly] = useState(false);
   const { theme } = useTheme();
-    const themeColors = Colors[theme]; 
+  const themeColors = Colors[theme]; 
 
 
   const [huntData, setHuntData] = useState<HuntData>({
@@ -420,7 +420,6 @@ const HuntFormPage = () => {
         partner_id: 1, // ID du partenaire connecté - à adapter selon votre authentification
         status: 1,
       };
-      console.log(apiData);
       
       const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
       const method = isEdit ? 'PUT' : 'POST';
