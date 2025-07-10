@@ -27,7 +27,7 @@ exports.seed = async function (knex) {
       password: "hashed_password", // à remplacer par un vrai hash en prod
       role: "admin",
       phone: 1234567890,
-      status: 1,
+      status: 0,
     },
     {
       id: 2,
@@ -36,7 +36,7 @@ exports.seed = async function (knex) {
       password: "hashed_password",
       role: "user",
       phone: 9876543210,
-      status: 1,
+      status: 0,
     },
   ]);
 
