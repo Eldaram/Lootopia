@@ -2,8 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import dynamic from 'next/dynamic';
+import { View } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
+console.log(API_URL);
 
 // Types
 interface HuntData {
@@ -61,6 +65,9 @@ const HuntFormPage = () => {
     ssr: false,
     loading: () => <p>Chargement de la carte...</p>,
   });
+  const [readOnly, setReadOnly] = useState(false);
+  const { theme } = useTheme();
+    const themeColors = Colors[theme]; 
 
 
   const [huntData, setHuntData] = useState<HuntData>({
@@ -229,21 +236,26 @@ const HuntFormPage = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
-
+  
       if (!response.ok) {
         throw new Error(`Erreur ${response.status}: ${response.statusText}`);
       }
-
+  
       const data = await response.json();
       const hunt = Array.isArray(data) && data.length > 0 ? data[0] : data;
-
+  
       setHuntData((prev: HuntData) => ({
         ...prev,
         ...hunt,
         duration: 1,
         durationUnit: 'heure'
       }));
-
+  
+      // ✅ on met la page en lecture seule si statut = 4 (clôturé)
+      if (hunt.status === 4) {
+        setReadOnly(true);
+      }
+  
       await loadSteps(id);
     } catch (error: unknown) {
       console.error('Erreur lors du chargement:', error);
@@ -252,6 +264,10 @@ const HuntFormPage = () => {
       setLoading(false);
     }
   };
+
+  const isDisabled = (fieldName?: keyof HuntData | keyof StepData) =>
+    readOnly || (fieldName ? !!errors[fieldName] : false);
+  
 
   const loadMaps = async (): Promise<void> => {
     try {
@@ -363,6 +379,22 @@ const HuntFormPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const generateSecretCode = (): string => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+  
+    let code = '';
+    for (let i = 0; i < 3; i++) {
+      code += letters[Math.floor(Math.random() * letters.length)];
+    }
+    for (let i = 0; i < 2; i++) {
+      code += numbers[Math.floor(Math.random() * numbers.length)];
+    }
+  
+    return code;
+  };
+  
+
   const handleSaveHunt = async (): Promise<void> => {
     if (!validateForm()) {
       return;
@@ -386,11 +418,16 @@ const HuntFormPage = () => {
         participation_fee: huntData.participation_fee,
         search_delay: convertSearchDelayToTime(huntData.search_delay, huntData.search_delay_unit),
         partner_id: 1, // ID du partenaire connecté - à adapter selon votre authentification
-        status: 1
+        status: 1,
       };
+      console.log(apiData);
       
       const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
       const method = isEdit ? 'PUT' : 'POST';
+      if (huntData.mode === 0) {
+        (apiData as any).code_secret = generateSecretCode();
+      }
+      
       
       const response = await fetch(url, {
         method,
@@ -640,6 +677,66 @@ const HuntFormPage = () => {
     />
   ), [newStep.latitude, newStep.longitude, newStep.dimensions]);
 
+  const handleSaveDraftHunt = async (): Promise<void> => {
+    if (!validateForm()) return;
+  
+    setSaving(true);
+    setErrors({});
+    setSuccessMessage('');
+  
+    try {
+      const apiData = {
+        title: huntData.title.trim(),
+        description: huntData.description.trim(),
+        world: huntData.world,
+        duration: convertDurationToDate(huntData.duration, huntData.durationUnit),
+        mode: huntData.mode,
+        max_participants: huntData.unlimited_participants ? 999999 : huntData.max_participants,
+        chat_enabled: huntData.chat_enabled,
+        map_id: huntData.map_id,
+        participation_fee: huntData.participation_fee,
+        search_delay: convertSearchDelayToTime(huntData.search_delay, huntData.search_delay_unit),
+        partner_id: 1,
+        status: 3 // Brouillon
+      };
+  
+      const url = isEdit ? `${API_URL}/hunts?id=${huntId}` : `${API_URL}/hunts`;
+      const method = isEdit ? 'PUT' : 'POST';
+      if (huntData.mode === 0) {
+        (apiData as any).code_secret = generateSecretCode();
+      }
+      
+  
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(apiData)
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+  
+      setSuccessMessage('Chasse enregistrée en tant que brouillon');
+  
+      // Redirection si besoin
+      setTimeout(() => {
+        router.push('/organiser');
+      }, 2000);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error('Erreur brouillon:', err);
+      setErrors({ global: `Erreur brouillon: ${err.message}` });
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+
 
   if (loading) {
     return (
@@ -653,11 +750,12 @@ const HuntFormPage = () => {
   }
 
   return (
+    <View style={{ flex: 1, backgroundColor: themeColors.background }}>
     <div className="hunt-form-container">
-      <div className="hunt-form-wrapper">
+      <div className="hunt-form-wrapper" style={{color: themeColors.text}}>
         {/* Header */}
         <div className="hunt-form-header">
-          <h1 className="hunt-form-title">
+          <h1 className="hunt-form-title" >
             {isEdit ? '✏️ Modifier la chasse' : '🆕 Créer une nouvelle chasse'}
           </h1>
           <p className="hunt-form-subtitle">
@@ -700,6 +798,7 @@ const HuntFormPage = () => {
                   className={`hunt-form-input ${errors.title ? 'input-error' : ''}`}
                   placeholder="Nom de votre chasse"
                   maxLength={100}
+                  disabled={readOnly}
                 />
                 {errors.title && <span className="error-message">{errors.title}</span>}
                 <small className="input-helper">
@@ -719,6 +818,7 @@ const HuntFormPage = () => {
                   className={`hunt-form-textarea ${errors.description ? 'input-error' : ''}`}
                   placeholder="Description de votre chasse"
                   maxLength={500}
+                  disabled={readOnly}
                 />
                 {errors.description && <span className="error-message">{errors.description}</span>}
                 <small className="input-helper">
@@ -735,6 +835,7 @@ const HuntFormPage = () => {
                   value={huntData.world}
                   onChange={(e) => handleInputChange('world', parseInt(e.target.value))}
                   className="hunt-form-select"
+                  disabled={readOnly}
                 >
                   <option value={1}>🥽 VR (Réalité Virtuelle)</option>
                   <option value={2}>🗺️ Carte (Monde Réel)</option>
@@ -752,6 +853,7 @@ const HuntFormPage = () => {
                       onClick={() => handleNumberInput('duration', 'decrement', 1)}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       −
                     </button>
@@ -761,11 +863,13 @@ const HuntFormPage = () => {
                       onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 1)}
                       className={`number-input ${errors.duration ? 'input-error' : ''}`}
                       min="1"
+                      disabled={readOnly}
                     />
                     <button
                       onClick={() => handleNumberInput('duration', 'increment')}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       +
                     </button>
@@ -774,6 +878,7 @@ const HuntFormPage = () => {
                     value={huntData.durationUnit}
                     onChange={(e) => handleInputChange('durationUnit', e.target.value)}
                     className="hunt-form-select"
+                    disabled={readOnly}
                   >
                     <option value="heure">Heure(s)</option>
                     <option value="semaine">Semaine(s)</option>
@@ -794,9 +899,10 @@ const HuntFormPage = () => {
                   value={huntData.mode}
                   onChange={(e) => handleInputChange('mode', parseInt(e.target.value))}
                   className="hunt-form-select"
+                  disabled={readOnly}
                 >
                   <option value={1}>🌐 Public</option>
-                  <option value={2}>🔐 Privé</option>
+                  <option value={0}>🔐 Privé</option>
                 </select>
               </div>
 
@@ -809,7 +915,7 @@ const HuntFormPage = () => {
                   <div className="number-input-group">
                     <button
                       onClick={() => handleNumberInput('max_participants', 'decrement', 1)}
-                      disabled={huntData.unlimited_participants}
+                      disabled={huntData.unlimited_participants || readOnly}
                       className="number-input-btn"
                       type="button"
                     >
@@ -819,13 +925,13 @@ const HuntFormPage = () => {
                       type="number"
                       value={huntData.unlimited_participants ? '∞' : huntData.max_participants}
                       onChange={(e) => handleInputChange('max_participants', parseInt(e.target.value) || 1)}
-                      disabled={huntData.unlimited_participants}
+                      disabled={huntData.unlimited_participants || readOnly}
                       className={`number-input ${errors.max_participants ? 'input-error' : ''}`}
                       min="1"
                     />
                     <button
                       onClick={() => handleNumberInput('max_participants', 'increment')}
-                      disabled={huntData.unlimited_participants}
+                      disabled={huntData.unlimited_participants || readOnly}
                       className="number-input-btn"
                       type="button"
                     >
@@ -836,6 +942,7 @@ const HuntFormPage = () => {
                     onClick={() => handleInputChange('unlimited_participants', !huntData.unlimited_participants)}
                     className={`toggle-btn ${huntData.unlimited_participants ? 'active' : 'inactive'}`}
                     type="button"
+                    disabled={readOnly}
                   >
                     ♾️ Illimité
                   </button>
@@ -853,6 +960,7 @@ const HuntFormPage = () => {
                     onClick={() => handleInputChange('chat_enabled', true)}
                     className={`toggle-btn ${huntData.chat_enabled ? 'success' : 'inactive'}`}
                     type="button"
+                    disabled={readOnly}
                   >
                     ✅ Activé
                   </button>
@@ -860,6 +968,7 @@ const HuntFormPage = () => {
                     onClick={() => handleInputChange('chat_enabled', false)}
                     className={`toggle-btn ${!huntData.chat_enabled ? 'error' : 'inactive'}`}
                     type="button"
+                    disabled={readOnly}
                   >
                     ❌ Désactivé
                   </button>
@@ -875,6 +984,7 @@ const HuntFormPage = () => {
                   value={huntData.map_id}
                   onChange={(e) => handleInputChange('map_id', parseInt(e.target.value))}
                   className="hunt-form-select"
+                  disabled={readOnly}
                 >
                   {maps.length > 0 ? (
                     maps.map(map => (
@@ -899,6 +1009,7 @@ const HuntFormPage = () => {
                       onClick={() => handleNumberInput('participation_fee', 'decrement', 0)}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       −
                     </button>
@@ -909,11 +1020,13 @@ const HuntFormPage = () => {
                       className={`number-input ${errors.participation_fee ? 'input-error' : ''}`}
                       min="0"
                       step="0.01"
+                      disabled={readOnly}
                     />
                     <button
                       onClick={() => handleNumberInput('participation_fee', 'increment')}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       +
                     </button>
@@ -922,6 +1035,7 @@ const HuntFormPage = () => {
                     value={huntData.currency}
                     onChange={(e) => handleInputChange('currency', e.target.value)}
                     className="hunt-form-select"
+                    disabled={readOnly}
                   >
                     <option value="EUR">EUR (€)</option>
                     <option value="USD">USD ($)</option>
@@ -943,6 +1057,7 @@ const HuntFormPage = () => {
                       onClick={() => handleNumberInput('search_delay', 'decrement', 1)}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       −
                     </button>
@@ -952,11 +1067,13 @@ const HuntFormPage = () => {
                       onChange={(e) => handleInputChange('search_delay', parseInt(e.target.value) || 1)}
                       className={`number-input ${errors.search_delay ? 'input-error' : ''}`}
                       min="1"
+                      disabled={readOnly}
                     />
                     <button
                       onClick={() => handleNumberInput('search_delay', 'increment')}
                       className="number-input-btn"
                       type="button"
+                      disabled={readOnly}
                     >
                       +
                     </button>
@@ -965,6 +1082,7 @@ const HuntFormPage = () => {
                     value={huntData.search_delay_unit}
                     onChange={(e) => handleInputChange('search_delay_unit', e.target.value)}
                     className="hunt-form-select"
+                    disabled={readOnly}
                   >
                     <option value="secondes">Secondes</option>
                     <option value="minutes">Minutes</option>
@@ -993,6 +1111,7 @@ const HuntFormPage = () => {
                     accept="image/*"
                     className="file-upload-input"
                     id="cover-image-input"
+                    disabled={readOnly}
                   />
                   <label
                     htmlFor="cover-image-input"
@@ -1028,7 +1147,7 @@ const HuntFormPage = () => {
                           }}
                           title="Déplacer vers le haut"
                           className="step-btn"
-                          disabled={index === 0}
+                          disabled={index === 0 || readOnly}
                         >
                           ⬆️
                         </button>
@@ -1040,7 +1159,7 @@ const HuntFormPage = () => {
                           }}
                           title="Déplacer vers le bas"
                           className="step-btn"
-                          disabled={index === steps.length - 1}
+                          disabled={index === steps.length - 1 || readOnly}
                         >
                           ⬇️
                         </button>
@@ -1057,7 +1176,7 @@ const HuntFormPage = () => {
                     </div>
 
                     <div className="step-header-actions">
-                      <button
+                      {!readOnly && (<button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleEditStep(step.id);
@@ -1068,6 +1187,20 @@ const HuntFormPage = () => {
                       >
                         ✏️
                       </button>
+                      )}
+                      {readOnly && (<button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditStep(step.id);
+                        }}
+                        className="step-btn"
+                        type="button"
+                        title="Voir cette étape"
+                      >
+                        👁️
+                      </button>
+                      )}
+
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1076,6 +1209,7 @@ const HuntFormPage = () => {
                         className="step-btn"
                         type="button"
                         title="Supprimer cette étape"
+                        disabled={readOnly}
                       >
                         🗑️
                       </button>
@@ -1126,6 +1260,7 @@ const HuntFormPage = () => {
                   onClick={() => setShowAddStep(true)}
                   className="add-step-btn"
                   type="button"
+                  disabled={readOnly}
                 >
                   <span className="add-step-icon">➕</span>
                   <span>Ajouter une étape</span>
@@ -1149,6 +1284,7 @@ const HuntFormPage = () => {
                         onChange={(e) => setNewStep(prev => ({ ...prev, title: e.target.value }))}
                         className={`hunt-form-input ${errors.stepTitle ? 'input-error' : ''}`}
                         placeholder="Titre de l'étape"
+                        disabled={readOnly}
                       />
                       {errors.stepTitle && <span className="error-message">{errors.stepTitle}</span>}
                     </div>
@@ -1169,6 +1305,7 @@ const HuntFormPage = () => {
                             onClick={() => handleStepNumberInput('dimensions', 'decrement', 1)}
                             className="number-input-btn"
                             type="button"
+                            disabled={readOnly}
                           >
                             −
                           </button>
@@ -1184,11 +1321,13 @@ const HuntFormPage = () => {
                             }}
                             className="number-input"
                             min="1"
+                            disabled={readOnly}
                           />
                           <button
                             onClick={() => handleStepNumberInput('dimensions', 'increment')}
                             className="number-input-btn"
                             type="button"
+                            disabled={readOnly}
                           >
                             +
                           </button>
@@ -1197,6 +1336,7 @@ const HuntFormPage = () => {
                           value={newStep.dimensionUnit}
                           onChange={(e) => setNewStep(prev => ({ ...prev, dimensionUnit: e.target.value }))}
                           className="hunt-form-select"
+                          disabled={readOnly}
                         >
                           <option value="kilometre">Kilomètre(s)</option>
                         </select>
@@ -1212,14 +1352,16 @@ const HuntFormPage = () => {
                       <button
                         onClick={() => setNewStep(prev => ({ ...prev, visibility: 1 }))}
                         className={`visibility-btn ${newStep.visibility === 1 ? 'toggle-btn success' : 'toggle-btn inactive'}`}
-                        type="button"
+                          type="button"
+                          disabled={readOnly}
                       >
                         👁️ Visible
                       </button>
                       <button
                         onClick={() => setNewStep(prev => ({ ...prev, visibility: 2 }))}
                         className={`visibility-btn ${newStep.visibility === 2 ? 'toggle-btn error' : 'toggle-btn inactive'}`}
-                        type="button"
+                          type="button"
+                          disabled={readOnly}
                       >
                         🚫 Cachée
                       </button>
@@ -1235,6 +1377,7 @@ const HuntFormPage = () => {
                         value={newStep.type}
                         onChange={(e) => setNewStep(prev => ({ ...prev, type: e.target.value }))}
                         className="hunt-form-select"
+                        disabled={readOnly}
                       >
                         <option value="qr_code">📱 QR Code</option>
                         <option value="image">🖼️ Image</option>
@@ -1265,6 +1408,7 @@ const HuntFormPage = () => {
                             }}
                             className="file-upload-input" 
                             id="step-image-input"
+                            disabled={readOnly}
                           />
                           <label
                             htmlFor="step-image-input"
@@ -1285,6 +1429,7 @@ const HuntFormPage = () => {
                             newStep.type === 'puzzle' ? 'Énigme ou puzzle' :
                             'Contenu de l\'étape'
                           }
+                          disabled={readOnly}
                         />
                       )}
                     </div>
@@ -1299,6 +1444,7 @@ const HuntFormPage = () => {
                           value={newStep.reward_collection}
                           onChange={(e) => setNewStep(prev => ({ ...prev, reward_collection: e.target.value, reward_item: '' }))}
                           className="hunt-form-select"
+                          disabled={readOnly}
                         >
                           <option value="">Choisir collection</option>
                           {collections.map(collection => (
@@ -1310,7 +1456,7 @@ const HuntFormPage = () => {
                         <select
                           value={newStep.reward_item}
                           onChange={(e) => setNewStep(prev => ({ ...prev, reward_item: e.target.value }))}
-                          disabled={!newStep.reward_collection}
+                          disabled={!newStep.reward_collection ||readOnly}
                           className="hunt-form-select"
                         >
                           <option value="">Choisir récompense</option>
@@ -1325,13 +1471,14 @@ const HuntFormPage = () => {
 
                     {/* Boutons d'action */}
                     <div className="step-actions">
-                      <button
+                      {readOnly && (<button
                         onClick={handleSaveStep}
                         className="step-action-btn step-action-primary"
                         type="button"
                       >
                         {editingStepId !== null ? '💾 Enregistrer les modifications' : '✅ Ajouter l\'étape'}
                       </button>
+                      )}
                       <button
                         onClick={() => {
                           setShowAddStep(false);
@@ -1360,26 +1507,46 @@ const HuntFormPage = () => {
           >
             ↩️ Annuler
           </button>
-          <button
-            onClick={handleSaveHunt}
-            disabled={saving || loading}
-            className="form-btn form-btn-save"
-            type="button"
-          >
-            {saving ? (
-              <>
-                <span className="btn-spinner">⏳</span>
-                Sauvegarde...
-              </>
-            ) : (
-              <>
-                {isEdit ? '✏️ Modifier la chasse' : '🆕 Créer la chasse'}
-              </>
-            )}
-          </button>
+          {!readOnly && (
+            <>
+              <button
+                onClick={handleSaveDraftHunt}
+                disabled={saving || loading}
+                className="form-btn form-btn-draft"
+                type="button"
+              >
+                {saving ? (
+                  <>
+                    <span className="btn-spinner">⏳</span>
+                    Sauvegarde du brouillon...
+                  </>
+                ) : (
+                  '📝 Enregistrer comme brouillon'
+                )}
+              </button>
+              <button
+                onClick={handleSaveHunt}
+                disabled={saving || loading}
+                className="form-btn form-btn-save"
+                type="button"
+              >
+                {saving ? (
+                  <>
+                    <span className="btn-spinner">⏳</span>
+                    Sauvegarde...
+                  </>
+                ) : (
+                  <>
+                    {isEdit ? '✏️ Modifier la chasse' : '🆕 Créer la chasse'}
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
-    </div>
+      </div>
+      </View>
   );
 };
 

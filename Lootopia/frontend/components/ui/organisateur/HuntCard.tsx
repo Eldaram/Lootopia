@@ -23,6 +23,7 @@ interface Hunt {
   status: number;
   created_at: string;
   updated_at: string | null;
+  code_secret: string | null;
 }
 
 const HuntCard: React.FC = () => {
@@ -34,6 +35,9 @@ const HuntCard: React.FC = () => {
   const router = useRouter();
   const [scrollIndex, setScrollIndex] = useState(0);
   const [filterStatus, setFilterStatus] = useState<'all' | 0 | 1 | 3 | 4>('all');
+  const [revealedId, setRevealedId] = useState<number | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+
 
 
   // Navigation vers création
@@ -127,12 +131,26 @@ const HuntCard: React.FC = () => {
   };
 
   const getStatusColor = (status: number) => {
-    return status === 1 ? '#4CAF50' : '#f44336';
+    switch (status) {
+      case 0: return '#9e9e9e'; // gris
+      case 1: return '#4CAF50'; // vert
+      case 3: return '#ff9800'; // orange (brouillon)
+      case 4: return '#607d8b'; // bleu-gris (clôturée)
+      default: return '#ccc';
+    }
   };
+  
 
   const getStatusText = (status: number) => {
-    return status === 1 ? 'Active' : 'Inactive';
+    switch (status) {
+      case 0: return 'Inactive';
+      case 1: return 'Active';
+      case 3: return 'Brouillon';
+      case 4: return 'Clôturée';
+      default: return 'Inconnu';
+    }
   };
+  
 
   const formatDuration = (duration: string) => {
     const date = new Date(duration);
@@ -305,23 +323,31 @@ const HuntCard: React.FC = () => {
               <div
                 key={hunt.id}
                 className={`hunting-card hunt-card ${
-                  hunt.status === 4 ? 'closed' :
-                  hunt.status === 0 ? 'inactive' :
-                  'active'
-                }`}
+                  hunt.status === 4
+                    ? 'hunt-closed'
+                    : hunt.status === 3
+                    ? 'hunt-draft'
+                    : hunt.status === 0
+                    ? 'hunt-inactive'
+                    : 'hunt-active'
+                }`}                
               >
                 <div className="card-header">
                   <div className="card-icon">
                     <Icon name={modeInfo.icon} size={24} color={modeInfo.color} />
                   </div>
                   <div className="card-actions">
+                  
                     <button 
                       className="action-btn edit-btn"
                       onClick={() => handleEdit(hunt.id)}
                       title="Éditer"
                     >
-                      <Icon name="edit" size={14} />
-                    </button>
+                      {hunt.status !== 4 && (<Icon name="edit" size={14} />)}
+                      {hunt.status == 4 && (<Icon name="eye" size={14} />)}
+                      </button>
+                      
+                    {hunt.status !== 4 && (
                     <label className="switch">
                       <input
                         type="checkbox"
@@ -339,7 +365,8 @@ const HuntCard: React.FC = () => {
                         }}
                       />
                       <span className="slider round" title={hunt.status === 1 ? 'Active' : 'Inactive'}></span>
-                    </label>
+                      </label>
+                      )}
                     {hunt.status !== 4 && (
                       <button
                         className="action-btn close-btn"
@@ -367,6 +394,10 @@ const HuntCard: React.FC = () => {
                     <span>{getStatusText(hunt.status)}</span>
                   </div>
                   <div className="detail-row">
+                    {hunt.mode === 0 ? <Icon name="lock" size={12} /> : <Icon name="unlock" size={12} />}
+                    <span>{hunt.mode === 0 ? "Privée" : "Public"}</span>
+                  </div>
+                  <div className="detail-row">
                     <Icon name="users" size={12} />
                     <span>{hunt.max_participants ?? "∞"} participants max</span>
                   </div>
@@ -376,6 +407,46 @@ const HuntCard: React.FC = () => {
                   </div>
                 </div>
 
+                <div className="card-extras">
+                  <div className="hunt-actions-row">
+                    <button
+                      className="participants-btn"
+                      onClick={() => router.push(`/hunt/${hunt.id}/participants`)}
+                    >
+                      <Icon name="users" size={14} /> Participants
+                    </button>
+                    {hunt.code_secret && (
+                    <div className="secret-box">
+                      <span className="secret-label">Code</span>
+                      <div className="secret-mask">
+                        {hunt.id === revealedId ? hunt.code_secret : '••••••••'}
+                      </div>
+                      <div className="secret-buttons">
+                        <button
+                          onClick={() =>
+                            setRevealedId(hunt.id === revealedId ? null : hunt.id)
+                          }
+                        >
+                          <Icon name={hunt.id === revealedId ? 'eye-slash' : 'eye'} size={12} /> {hunt.id === revealedId ? 'Masquer' : 'Voir'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(hunt.code_secret || '');
+                            setCopiedId(hunt.id);
+                            setTimeout(() => setCopiedId(null), 1500);
+                          }}
+                        >
+                          <Icon name="clipboard" size={12} /> Copier
+                        </button>
+                        </div>
+                        {copiedId === hunt.id && (
+                          <div className="copy-feedback">Code copié ✓</div>
+                        )}
+                      </div>
+                      )}
+                  </div>
+                </div>
+                
                 <div className="card-footer">
                   <small className="creation-date">
                     Créée le {new Date(hunt.created_at).toLocaleDateString('fr-FR')}

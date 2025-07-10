@@ -28,8 +28,8 @@ const huntSchema = Yup.object({
 
   mode: Yup.number()
     .integer()
-    .min(1, "Le mode doit être 1 (Public) ou 2 (Privé)")
-    .max(2, "Le mode doit être 1 (Public) ou 2 (Privé)")
+    .min(0, "Le mode doit être 1 (Public) ou 0 (Privé)")
+    .max(2, "Le mode doit être 1 (Public) ou 0 (Privé)")
     .default(1),
 
   max_participants: Yup.number()
@@ -69,6 +69,9 @@ const huntSchema = Yup.object({
     .default(1), // 0: brouillon, 1: actif, 2: suspendu, 3: terminé
 
   closed_at: Yup.date().nullable(),
+  code_secret: Yup.string()
+    .max(255, "Le code secret ne peut pas dépasser 255 caractères")
+    .nullable(),
 });
 
 const huntCreateSchema = huntSchema; // inchangé
@@ -78,7 +81,7 @@ const huntUpdateSchema = Yup.object({
   description: Yup.string().max(500),
   world: Yup.number().integer().min(1).max(2),
   duration: Yup.date().min(new Date()),
-  mode: Yup.number().integer().min(1).max(2),
+  mode: Yup.number().integer().min(0).max(2),
   max_participants: Yup.number().integer().min(1).max(999999),
   chat_enabled: Yup.boolean(),
   map_id: Yup.number().integer().min(1),
@@ -87,6 +90,7 @@ const huntUpdateSchema = Yup.object({
   partner_id: Yup.number().integer().min(1),
   status: Yup.number().integer().min(0).max(4),
   closed_at: Yup.date().nullable(),
+  code_secret: Yup.string().max(255).nullable(),
 });
 
 // Parse la durée depuis frontend vers Date (durée fin)
@@ -269,6 +273,9 @@ function formatForFrontend(hunt) {
   formatted.is_active = hunt.status === 1;
   formatted.is_expired = new Date(hunt.duration) < new Date();
   formatted.closed_at = hunt.closed_at || null;
+
+  formatted.code_secret = hunt.code_secret || null;
+
 
   return formatted;
 }

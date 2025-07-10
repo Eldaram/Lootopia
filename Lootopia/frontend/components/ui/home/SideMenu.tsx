@@ -7,41 +7,71 @@ import {
   ImageBackground,
   ScrollView,
   useWindowDimensions,
+  useColorScheme,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getSession, clearSession } from '@/app/src/services/authService'; 
 import { useRouter } from 'expo-router';
-import '../../../app/src/styles.css'; 
+import { Colors } from '@/constants/Colors';
 
-export const SideMenu: React.FC = () => {
+interface SideMenuProps {
+  themeColors: typeof Colors.light;
+}
+
+export const SideMenu: React.FC<SideMenuProps> = ({ themeColors })=> {
   const { width, height } = useWindowDimensions();
+  const [userRole, setUserRole] = useState<string | null>(null); 
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); 
   const router = useRouter();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const buttonWidth = Platform.OS === 'android' ? 170 : 190;
 
   useEffect(() => {
-    const checkDarkMode = () => {
-      const darkModeEnabled = document.documentElement.classList.contains('dark');
-      setIsDarkMode(darkModeEnabled);
+    const fetchUserRole = async () => {
+      const session = await getSession();
+      if (session) {
+        setUserRole(session.role); 
+        setIsLoggedIn(true); 
+      } else {
+        setUserRole(null); 
+        setIsLoggedIn(false); 
+      }
     };
-    checkDarkMode();
-    window.addEventListener('darkmodechange', checkDarkMode);
 
-    return () => {
-      window.removeEventListener('darkmodechange', checkDarkMode);
-    };
-  }, []);
+    fetchUserRole();
+  }, []); 
 
   const menuItems = [
-    { label: 'Accueil', icon: 'home', to: '/' as const },
+    { label: 'Accueil', icon: 'home', to: '/' },
     { label: 'Espace organisateur', icon: 'cogs', to: '/organiser' as const },
-    { label: 'Mes Chasses', icon: 'bullseye', to: '/mes-chasses' as const },
-    { label: 'Chasses disponibles', icon: 'gamepad', to: '/chasses-disponibles' as const },
-    { label: 'Artefacts', icon: 'gem', to: '/artefacts' as const },
-    { label: 'Classement', icon: 'list', to: '/classement' as const },
-    { label: 'Tableau de bord(Admin)', icon: 'tachometer', to: '/tableau-de-bord' as const },
-    { label: 'Boutique', icon: 'shopping-cart', to: '/boutique' as const },
-    { label: 'Aide', icon: 'question-circle', to: '/aide' as const },
-    { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion'as const  },
+    { label: 'Mes Chasses', icon: 'bullseye', to: '/myHunts' },
+    { label: 'Chasses disponibles', icon: 'gamepad', to: '/hunts' },
+    { label: 'Artefacts', icon: 'gem', to: '/artefacts' },
+    { label: 'Classement', icon: 'list', to: '/classement' },
+    { label: 'Tableau de bord', icon: 'tachometer', to: '/dashboard', role: 'admin' },
+    { label: 'Boutique', icon: 'shopping-cart', to: '/shop' },
+    { label: 'Aide', icon: 'question-circle', to: '/help' },
+    { label: 'Connexion', icon: 'sign-in', to: '/login' }, 
+    { label: 'Déconnexion', icon: 'sign-out', to: '/deconnexion' },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => {
+    if (isLoggedIn === false) {
+      return ['/', '/hunts', '/classement', '/shop', '/help', '/login'].includes(item.to);
+    }
+    if (isLoggedIn === true) {
+      return item.label !== 'Connexion' && (!item.role || item.role === userRole);
+    }
+    return true;
+  });
+
+  const handleLogout = async () => {
+    await clearSession(); 
+    setIsLoggedIn(false);
+    router.push('/login');
+  };
 
   return (
     <View
@@ -49,14 +79,14 @@ export const SideMenu: React.FC = () => {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: width * 0.19,
+        width: width < 768 ? width * 0.7 : width * 0.2,
         height: height,
         zIndex: 1000,
       }}
     >
       <ImageBackground
         source={
-          isDarkMode
+          themeColors === Colors.dark
             ? require('@/assets/images/menu-background-dark.png')
             : require('@/assets/images/menu-background.png')
         }
@@ -76,7 +106,7 @@ export const SideMenu: React.FC = () => {
             padding: 10,
           }}
         >
-          <Image 
+          <Image
             source={require('@/assets/images/logo.png')}
             style={{
               width: 200,
@@ -94,43 +124,49 @@ export const SideMenu: React.FC = () => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          {menuItems.map((item, index) => (
+          {filteredMenuItems.map((item, index) => (
             <TouchableOpacity
-            key={index}
-            onPress={() => router.push(item.to)}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: 12,
-              marginBottom: 8,
-              backgroundColor: isDarkMode ? '#444' : '#f4f4f4',
-              borderRadius: 10,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 2,
-            }}
-          >
-            <View style={{ width: 30, alignItems: 'center' }}>
-              <Icon
-                name={item.icon}
-                size={20}
-                color={isDarkMode ? '#fff' : '#333'}
-              />
-            </View>
-            <Text
+              key={index}
+              onPress={() => {
+                if (item.label === 'Déconnexion') {
+                  handleLogout();
+                } else {
+                  router.push(item.to as any);
+                }
+              }}
               style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                  color: isDarkMode ? '#fff' : '#333',
-                marginLeft: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: 12,
+                marginBottom: 8,
+                backgroundColor: isDarkMode ? '#444' : '#f4f4f4',
+                borderRadius: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+                width: buttonWidth,
               }}
             >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-          
+              <View style={{ width: 30, alignItems: 'center' }}>
+                <Icon
+                  name={item.icon}
+                  size={20}
+                  color={isDarkMode ? '#fff' : '#333'}
+                />
+              </View>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: isDarkMode ? '#fff' : '#333',
+                  marginLeft: 8,
+                }}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </ImageBackground>

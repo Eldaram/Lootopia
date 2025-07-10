@@ -1,42 +1,55 @@
-import db from "../../services/db";
+import db from "../../../services/db";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
+  const { id } = req.query;
+
   if (req.method === "GET") {
-    const users = await db("users").select(
-      "id",
-      "username",
-      "email",
-      "role",
-      "status",
-      "created_at",
-      "updated_at",
-      "disabled_time",
-      "disabled_start",
-      "disabled_end"
-    );
-    return res.status(200).json(users);
+    const user = await db("users")
+      .select(
+        "id",
+        "username",
+        "email",
+        "role",
+        "status",
+        "created_at",
+        "updated_at",
+        "disabled_time",
+        "disabled_start",
+        "disabled_end",
+        "appearance_id"
+      )
+      .where({ id })
+      .first();
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    return res.status(200).json(user);
   }
 
   if (req.method === "PUT") {
-    const { id } = req.query;
-    const { status, role, disabled_time, disabled_start, disabled_end } =
-      req.body;
+    const {
+      status,
+      role,
+      disabled_time,
+      disabled_start,
+      disabled_end,
+      appearance_id,
+    } = req.body;
 
     const updateData = {};
     if (status !== undefined) updateData.status = status;
     if (role !== undefined) updateData.role = role;
+    if (appearance_id !== undefined) updateData.appearance_id = appearance_id;
     if (disabled_time !== undefined) {
       const hours = Math.floor(disabled_time / 60);
       const minutes = disabled_time % 60;
@@ -68,6 +81,5 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader("Allow", ["GET", "PUT"]);
   return res.status(405).end(`Méthode ${req.method} non autorisée`);
 }
