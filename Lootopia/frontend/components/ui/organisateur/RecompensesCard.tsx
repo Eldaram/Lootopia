@@ -3,6 +3,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import '../../../app/src/styles.css';
 import Constants from 'expo-constants';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { View } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -22,6 +25,8 @@ interface Artifact {
 }
 
 const RecompensesCard: React.FC = () => {
+  const { theme } = useTheme();
+  const themeColors = Colors[theme]; 
   const scrollRef = useRef<HTMLDivElement>(null);
   const currentIndex = useRef(0);
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
@@ -139,6 +144,7 @@ const RecompensesCard: React.FC = () => {
 
   if (loading) {
     return (
+      <View style={{ flex: 1, backgroundColor: themeColors.background }}>
       <div>
         <h2 className="section-title">Mes récompenses</h2>
         <div className="hunting-card-row">
@@ -147,11 +153,13 @@ const RecompensesCard: React.FC = () => {
             <p>Chargement...</p>
           </div>
         </div>
-      </div>
+        </div>
+        </View>
     );
   }
 
   return (
+    <View style={{ flex: 1, backgroundColor: themeColors.background }}>
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         <h2 className="section-title">Mes récompenses ({artifacts.length})</h2>
@@ -260,7 +268,8 @@ const RecompensesCard: React.FC = () => {
           <Icon name="chevron-right" size={30} />
         </button>
       </div>
-    </div>
+      </div>
+      </View>
   );
 };
 

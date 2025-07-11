@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 import dynamic from 'next/dynamic';
+import { View } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 const DynamicMap = dynamic(() => import('@/components/DynamicMap'), {
@@ -14,6 +17,8 @@ const MapFormScreen = () => {
   const { id } = useLocalSearchParams();
   const stringId = Array.isArray(id) ? id[0] : id;
   const isEditMode = stringId && stringId != 'index';
+  const { theme } = useTheme();
+  const themeColors = Colors[theme]; 
 
   const [form, setForm] = useState({
     name: '',
@@ -188,6 +193,7 @@ const MapFormScreen = () => {
   if (loading) return <p className="loading-text">Chargement...</p>;
 
   return (
+    <View style={{ flex: 1, backgroundColor: themeColors.background }}>
     <div className="centered-page">
       <div className="form-box">
         <h1 className="form-title">{isEditMode ? '✏️ Modifier la carte' : '🗺️ Créer une nouvelle carte'}</h1>
@@ -259,7 +265,8 @@ const MapFormScreen = () => {
           </div>
         </form>
       </div>
-    </div>
+      </div>
+      </View>
   );
 };
 

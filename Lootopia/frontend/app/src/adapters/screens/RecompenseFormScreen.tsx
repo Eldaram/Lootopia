@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Constants from 'expo-constants';
+import { View } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -12,6 +15,8 @@ const rarityOptions = [
 ];
 
 const RecompenseFormScreen = () => {
+  const { theme } = useTheme();
+  const themeColors = Colors[theme]; 
   const router = useRouter();
   const params = useLocalSearchParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -134,6 +139,7 @@ const RecompenseFormScreen = () => {
   if (loading) return <p className="loading-text">Chargement...</p>;
 
   return (
+    <View style={{ flex: 1, backgroundColor: themeColors.background }}>
     <div className="centered-page">
       <div className="form-box">
         <h1 className="form-title">{isEditMode ? '✏️ Modifier la récompense' : '🎁 Créer une récompense'}</h1>
@@ -213,7 +219,8 @@ const RecompenseFormScreen = () => {
           </div>
         </form>
       </div>
-    </div>
+      </div>
+      </View>
   );
 };
 

@@ -85,9 +85,8 @@ export const OrganisateurScreen = () => {
 
   if (Platform.OS === 'web') {
     return (
-      <View style={{ flex: 1, backgroundColor: themeColors.background }}>
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, backgroundColor: themeColors.background }}>
             <Animated.View
               style={{
                 flex: 1,
@@ -113,7 +112,6 @@ export const OrganisateurScreen = () => {
             </Animated.View>
           </View>
         </TouchableWithoutFeedback>
-      </View>
 
       
     );

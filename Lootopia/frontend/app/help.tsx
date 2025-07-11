@@ -1,10 +1,3 @@
-// aide.tsx
-import { View, Text } from 'react-native';
+import HelpScreen from "@/app/src/adapters/screens/HelpScreen";
 
-export default function AideScreen() {
-  return (
-    <View>
-      <Text>Aide</Text>
-    </View>
-  );
-}
+export default HelpScreen;

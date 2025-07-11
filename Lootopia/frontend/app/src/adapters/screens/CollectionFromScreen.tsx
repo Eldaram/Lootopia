@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Constants from 'expo-constants';
+import { View } from 'react-native';
+import { useTheme } from '@/constants/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -17,6 +20,8 @@ const CollectionFormScreen = () => {
   const [success, setSuccess] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(!isCreateMode);
+  const { theme } = useTheme();
+  const themeColors = Colors[theme]; 
 
   useEffect(() => {
     if (!isCreateMode && stringId) {
@@ -85,6 +90,7 @@ const CollectionFormScreen = () => {
   if (loading) return <p className="loading-text">Chargement...</p>;
 
   return (
+    <View style={{ flex: 1, backgroundColor: themeColors.background }}>
     <div className="centered-page">
       <div className="form-box">
         <h1 className="form-title">
@@ -138,7 +144,8 @@ const CollectionFormScreen = () => {
           </div>
         </form>
       </div>
-    </div>
+      </div>
+      </View>
   );
 };
 
