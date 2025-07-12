@@ -5,8 +5,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
 import { getSession } from '@/app/src/services/authService';
 import { useTheme } from '@/constants/ThemeProvider';
+import { useRouter } from 'expo-router';
 
 const screenWidth = Dimensions.get('window').width;
+const router = useRouter();
 
 interface Event {
   id: string;
@@ -55,11 +57,20 @@ export const ButtonGrid = () => {
    const themeColors = Colors[themeName];
 
   const buttons = ['Organiser', 'Chasses disponibles', 'Mes chasses', 'Mes artéfacts'];
+  const handlePress = (text: string) => {
+    if (text === 'Chasses disponibles') {
+      router.push('/hunts'); 
+    }
+    if (text === 'Mes chasses') {
+      router.push('/myHunts'); 
+    }
+  };
 
   return (
     <View style={{ marginTop: 40, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
       {buttons.map((text, index) => (
-        <TouchableOpacity key={index} style={{ width: '48%', height: 120, marginBottom: 16 }}>
+        <TouchableOpacity key={index} style={{ width: '48%', height: 120, marginBottom: 16 }}
+        onPress={() => handlePress(text)}>
           <LinearGradient
             colors={index % 3 === 0 ? ['#F9968B', '#FF6347'] : ['#176A6C', '#2CCED2']}
             start={{ x: 0, y: 0 }}
