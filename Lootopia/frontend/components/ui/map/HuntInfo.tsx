@@ -37,7 +37,7 @@ export default function HuntInfo() {
 
     const fetchUserData = async (userId: string) => {
       try {
-        const res = await fetch(`http://192.168.137.1:3000/api/users/${id}`);
+        const res = await fetch(`http://localhost:3000/api/users/${id}`);
         if (!res.ok) throw new Error('Erreur de récupération de l\'utilisateur');
         const data: User = await res.json();
         setUser(data);
@@ -53,7 +53,7 @@ export default function HuntInfo() {
     if (id) {
       async function fetchHunt() {
         try {
-          const res = await fetch(`http://192.168.137.1:3000/api/hunts/${id}`);
+          const res = await fetch(`http://localhost:3000/api/hunts/${id}`);
           if (!res.ok) throw new Error('Erreur de récupération de la chasse');
           const data: Hunt = await res.json();
           setHunt(data);
