@@ -41,7 +41,7 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
 
     const checkIfUserJoined = async () => {
       try {
-        const response = await fetch(`http://192.168.137.1:3000/api/users/${userId}/hunts`, {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}/hunts`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export default function JoinHuntButton({ item }: { item: Hunt }) {
     }
 
     try {
-      const response = await fetch(`http://192.168.137.1:3000/api/users/${userId}/hunts`, {
+      const response = await fetch(`http://localhost:3000/api/users/${userId}/hunts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
