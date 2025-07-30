@@ -1,0 +1,865 @@
+{ 
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Treasure-Hunt Platform API",
+    "description": "Swagger/OpenAPI description that reflects the behaviour of every route present in the provided source files.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "/api" }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Authenticate a user and create a session cookie",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/SuccessLogin" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+
+    "/badges": {
+      "get": {
+        "summary": "List every badge",
+        "responses": {
+          "200": {
+            "description": "Array of badges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Badge" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a badge",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BadgeCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/BadgeCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/badges/{id}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/IdParam" }
+      ],
+      "get": {
+        "summary": "Get a badge by id",
+        "responses": {
+          "200": { "$ref": "#/components/responses/BadgeCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update a badge",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BadgeUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/BadgeCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "delete": {
+        "summary": "Remove a badge",
+        "responses": {
+          "200": { "$ref": "#/components/responses/BadgeCreated" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+
+    "/artifacts": {
+      "get": {
+        "summary": "List every artifact",
+        "responses": {
+          "200": {
+            "description": "Array of artifacts",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Artifact" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an artifact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ArtifactCreate" } }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/ArtifactCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/artifacts/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": {
+        "summary": "Get an artifact",
+        "responses": {
+          "200": { "$ref": "#/components/responses/ArtifactCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "summary": "Update an artifact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ArtifactUpdate" } }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/ArtifactCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an artifact",
+        "responses": {
+          "200": { "$ref": "#/components/responses/ArtifactCreated" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
+    "/collections": {
+      "get": {
+        "summary": "List collections",
+        "responses": {
+          "200": {
+            "description": "Array of collections",
+            "content": {
+              "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Collection" } } }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a collection",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CollectionCreate" } } }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/CollectionCreated" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/collections/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": {
+        "summary": "Get collection",
+        "responses": { "200": { "$ref": "#/components/responses/CollectionCreated" }, "404": { "$ref": "#/components/responses/NotFound" } }
+      },
+      "put": {
+        "summary": "Update collection",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CollectionUpdate" } } }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/CollectionCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "summary": "Delete collection",
+        "responses": {
+          "200": { "$ref": "#/components/responses/CollectionCreated" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
+    "/caches": {
+      "get": {
+        "summary": "List caches",
+        "responses": {
+          "200": { "description": "Array of caches", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Cache" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create cache",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CacheCreate" } } } },
+        "responses": {
+          "201": { "$ref": "#/components/responses/CacheCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/caches/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get cache", "responses": { "200": { "$ref": "#/components/responses/CacheCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+      },
+
+    "/hunt_artifacts": {
+      "get": {
+        "summary": "Search associations between hunts and artifacts",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParamOptional" },
+          { "$ref": "#/components/parameters/HuntIdQuery" },
+          { "$ref": "#/components/parameters/ArtifactIdQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of hunt-artifact associations",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/HuntArtifact" } } } }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create association hunt/artifact",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HuntArtifactCreate" } } }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/HuntArtifactCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/hunt_artifacts/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get association by id", "responses": { "200": { "$ref": "#/components/responses/HuntArtifactCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": {
+        "summary": "Update association",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HuntArtifactUpdate" } } }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/HuntArtifactCreated" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      },
+      "delete": { "summary": "Delete association", "responses": { "200": { "$ref": "#/components/responses/HuntArtifactCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+    },
+
+    "/hunts": {
+      "get": { "summary": "List hunts", "responses": { "200": { "description": "Array of hunts", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Hunt" } } } } } } },
+      "post": { "summary": "Create hunt", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HuntCreate" } } } }, "responses": { "201": { "$ref": "#/components/responses/HuntCreated" }, "500": { "$ref": "#/components/responses/ServerError" } } }
+    },
+    "/hunts/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get hunt by id", "responses": { "200": { "$ref": "#/components/responses/HuntCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update hunt", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HuntUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/HuntCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "delete": { "summary": "Delete hunt", "responses": { "200": { "$ref": "#/components/responses/HuntCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+    },
+
+    "/maps": {
+      "get": { "summary": "List maps", "responses": { "200": { "description": "Array of maps", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Map" } } } } } } },
+      "post": { "summary": "Create map", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MapCreate" } } } }, "responses": { "201": { "$ref": "#/components/responses/MapCreated" } } }
+    },
+    "/maps/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get map", "responses": { "200": { "$ref": "#/components/responses/MapCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update map", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MapUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/MapCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "delete": { "summary": "Delete map", "responses": { "200": { "$ref": "#/components/responses/MapCreated" }, "409": { "$ref": "#/components/responses/Conflict" } } }
+    },
+
+    "/offers": {
+      "get": { "summary": "List offers", "responses": { "200": { "description": "Array of offers", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Offer" } } } } } } },
+      "post": { "summary": "Create offer", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OfferCreate" } } } }, "responses": { "201": { "$ref": "#/components/responses/OfferCreated" } } }
+    },
+    "/offers/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get offer", "responses": { "200": { "$ref": "#/components/responses/OfferCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update offer", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OfferUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/OfferCreated" } } },
+      "delete": { "summary": "Delete offer", "responses": { "200": { "$ref": "#/components/responses/OfferCreated" }, "409": { "$ref": "#/components/responses/Conflict" } } }
+    },
+
+    "/other_rewards": {
+      "get": {
+        "summary": "List rewards",
+        "parameters": [
+          { "$ref": "#/components/parameters/PartnerIdQueryOptional" }
+        ],
+        "responses": {
+          "200": { "description": "Array of rewards", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/OtherReward" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create reward",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OtherRewardCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/OtherRewardCreated" } }
+      }
+    },
+    "/other_rewards/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get reward", "responses": { "200": { "$ref": "#/components/responses/OtherRewardCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update reward", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OtherRewardUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/OtherRewardCreated" } } },
+      "delete": { "summary": "Delete reward", "responses": { "200": { "$ref": "#/components/responses/OtherRewardCreated" }, "409": { "$ref": "#/components/responses/Conflict" } } }
+    },
+
+    "/partner_colors": {
+      "get": {
+        "summary": "List partner colors",
+        "parameters": [ { "$ref": "#/components/parameters/PartnerIdQueryOptional" } ],
+        "responses": {
+          "200": { "description": "Array of colors", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PartnerColor" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create partner color",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PartnerColorCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/PartnerColorCreated" } }
+      }
+    },
+    "/partner_colors/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get partner color", "responses": { "200": { "$ref": "#/components/responses/PartnerColorCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update partner color", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PartnerColorUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/PartnerColorCreated" } } },
+      "delete": { "summary": "Delete partner color", "responses": { "200": { "$ref": "#/components/responses/PartnerColorCreated" }, "409": { "$ref": "#/components/responses/Conflict" } } }
+    },
+
+    "/transactions": {
+      "get": {
+        "summary": "List transactions",
+        "parameters": [ { "$ref": "#/components/parameters/UserIdQueryOptional" } ],
+        "responses": {
+          "200": { "description": "Array of transactions", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Transaction" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create transaction",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/TransactionCreated" } }
+      }
+    },
+    "/transactions/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "Get transaction", "responses": { "200": { "$ref": "#/components/responses/TransactionCreated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "summary": "Update transaction", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionUpdate" } } } }, "responses": { "200": { "$ref": "#/components/responses/TransactionCreated" } } },
+      "delete": { "summary": "Delete transaction", "responses": { "200": { "$ref": "#/components/responses/TransactionCreated" } } }
+    },
+
+    "/users": {
+      "get": { "summary": "List users", "responses": { "200": { "description": "Array of users", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/User" } } } } } } }
+    },
+    "/users/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": {
+        "summary": "Get user",
+        "responses": { "200": { "$ref": "#/components/responses/UserRetrieved" }, "404": { "$ref": "#/components/responses/NotFound" } }
+      },
+      "put": {
+        "summary": "Admin update user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserAdminUpdate" } } } },
+        "responses": { "200": { "description": "User updated" }, "404": { "$ref": "#/components/responses/NotFound" } }
+      }
+    },
+
+    "/users/{id}/hunts": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "get": { "summary": "List hunts the user participates in", "responses": { "200": { "description": "Array of hunts", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Hunt" } } } } } } },
+      "post": {
+        "summary": "Enroll user in a hunt",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserHuntCreate" } } } },
+        "responses": { "200": { "description": "Participation saved" } }
+      }
+    },
+
+    "/user_artifacts": {
+      "get": {
+        "summary": "Search user-artifact associations",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParamOptional" },
+          { "$ref": "#/components/parameters/UserIdQueryOptional" },
+          { "$ref": "#/components/parameters/ArtifactIdQuery" }
+        ],
+        "responses": { "200": { "description": "Array of associations", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UserArtifact" } } } } } }
+      },
+      "post": {
+        "summary": "Give an artifact to a user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserArtifactCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/UserArtifactCreated" } }
+      }
+    },
+    "/user_artifacts/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "put": { "summary": "Touch association (updates updated_at)", "responses": { "200": { "$ref": "#/components/responses/UserArtifactCreated" } } },
+      "delete": { "summary": "Delete association", "responses": { "200": { "$ref": "#/components/responses/UserArtifactCreated" } } }
+    },
+
+    "/user_offers": {
+      "get": {
+        "summary": "Search user-offer associations",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParamOptional" },
+          { "$ref": "#/components/parameters/UserIdQueryOptional" },
+          { "$ref": "#/components/parameters/OfferIdQuery" }
+        ],
+        "responses": { "200": { "description": "Array of associations", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UserOffer" } } } } } }
+      },
+      "post": {
+        "summary": "Apply an offer for user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserOfferCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/UserOfferCreated" } }
+      }
+    },
+    "/user_offers/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "put": { "summary": "Touch association", "responses": { "200": { "$ref": "#/components/responses/UserOfferCreated" } } },
+      "delete": { "summary": "Delete association", "responses": { "200": { "$ref": "#/components/responses/UserOfferCreated" } } }
+    },
+
+    "/user_badges": {
+      "get": {
+        "summary": "Search user-badge associations",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParamOptional" },
+          { "$ref": "#/components/parameters/UserIdQueryOptional" },
+          { "$ref": "#/components/parameters/BadgeIdQuery" }
+        ],
+        "responses": { "200": { "description": "Array of associations", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UserBadge" } } } } } }
+      },
+      "post": {
+        "summary": "Give badge to user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserBadgeCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/UserBadgeCreated" } }
+      }
+    },
+    "/user_badges/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "delete": { "summary": "Delete association", "responses": { "200": { "$ref": "#/components/responses/UserBadgeCreated" } } }
+    },
+
+    "/user_other_rewards": {
+      "get": {
+        "summary": "Search user-other_reward associations",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdParamOptional" },
+          { "$ref": "#/components/parameters/UserIdQueryOptional" },
+          { "$ref": "#/components/parameters/OtherRewardIdQuery" }
+        ],
+        "responses": { "200": { "description": "Array", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UserOtherReward" } } } } } }
+      },
+      "post": {
+        "summary": "Give reward to user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserOtherRewardCreate" } } } },
+        "responses": { "201": { "$ref": "#/components/responses/UserOtherRewardCreated" } }
+      }
+    },
+    "/user_other_rewards/{id}": {
+      "parameters": [ { "$ref": "#/components/parameters/IdParam" } ],
+      "put": { "summary": "Touch association", "responses": { "200": { "$ref": "#/components/responses/UserOtherRewardCreated" } } },
+      "delete": { "summary": "Delete association", "responses": { "200": { "$ref": "#/components/responses/UserOtherRewardCreated" } } }
+    }
+  },
+
+  "components": {
+    "parameters": {
+      "IdParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer" }
+      },
+      "IdParamOptional": {
+        "name": "id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "UserIdQueryOptional": {
+        "name": "user_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "PartnerIdQueryOptional": {
+        "name": "partner_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "ArtifactIdQuery": {
+        "name": "artifact_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "HuntIdQuery": {
+        "name": "hunt_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "OfferIdQuery": {
+        "name": "offer_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "BadgeIdQuery": {
+        "name": "badge_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      },
+      "OtherRewardIdQuery": {
+        "name": "other_reward_id",
+        "in": "query",
+        "schema": { "type": "integer" }
+      }
+    },
+
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [ "email", "password" ],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+
+      "Badge": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "type": { "type": "integer", "nullable": true },
+          "illustration_id": { "type": "integer", "nullable": true },
+          "collections_id": { "type": "integer", "nullable": true },
+          "admin_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "BadgeCreate": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Badge" },
+          { "required": [ "name", "admin_id" ], "properties": { "id": { "readOnly": true } } }
+        ]
+      },
+      "BadgeUpdate": { "$ref": "#/components/schemas/BadgeCreate" },
+
+      "Artifact": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "type": { "type": "integer", "nullable": true },
+          "theme_id": { "type": "integer", "nullable": true },
+          "rarity": { "type": "integer", "nullable": true },
+          "illustration_id": { "type": "integer", "nullable": true },
+          "collection_id": { "type": "integer", "nullable": true },
+          "usage": { "type": "integer", "nullable": true },
+          "admin_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "ArtifactCreate": { "allOf": [ { "$ref": "#/components/schemas/Artifact" }, { "required": [ "admin_id" ] } ] },
+      "ArtifactUpdate": { "$ref": "#/components/schemas/ArtifactCreate" },
+
+      "Collection": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "admin_id": { "type": "integer" },
+          "type": { "type": "integer" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "CollectionCreate": { "allOf": [ { "$ref": "#/components/schemas/Collection" }, { "required": [ "name", "admin_id" ] } ] },
+      "CollectionUpdate": { "$ref": "#/components/schemas/CollectionCreate" },
+
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "dimensions": { "type": "string", "nullable": true },
+          "visibility": { "type": "integer", "nullable": true },
+          "partner_id": { "type": "integer", "nullable": true },
+          "status": { "type": "integer" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "CacheCreate": { "allOf": [ { "$ref": "#/components/schemas/Cache" }, { "required": [ "latitude", "longitude" ] } ] },
+
+      "HuntArtifact": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "hunt_id": { "type": "integer" },
+          "artifact_id": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "HuntArtifactCreate": { "allOf": [ { "$ref": "#/components/schemas/HuntArtifact" }, { "required": [ "hunt_id", "artifact_id" ] } ] },
+      "HuntArtifactUpdate": { "$ref": "#/components/schemas/HuntArtifactCreate" },
+
+      "Hunt": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "world": { "type": "integer" },
+          "duration": { "type": "string", "format": "date-time" },
+          "mode": { "type": "integer" },
+          "max_participants": { "type": "integer" },
+          "chat_enabled": { "type": "boolean" },
+          "map_id": { "type": "integer" },
+          "participation_fee": { "type": "number" },
+          "search_delay": { "type": "string" },
+          "partner_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "HuntCreate": { "allOf": [ { "$ref": "#/components/schemas/Hunt" }, { "required": [ "title", "partner_id" ] } ] },
+      "HuntUpdate": { "$ref": "#/components/schemas/HuntCreate" },
+
+      "Map": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "skin": { "type": "integer" },
+          "zone": { "type": "string" },
+          "scale": { "type": "string" },
+          "partner_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "MapCreate": { "allOf": [ { "$ref": "#/components/schemas/Map" }, { "required": [ "name", "partner_id" ] } ] },
+      "MapUpdate": { "$ref": "#/components/schemas/MapCreate" },
+
+      "Offer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "type": { "type": "integer", "nullable": true },
+          "title": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "admin_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "lifetime": { "type": "string", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "OfferCreate": { "allOf": [ { "$ref": "#/components/schemas/Offer" }, { "required": [ "title", "admin_id" ] } ] },
+      "OfferUpdate": { "$ref": "#/components/schemas/OfferCreate" },
+
+      "OtherReward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "type": { "type": "integer", "nullable": true },
+          "title": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "partner_id": { "type": "integer" },
+          "status": { "type": "integer" },
+          "lifetime": { "type": "string", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "OtherRewardCreate": { "allOf": [ { "$ref": "#/components/schemas/OtherReward" }, { "required": [ "title", "partner_id" ] } ] },
+      "OtherRewardUpdate": { "$ref": "#/components/schemas/OtherRewardCreate" },
+
+      "PartnerColor": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "partner_id": { "type": "integer" },
+          "hex_color": { "type": "string" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "PartnerColorCreate": { "allOf": [ { "$ref": "#/components/schemas/PartnerColor" }, { "required": [ "partner_id", "hex_color" ] } ] },
+      "PartnerColorUpdate": { "$ref": "#/components/schemas/PartnerColorCreate" },
+
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "sender_id": { "type": "integer" },
+          "receiver_id": { "type": "integer" },
+          "type": { "type": "integer" },
+          "amount": { "type": "number" },
+          "status": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "TransactionCreate": { "allOf": [ { "$ref": "#/components/schemas/Transaction" }, { "required": [ "sender_id", "receiver_id", "type", "amount" ] } ] },
+      "TransactionUpdate": { "$ref": "#/components/schemas/TransactionCreate" },
+
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "username": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "role": { "type": "string" },
+          "status": { "type": "integer" },
+          "appearance_id": { "type": "integer", "nullable": true },
+          "money": { "type": "number", "nullable": true },
+          "disabled_time": { "type": "string", "nullable": true },
+          "disabled_start": { "type": "string", "format": "date-time", "nullable": true },
+          "disabled_end": { "type": "string", "format": "date-time", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "UserAdminUpdate": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "role": { "type": "string" },
+          "disabled_time": { "type": "integer", "description": "minutes" },
+          "disabled_start": { "type": "string", "format": "date-time" },
+          "disabled_end": { "type": "string", "format": "date-time" },
+          "appearance_id": { "type": "integer" },
+          "money": { "type": "number" }
+        }
+      },
+
+      "UserHuntCreate": {
+        "type": "object",
+        "required": [ "user_id", "hunt_id" ],
+        "properties": {
+          "user_id": { "type": "integer" },
+          "hunt_id": { "type": "integer" }
+        }
+      },
+
+      "UserArtifact": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "artifact_id": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "UserArtifactCreate": { "allOf": [ { "$ref": "#/components/schemas/UserArtifact" }, { "required": [ "user_id", "artifact_id" ] } ] },
+
+      "UserOffer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "offer_id": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "UserOfferCreate": { "allOf": [ { "$ref": "#/components/schemas/UserOffer" }, { "required": [ "user_id", "offer_id" ] } ] },
+
+      "UserBadge": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "badge_id": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserBadgeCreate": { "allOf": [ { "$ref": "#/components/schemas/UserBadge" }, { "required": [ "user_id", "badge_id" ] } ] },
+
+      "UserOtherReward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "other_reward_id": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "UserOtherRewardCreate": { "allOf": [ { "$ref": "#/components/schemas/UserOtherReward" }, { "required": [ "user_id", "other_reward_id" ] } ] }
+    },
+
+    "responses": {
+      "BadgeCreated": { "description": "Badge entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Badge" } } } },
+      "ArtifactCreated": { "description": "Artifact entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Artifact" } } } },
+      "CollectionCreated": { "description": "Collection entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Collection" } } } },
+      "CacheCreated": { "description": "Cache entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cache" } } } },
+      "HuntArtifactCreated": { "description": "Hunt-Artifact entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HuntArtifact" } } } },
+      "HuntCreated": { "description": "Hunt entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Hunt" } } } },
+      "MapCreated": { "description": "Map entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Map" } } } },
+      "OfferCreated": { "description": "Offer entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Offer" } } } },
+      "OtherRewardCreated": { "description": "Other reward entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OtherReward" } } } },
+      "PartnerColorCreated": { "description": "Partner color entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PartnerColor" } } } },
+      "TransactionCreated": { "description": "Transaction entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Transaction" } } } },
+      "UserRetrieved": { "description": "User entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+      "UserArtifactCreated": { "description": "User-Artifact entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserArtifact" } } } },
+      "UserOfferCreated": { "description": "User-Offer entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserOffer" } } } },
+      "UserBadgeCreated": { "description": "User-Badge entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserBadge" } } } },
+      "UserOtherRewardCreated": { "description": "User-OtherReward entity", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserOtherReward" } } } },
+
+      "SuccessLogin": { "description": "Login success", "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean" }, "user": { "$ref": "#/components/schemas/User" } } } } } },
+      "BadRequest": { "description": "Bad request" },
+      "Unauthorized": { "description": "Unauthorized" },
+      "Forbidden": { "description": "Forbidden" },
+      "NotFound": { "description": "Not found" },
+      "Conflict": { "description": "Conflict" },
+      "ServerError": { "description": "Server error" }
+    }
+  }
+}
